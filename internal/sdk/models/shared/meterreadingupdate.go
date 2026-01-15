@@ -7,11 +7,11 @@ type Meter struct {
 	DollarEntityUniqueIds map[string]any `json:"$entity_unique_ids"`
 }
 
-func (o *Meter) GetDollarEntityUniqueIds() map[string]any {
-	if o == nil {
+func (m *Meter) GetDollarEntityUniqueIds() map[string]any {
+	if m == nil {
 		return map[string]any{}
 	}
-	return o.DollarEntityUniqueIds
+	return m.DollarEntityUniqueIds
 }
 
 type MeterCounter struct {
@@ -19,11 +19,11 @@ type MeterCounter struct {
 	DollarEntityUniqueIds map[string]any `json:"$entity_unique_ids,omitempty"`
 }
 
-func (o *MeterCounter) GetDollarEntityUniqueIds() map[string]any {
-	if o == nil {
+func (m *MeterCounter) GetDollarEntityUniqueIds() map[string]any {
+	if m == nil {
 		return nil
 	}
-	return o.DollarEntityUniqueIds
+	return m.DollarEntityUniqueIds
 }
 
 type MeterReadingUpdate struct {
@@ -33,23 +33,23 @@ type MeterReadingUpdate struct {
 	Attributes map[string]any `json:"attributes"`
 }
 
-func (o *MeterReadingUpdate) GetMeter() Meter {
-	if o == nil {
+func (m *MeterReadingUpdate) GetMeter() Meter {
+	if m == nil {
 		return Meter{}
 	}
-	return o.Meter
+	return m.Meter
 }
 
-func (o *MeterReadingUpdate) GetMeterCounter() *MeterCounter {
-	if o == nil {
+func (m *MeterReadingUpdate) GetMeterCounter() *MeterCounter {
+	if m == nil {
 		return nil
 	}
-	return o.MeterCounter
+	return m.MeterCounter
 }
 
-func (o *MeterReadingUpdate) GetAttributes() map[string]any {
-	if o == nil {
+func (m *MeterReadingUpdate) GetAttributes() map[string]any {
+	if m == nil {
 		return map[string]any{}
 	}
-	return o.Attributes
+	return m.Attributes
 }

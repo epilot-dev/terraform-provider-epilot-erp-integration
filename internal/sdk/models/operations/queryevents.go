@@ -15,18 +15,18 @@ type QueryEventsRequest struct {
 	QueryEventsRequest shared.QueryEventsRequest `request:"mediaType=application/json"`
 }
 
-func (o *QueryEventsRequest) GetIntegrationID() string {
-	if o == nil {
+func (q *QueryEventsRequest) GetIntegrationID() string {
+	if q == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return q.IntegrationID
 }
 
-func (o *QueryEventsRequest) GetQueryEventsRequest() shared.QueryEventsRequest {
-	if o == nil {
+func (q *QueryEventsRequest) GetQueryEventsRequest() shared.QueryEventsRequest {
+	if q == nil {
 		return shared.QueryEventsRequest{}
 	}
-	return o.QueryEventsRequest
+	return q.QueryEventsRequest
 }
 
 // NextCursor - Cursor to fetch the next page. Null if no more results.
@@ -46,18 +46,18 @@ func (n *NextCursor) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *NextCursor) GetEventTime() *time.Time {
-	if o == nil {
+func (n *NextCursor) GetEventTime() *time.Time {
+	if n == nil {
 		return nil
 	}
-	return o.EventTime
+	return n.EventTime
 }
 
-func (o *NextCursor) GetEventID() *string {
-	if o == nil {
+func (n *NextCursor) GetEventID() *string {
+	if n == nil {
 		return nil
 	}
-	return o.EventID
+	return n.EventID
 }
 
 // QueryEventsResponseBody - Events queried successfully
@@ -70,25 +70,25 @@ type QueryEventsResponseBody struct {
 	HasMore *bool `json:"has_more,omitempty"`
 }
 
-func (o *QueryEventsResponseBody) GetData() []shared.ErpEvent {
-	if o == nil {
+func (q *QueryEventsResponseBody) GetData() []shared.ErpEvent {
+	if q == nil {
 		return nil
 	}
-	return o.Data
+	return q.Data
 }
 
-func (o *QueryEventsResponseBody) GetNextCursor() *NextCursor {
-	if o == nil {
+func (q *QueryEventsResponseBody) GetNextCursor() *NextCursor {
+	if q == nil {
 		return nil
 	}
-	return o.NextCursor
+	return q.NextCursor
 }
 
-func (o *QueryEventsResponseBody) GetHasMore() *bool {
-	if o == nil {
+func (q *QueryEventsResponseBody) GetHasMore() *bool {
+	if q == nil {
 		return nil
 	}
-	return o.HasMore
+	return q.HasMore
 }
 
 type QueryEventsResponse struct {
@@ -104,37 +104,37 @@ type QueryEventsResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *QueryEventsResponse) GetContentType() string {
-	if o == nil {
+func (q *QueryEventsResponse) GetContentType() string {
+	if q == nil {
 		return ""
 	}
-	return o.ContentType
+	return q.ContentType
 }
 
-func (o *QueryEventsResponse) GetStatusCode() int {
-	if o == nil {
+func (q *QueryEventsResponse) GetStatusCode() int {
+	if q == nil {
 		return 0
 	}
-	return o.StatusCode
+	return q.StatusCode
 }
 
-func (o *QueryEventsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (q *QueryEventsResponse) GetRawResponse() *http.Response {
+	if q == nil {
 		return nil
 	}
-	return o.RawResponse
+	return q.RawResponse
 }
 
-func (o *QueryEventsResponse) GetObject() *QueryEventsResponseBody {
-	if o == nil {
+func (q *QueryEventsResponse) GetObject() *QueryEventsResponseBody {
+	if q == nil {
 		return nil
 	}
-	return o.Object
+	return q.Object
 }
 
-func (o *QueryEventsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (q *QueryEventsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if q == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return q.ErrorResponseBase
 }

@@ -12,11 +12,11 @@ type ListIntegrationsResponseBody struct {
 	Integrations []shared.Integration `json:"integrations"`
 }
 
-func (o *ListIntegrationsResponseBody) GetIntegrations() []shared.Integration {
-	if o == nil {
+func (l *ListIntegrationsResponseBody) GetIntegrations() []shared.Integration {
+	if l == nil {
 		return []shared.Integration{}
 	}
-	return o.Integrations
+	return l.Integrations
 }
 
 type ListIntegrationsResponse struct {
@@ -32,37 +32,37 @@ type ListIntegrationsResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *ListIntegrationsResponse) GetContentType() string {
-	if o == nil {
+func (l *ListIntegrationsResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *ListIntegrationsResponse) GetStatusCode() int {
-	if o == nil {
+func (l *ListIntegrationsResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *ListIntegrationsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *ListIntegrationsResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *ListIntegrationsResponse) GetObject() *ListIntegrationsResponseBody {
-	if o == nil {
+func (l *ListIntegrationsResponse) GetObject() *ListIntegrationsResponseBody {
+	if l == nil {
 		return nil
 	}
-	return o.Object
+	return l.Object
 }
 
-func (o *ListIntegrationsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (l *ListIntegrationsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if l == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return l.ErrorResponseBase
 }

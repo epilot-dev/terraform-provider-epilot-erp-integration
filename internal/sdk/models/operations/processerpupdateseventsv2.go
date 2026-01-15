@@ -47,25 +47,25 @@ type ProcessErpUpdatesEventsV2Results struct {
 	Message *string                         `json:"message,omitempty"`
 }
 
-func (o *ProcessErpUpdatesEventsV2Results) GetEventID() string {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Results) GetEventID() string {
+	if p == nil {
 		return ""
 	}
-	return o.EventID
+	return p.EventID
 }
 
-func (o *ProcessErpUpdatesEventsV2Results) GetStatus() ProcessErpUpdatesEventsV2Status {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Results) GetStatus() ProcessErpUpdatesEventsV2Status {
+	if p == nil {
 		return ProcessErpUpdatesEventsV2Status("")
 	}
-	return o.Status
+	return p.Status
 }
 
-func (o *ProcessErpUpdatesEventsV2Results) GetMessage() *string {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Results) GetMessage() *string {
+	if p == nil {
 		return nil
 	}
-	return o.Message
+	return p.Message
 }
 
 // ProcessErpUpdatesEventsV2ResponseBody - Some events failed to process
@@ -73,11 +73,11 @@ type ProcessErpUpdatesEventsV2ResponseBody struct {
 	Results []ProcessErpUpdatesEventsV2Results `json:"results,omitempty"`
 }
 
-func (o *ProcessErpUpdatesEventsV2ResponseBody) GetResults() []ProcessErpUpdatesEventsV2Results {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2ResponseBody) GetResults() []ProcessErpUpdatesEventsV2Results {
+	if p == nil {
 		return nil
 	}
-	return o.Results
+	return p.Results
 }
 
 type ProcessErpUpdatesEventsV2Response struct {
@@ -93,37 +93,37 @@ type ProcessErpUpdatesEventsV2Response struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *ProcessErpUpdatesEventsV2Response) GetContentType() string {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Response) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *ProcessErpUpdatesEventsV2Response) GetStatusCode() int {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Response) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *ProcessErpUpdatesEventsV2Response) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Response) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *ProcessErpUpdatesEventsV2Response) GetObject() *ProcessErpUpdatesEventsV2ResponseBody {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Response) GetObject() *ProcessErpUpdatesEventsV2ResponseBody {
+	if p == nil {
 		return nil
 	}
-	return o.Object
+	return p.Object
 }
 
-func (o *ProcessErpUpdatesEventsV2Response) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsV2Response) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if p == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return p.ErrorResponseBase
 }

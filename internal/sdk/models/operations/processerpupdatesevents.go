@@ -28,18 +28,18 @@ func (m *Meta) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *Meta) GetCorrelationID() *string {
-	if o == nil {
+func (m *Meta) GetCorrelationID() *string {
+	if m == nil {
 		return nil
 	}
-	return o.CorrelationID
+	return m.CorrelationID
 }
 
-func (o *Meta) GetAdditionalProperties() any {
-	if o == nil {
+func (m *Meta) GetAdditionalProperties() any {
+	if m == nil {
 		return nil
 	}
-	return o.AdditionalProperties
+	return m.AdditionalProperties
 }
 
 type ProcessErpUpdatesEventsRequestBody struct {
@@ -53,32 +53,32 @@ type ProcessErpUpdatesEventsRequestBody struct {
 	Events []shared.ErpEvent `json:"events"`
 }
 
-func (o *ProcessErpUpdatesEventsRequestBody) GetAppID() string {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsRequestBody) GetAppID() string {
+	if p == nil {
 		return ""
 	}
-	return o.AppID
+	return p.AppID
 }
 
-func (o *ProcessErpUpdatesEventsRequestBody) GetComponentID() string {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsRequestBody) GetComponentID() string {
+	if p == nil {
 		return ""
 	}
-	return o.ComponentID
+	return p.ComponentID
 }
 
-func (o *ProcessErpUpdatesEventsRequestBody) GetMeta() Meta {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsRequestBody) GetMeta() Meta {
+	if p == nil {
 		return Meta{}
 	}
-	return o.Meta
+	return p.Meta
 }
 
-func (o *ProcessErpUpdatesEventsRequestBody) GetEvents() []shared.ErpEvent {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsRequestBody) GetEvents() []shared.ErpEvent {
+	if p == nil {
 		return []shared.ErpEvent{}
 	}
-	return o.Events
+	return p.Events
 }
 
 // Status - Processing status for the event (skipped indicates duplicate deduplication_id)
@@ -119,25 +119,25 @@ type Results struct {
 	Message *string `json:"message,omitempty"`
 }
 
-func (o *Results) GetEventID() string {
-	if o == nil {
+func (r *Results) GetEventID() string {
+	if r == nil {
 		return ""
 	}
-	return o.EventID
+	return r.EventID
 }
 
-func (o *Results) GetStatus() Status {
-	if o == nil {
+func (r *Results) GetStatus() Status {
+	if r == nil {
 		return Status("")
 	}
-	return o.Status
+	return r.Status
 }
 
-func (o *Results) GetMessage() *string {
-	if o == nil {
+func (r *Results) GetMessage() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Message
+	return r.Message
 }
 
 // ProcessErpUpdatesEventsResponseBody - Some events failed to process
@@ -145,11 +145,11 @@ type ProcessErpUpdatesEventsResponseBody struct {
 	Results []Results `json:"results,omitempty"`
 }
 
-func (o *ProcessErpUpdatesEventsResponseBody) GetResults() []Results {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsResponseBody) GetResults() []Results {
+	if p == nil {
 		return nil
 	}
-	return o.Results
+	return p.Results
 }
 
 type ProcessErpUpdatesEventsResponse struct {
@@ -165,37 +165,37 @@ type ProcessErpUpdatesEventsResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *ProcessErpUpdatesEventsResponse) GetContentType() string {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *ProcessErpUpdatesEventsResponse) GetStatusCode() int {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *ProcessErpUpdatesEventsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *ProcessErpUpdatesEventsResponse) GetObject() *ProcessErpUpdatesEventsResponseBody {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsResponse) GetObject() *ProcessErpUpdatesEventsResponseBody {
+	if p == nil {
 		return nil
 	}
-	return o.Object
+	return p.Object
 }
 
-func (o *ProcessErpUpdatesEventsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (p *ProcessErpUpdatesEventsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if p == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return p.ErrorResponseBase
 }

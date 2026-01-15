@@ -63,7 +63,7 @@ func (o OutboundUseCaseHistoryEntry) MarshalJSON() ([]byte, error) {
 }
 
 func (o *OutboundUseCaseHistoryEntry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &o, "", false, []string{"id", "useCaseId", "integrationId", "name", "enabled", "created_at", "updated_at", "history_created_at", "type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
 		return err
 	}
 	return nil

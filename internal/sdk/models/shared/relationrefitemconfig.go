@@ -23,36 +23,36 @@ func (r RelationRefItemConfig) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RelationRefItemConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"entity_schema", "unique_ids", "path", "value"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *RelationRefItemConfig) GetEntitySchema() string {
-	if o == nil {
+func (r *RelationRefItemConfig) GetEntitySchema() string {
+	if r == nil {
 		return ""
 	}
-	return o.EntitySchema
+	return r.EntitySchema
 }
 
-func (o *RelationRefItemConfig) GetUniqueIds() []RelationUniqueIDField {
-	if o == nil {
+func (r *RelationRefItemConfig) GetUniqueIds() []RelationUniqueIDField {
+	if r == nil {
 		return []RelationUniqueIDField{}
 	}
-	return o.UniqueIds
+	return r.UniqueIds
 }
 
-func (o *RelationRefItemConfig) GetPath() string {
-	if o == nil {
+func (r *RelationRefItemConfig) GetPath() string {
+	if r == nil {
 		return ""
 	}
-	return o.Path
+	return r.Path
 }
 
-func (o *RelationRefItemConfig) GetValue() RelationRefValueConfig {
-	if o == nil {
+func (r *RelationRefItemConfig) GetValue() RelationRefValueConfig {
+	if r == nil {
 		return RelationRefValueConfig{}
 	}
-	return o.Value
+	return r.Value
 }

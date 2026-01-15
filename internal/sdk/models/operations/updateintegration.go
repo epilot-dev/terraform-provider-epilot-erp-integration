@@ -13,18 +13,18 @@ type UpdateIntegrationRequest struct {
 	UpdateIntegrationRequest shared.UpdateIntegrationRequest `request:"mediaType=application/json"`
 }
 
-func (o *UpdateIntegrationRequest) GetIntegrationID() string {
-	if o == nil {
+func (u *UpdateIntegrationRequest) GetIntegrationID() string {
+	if u == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return u.IntegrationID
 }
 
-func (o *UpdateIntegrationRequest) GetUpdateIntegrationRequest() shared.UpdateIntegrationRequest {
-	if o == nil {
+func (u *UpdateIntegrationRequest) GetUpdateIntegrationRequest() shared.UpdateIntegrationRequest {
+	if u == nil {
 		return shared.UpdateIntegrationRequest{}
 	}
-	return o.UpdateIntegrationRequest
+	return u.UpdateIntegrationRequest
 }
 
 type UpdateIntegrationResponse struct {
@@ -40,37 +40,37 @@ type UpdateIntegrationResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *UpdateIntegrationResponse) GetContentType() string {
-	if o == nil {
+func (u *UpdateIntegrationResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UpdateIntegrationResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UpdateIntegrationResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UpdateIntegrationResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UpdateIntegrationResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
 
-func (o *UpdateIntegrationResponse) GetIntegration() *shared.Integration {
-	if o == nil {
+func (u *UpdateIntegrationResponse) GetIntegration() *shared.Integration {
+	if u == nil {
 		return nil
 	}
-	return o.Integration
+	return u.Integration
 }
 
-func (o *UpdateIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (u *UpdateIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if u == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return u.ErrorResponseBase
 }

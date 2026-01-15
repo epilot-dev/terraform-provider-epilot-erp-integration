@@ -59,29 +59,29 @@ func (r RelationConfig) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RelationConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"operation"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *RelationConfig) GetOperation() Operation {
-	if o == nil {
+func (r *RelationConfig) GetOperation() Operation {
+	if r == nil {
 		return Operation("")
 	}
-	return o.Operation
+	return r.Operation
 }
 
-func (o *RelationConfig) GetItems() []RelationItemConfig {
-	if o == nil {
+func (r *RelationConfig) GetItems() []RelationItemConfig {
+	if r == nil {
 		return nil
 	}
-	return o.Items
+	return r.Items
 }
 
-func (o *RelationConfig) GetJsonataExpression() *string {
-	if o == nil {
+func (r *RelationConfig) GetJsonataExpression() *string {
+	if r == nil {
 		return nil
 	}
-	return o.JsonataExpression
+	return r.JsonataExpression
 }

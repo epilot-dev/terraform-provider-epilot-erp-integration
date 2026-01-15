@@ -13,26 +13,26 @@ type CreateUseCaseRequest struct {
 	CreateUseCaseRequest shared.CreateUseCaseRequest `request:"mediaType=application/json"`
 }
 
-func (o *CreateUseCaseRequest) GetIntegrationID() string {
-	if o == nil {
+func (c *CreateUseCaseRequest) GetIntegrationID() string {
+	if c == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return c.IntegrationID
 }
 
-func (o *CreateUseCaseRequest) GetCreateUseCaseRequest() shared.CreateUseCaseRequest {
-	if o == nil {
+func (c *CreateUseCaseRequest) GetCreateUseCaseRequest() shared.CreateUseCaseRequest {
+	if c == nil {
 		return shared.CreateUseCaseRequest{}
 	}
-	return o.CreateUseCaseRequest
+	return c.CreateUseCaseRequest
 }
 
-func (o *CreateUseCaseRequest) GetCreateUseCaseRequestInbound() *shared.CreateInboundUseCaseRequest {
-	return o.GetCreateUseCaseRequest().CreateInboundUseCaseRequest
+func (c *CreateUseCaseRequest) GetCreateUseCaseRequestInbound() *shared.CreateInboundUseCaseRequest {
+	return c.GetCreateUseCaseRequest().CreateInboundUseCaseRequest
 }
 
-func (o *CreateUseCaseRequest) GetCreateUseCaseRequestOutbound() *shared.CreateOutboundUseCaseRequest {
-	return o.GetCreateUseCaseRequest().CreateOutboundUseCaseRequest
+func (c *CreateUseCaseRequest) GetCreateUseCaseRequestOutbound() *shared.CreateOutboundUseCaseRequest {
+	return c.GetCreateUseCaseRequest().CreateOutboundUseCaseRequest
 }
 
 type CreateUseCaseResponse struct {
@@ -48,51 +48,51 @@ type CreateUseCaseResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *CreateUseCaseResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateUseCaseResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateUseCaseResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateUseCaseResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateUseCaseResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateUseCaseResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CreateUseCaseResponse) GetUseCase() *shared.UseCase {
-	if o == nil {
+func (c *CreateUseCaseResponse) GetUseCase() *shared.UseCase {
+	if c == nil {
 		return nil
 	}
-	return o.UseCase
+	return c.UseCase
 }
 
-func (o *CreateUseCaseResponse) GetUseCaseInbound() *shared.Schemas {
-	if v := o.GetUseCase(); v != nil {
+func (c *CreateUseCaseResponse) GetUseCaseInbound() *shared.Schemas {
+	if v := c.GetUseCase(); v != nil {
 		return v.Schemas
 	}
 	return nil
 }
 
-func (o *CreateUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCaseSchemas {
-	if v := o.GetUseCase(); v != nil {
+func (c *CreateUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCaseSchemas {
+	if v := c.GetUseCase(); v != nil {
 		return v.OutboundUseCaseSchemas
 	}
 	return nil
 }
 
-func (o *CreateUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (c *CreateUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if c == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return c.ErrorResponseBase
 }

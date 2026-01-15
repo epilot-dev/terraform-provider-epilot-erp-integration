@@ -42,17 +42,17 @@ func (m Mapping) MarshalJSON() ([]byte, error) {
 }
 
 func (m *Mapping) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"objects"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Mapping) GetObjects() map[string]IntegrationObjectV1 {
-	if o == nil {
+func (m *Mapping) GetObjects() map[string]IntegrationObjectV1 {
+	if m == nil {
 		return map[string]IntegrationObjectV1{}
 	}
-	return o.Objects
+	return m.Objects
 }
 
 type IntegrationConfigurationV1 struct {
@@ -66,22 +66,22 @@ func (i IntegrationConfigurationV1) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationConfigurationV1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"mapping"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationConfigurationV1) GetVersion() *Version {
-	if o == nil {
+func (i *IntegrationConfigurationV1) GetVersion() *Version {
+	if i == nil {
 		return nil
 	}
-	return o.Version
+	return i.Version
 }
 
-func (o *IntegrationConfigurationV1) GetMapping() Mapping {
-	if o == nil {
+func (i *IntegrationConfigurationV1) GetMapping() Mapping {
+	if i == nil {
 		return Mapping{}
 	}
-	return o.Mapping
+	return i.Mapping
 }

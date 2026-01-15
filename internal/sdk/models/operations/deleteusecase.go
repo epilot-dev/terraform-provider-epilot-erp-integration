@@ -14,18 +14,18 @@ type DeleteUseCaseRequest struct {
 	UseCaseID string `pathParam:"style=simple,explode=false,name=useCaseId"`
 }
 
-func (o *DeleteUseCaseRequest) GetIntegrationID() string {
-	if o == nil {
+func (d *DeleteUseCaseRequest) GetIntegrationID() string {
+	if d == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return d.IntegrationID
 }
 
-func (o *DeleteUseCaseRequest) GetUseCaseID() string {
-	if o == nil {
+func (d *DeleteUseCaseRequest) GetUseCaseID() string {
+	if d == nil {
 		return ""
 	}
-	return o.UseCaseID
+	return d.UseCaseID
 }
 
 // DeleteUseCaseResponseBody - Use case deleted successfully
@@ -33,11 +33,11 @@ type DeleteUseCaseResponseBody struct {
 	Message *string `json:"message,omitempty"`
 }
 
-func (o *DeleteUseCaseResponseBody) GetMessage() *string {
-	if o == nil {
+func (d *DeleteUseCaseResponseBody) GetMessage() *string {
+	if d == nil {
 		return nil
 	}
-	return o.Message
+	return d.Message
 }
 
 type DeleteUseCaseResponse struct {
@@ -53,37 +53,37 @@ type DeleteUseCaseResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *DeleteUseCaseResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteUseCaseResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteUseCaseResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteUseCaseResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteUseCaseResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteUseCaseResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteUseCaseResponse) GetObject() *DeleteUseCaseResponseBody {
-	if o == nil {
+func (d *DeleteUseCaseResponse) GetObject() *DeleteUseCaseResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Object
+	return d.Object
 }
 
-func (o *DeleteUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (d *DeleteUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if d == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return d.ErrorResponseBase
 }

@@ -18,30 +18,30 @@ type TriggerErpResponse struct {
 	TriggerWebhookResp *shared.TriggerWebhookResp
 }
 
-func (o *TriggerErpResponse) GetContentType() string {
-	if o == nil {
+func (t *TriggerErpResponse) GetContentType() string {
+	if t == nil {
 		return ""
 	}
-	return o.ContentType
+	return t.ContentType
 }
 
-func (o *TriggerErpResponse) GetStatusCode() int {
-	if o == nil {
+func (t *TriggerErpResponse) GetStatusCode() int {
+	if t == nil {
 		return 0
 	}
-	return o.StatusCode
+	return t.StatusCode
 }
 
-func (o *TriggerErpResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (t *TriggerErpResponse) GetRawResponse() *http.Response {
+	if t == nil {
 		return nil
 	}
-	return o.RawResponse
+	return t.RawResponse
 }
 
-func (o *TriggerErpResponse) GetTriggerWebhookResp() *shared.TriggerWebhookResp {
-	if o == nil {
+func (t *TriggerErpResponse) GetTriggerWebhookResp() *shared.TriggerWebhookResp {
+	if t == nil {
 		return nil
 	}
-	return o.TriggerWebhookResp
+	return t.TriggerWebhookResp
 }

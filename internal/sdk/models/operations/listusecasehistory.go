@@ -18,25 +18,25 @@ type ListUseCaseHistoryRequest struct {
 	Cursor *string `queryParam:"style=form,explode=true,name=cursor"`
 }
 
-func (o *ListUseCaseHistoryRequest) GetIntegrationID() string {
-	if o == nil {
+func (l *ListUseCaseHistoryRequest) GetIntegrationID() string {
+	if l == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return l.IntegrationID
 }
 
-func (o *ListUseCaseHistoryRequest) GetUseCaseID() string {
-	if o == nil {
+func (l *ListUseCaseHistoryRequest) GetUseCaseID() string {
+	if l == nil {
 		return ""
 	}
-	return o.UseCaseID
+	return l.UseCaseID
 }
 
-func (o *ListUseCaseHistoryRequest) GetCursor() *string {
-	if o == nil {
+func (l *ListUseCaseHistoryRequest) GetCursor() *string {
+	if l == nil {
 		return nil
 	}
-	return o.Cursor
+	return l.Cursor
 }
 
 // ListUseCaseHistoryResponseBody - Successfully retrieved use case history
@@ -47,18 +47,18 @@ type ListUseCaseHistoryResponseBody struct {
 	NextCursor *string `json:"next_cursor,omitempty"`
 }
 
-func (o *ListUseCaseHistoryResponseBody) GetHistory() []shared.UseCaseHistoryEntry {
-	if o == nil {
+func (l *ListUseCaseHistoryResponseBody) GetHistory() []shared.UseCaseHistoryEntry {
+	if l == nil {
 		return []shared.UseCaseHistoryEntry{}
 	}
-	return o.History
+	return l.History
 }
 
-func (o *ListUseCaseHistoryResponseBody) GetNextCursor() *string {
-	if o == nil {
+func (l *ListUseCaseHistoryResponseBody) GetNextCursor() *string {
+	if l == nil {
 		return nil
 	}
-	return o.NextCursor
+	return l.NextCursor
 }
 
 type ListUseCaseHistoryResponse struct {
@@ -74,37 +74,37 @@ type ListUseCaseHistoryResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *ListUseCaseHistoryResponse) GetContentType() string {
-	if o == nil {
+func (l *ListUseCaseHistoryResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *ListUseCaseHistoryResponse) GetStatusCode() int {
-	if o == nil {
+func (l *ListUseCaseHistoryResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *ListUseCaseHistoryResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *ListUseCaseHistoryResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *ListUseCaseHistoryResponse) GetObject() *ListUseCaseHistoryResponseBody {
-	if o == nil {
+func (l *ListUseCaseHistoryResponse) GetObject() *ListUseCaseHistoryResponseBody {
+	if l == nil {
 		return nil
 	}
-	return o.Object
+	return l.Object
 }
 
-func (o *ListUseCaseHistoryResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (l *ListUseCaseHistoryResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if l == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return l.ErrorResponseBase
 }

@@ -64,7 +64,7 @@ func (s *Trigger) TriggerErp(ctx context.Context, request shared.TriggerErpActio
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "triggerErp",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)

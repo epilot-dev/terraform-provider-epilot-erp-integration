@@ -17,8 +17,8 @@ const (
 
 // Enabled - Controls whether this entity mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean.
 type Enabled struct {
-	Boolean *bool   `queryParam:"inline" name:"enabled"`
-	Str     *string `queryParam:"inline" name:"enabled"`
+	Boolean *bool   `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type EnabledType
 }
@@ -43,17 +43,43 @@ func CreateEnabledStr(str string) Enabled {
 
 func (u *Enabled) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var boolean bool = false
 	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		u.Boolean = &boolean
-		u.Type = EnabledTypeBoolean
-		return nil
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  EnabledTypeBoolean,
+			Value: &boolean,
+		})
 	}
 
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		u.Str = &str
-		u.Type = EnabledTypeStr
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  EnabledTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Enabled", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Enabled", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(EnabledType)
+	switch best.Type {
+	case EnabledTypeBoolean:
+		u.Boolean = best.Value.(*bool)
+		return nil
+	case EnabledTypeStr:
+		u.Str = best.Value.(*string)
 		return nil
 	}
 
@@ -93,43 +119,43 @@ func (i IntegrationEntity) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationEntity) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"entity_schema", "unique_ids", "fields"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationEntity) GetEntitySchema() string {
-	if o == nil {
+func (i *IntegrationEntity) GetEntitySchema() string {
+	if i == nil {
 		return ""
 	}
-	return o.EntitySchema
+	return i.EntitySchema
 }
 
-func (o *IntegrationEntity) GetUniqueIds() []string {
-	if o == nil {
+func (i *IntegrationEntity) GetUniqueIds() []string {
+	if i == nil {
 		return []string{}
 	}
-	return o.UniqueIds
+	return i.UniqueIds
 }
 
-func (o *IntegrationEntity) GetJsonataExpression() *string {
-	if o == nil {
+func (i *IntegrationEntity) GetJsonataExpression() *string {
+	if i == nil {
 		return nil
 	}
-	return o.JsonataExpression
+	return i.JsonataExpression
 }
 
-func (o *IntegrationEntity) GetEnabled() *Enabled {
-	if o == nil {
+func (i *IntegrationEntity) GetEnabled() *Enabled {
+	if i == nil {
 		return nil
 	}
-	return o.Enabled
+	return i.Enabled
 }
 
-func (o *IntegrationEntity) GetFields() []IntegrationEntityField {
-	if o == nil {
+func (i *IntegrationEntity) GetFields() []IntegrationEntityField {
+	if i == nil {
 		return []IntegrationEntityField{}
 	}
-	return o.Fields
+	return i.Fields
 }

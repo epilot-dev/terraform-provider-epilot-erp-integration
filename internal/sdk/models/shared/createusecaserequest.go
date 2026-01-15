@@ -17,8 +17,8 @@ const (
 )
 
 type CreateUseCaseRequest struct {
-	CreateInboundUseCaseRequest  *CreateInboundUseCaseRequest  `queryParam:"inline" name:"CreateUseCaseRequest"`
-	CreateOutboundUseCaseRequest *CreateOutboundUseCaseRequest `queryParam:"inline" name:"CreateUseCaseRequest"`
+	CreateInboundUseCaseRequest  *CreateInboundUseCaseRequest  `queryParam:"inline" union:"member"`
+	CreateOutboundUseCaseRequest *CreateOutboundUseCaseRequest `queryParam:"inline" union:"member"`
 
 	Type CreateUseCaseRequestType
 }

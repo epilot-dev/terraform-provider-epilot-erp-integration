@@ -20,37 +20,37 @@ type SimulateMappingResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *SimulateMappingResponse) GetContentType() string {
-	if o == nil {
+func (s *SimulateMappingResponse) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SimulateMappingResponse) GetStatusCode() int {
-	if o == nil {
+func (s *SimulateMappingResponse) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SimulateMappingResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SimulateMappingResponse) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
 }
 
-func (o *SimulateMappingResponse) GetMappingSimulationResponse() *shared.MappingSimulationResponse {
-	if o == nil {
+func (s *SimulateMappingResponse) GetMappingSimulationResponse() *shared.MappingSimulationResponse {
+	if s == nil {
 		return nil
 	}
-	return o.MappingSimulationResponse
+	return s.MappingSimulationResponse
 }
 
-func (o *SimulateMappingResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (s *SimulateMappingResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if s == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return s.ErrorResponseBase
 }

@@ -13,18 +13,18 @@ type ReplayEventsRequest struct {
 	ReplayEventsRequest shared.ReplayEventsRequest `request:"mediaType=application/json"`
 }
 
-func (o *ReplayEventsRequest) GetIntegrationID() string {
-	if o == nil {
+func (r *ReplayEventsRequest) GetIntegrationID() string {
+	if r == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return r.IntegrationID
 }
 
-func (o *ReplayEventsRequest) GetReplayEventsRequest() shared.ReplayEventsRequest {
-	if o == nil {
+func (r *ReplayEventsRequest) GetReplayEventsRequest() shared.ReplayEventsRequest {
+	if r == nil {
 		return shared.ReplayEventsRequest{}
 	}
-	return o.ReplayEventsRequest
+	return r.ReplayEventsRequest
 }
 
 // ReplayEventsResponseBody - Events replay initiated
@@ -33,11 +33,11 @@ type ReplayEventsResponseBody struct {
 	EventIds []string `json:"event_ids,omitempty"`
 }
 
-func (o *ReplayEventsResponseBody) GetEventIds() []string {
-	if o == nil {
+func (r *ReplayEventsResponseBody) GetEventIds() []string {
+	if r == nil {
 		return nil
 	}
-	return o.EventIds
+	return r.EventIds
 }
 
 type ReplayEventsResponse struct {
@@ -53,37 +53,37 @@ type ReplayEventsResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *ReplayEventsResponse) GetContentType() string {
-	if o == nil {
+func (r *ReplayEventsResponse) GetContentType() string {
+	if r == nil {
 		return ""
 	}
-	return o.ContentType
+	return r.ContentType
 }
 
-func (o *ReplayEventsResponse) GetStatusCode() int {
-	if o == nil {
+func (r *ReplayEventsResponse) GetStatusCode() int {
+	if r == nil {
 		return 0
 	}
-	return o.StatusCode
+	return r.StatusCode
 }
 
-func (o *ReplayEventsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (r *ReplayEventsResponse) GetRawResponse() *http.Response {
+	if r == nil {
 		return nil
 	}
-	return o.RawResponse
+	return r.RawResponse
 }
 
-func (o *ReplayEventsResponse) GetObject() *ReplayEventsResponseBody {
-	if o == nil {
+func (r *ReplayEventsResponse) GetObject() *ReplayEventsResponseBody {
+	if r == nil {
 		return nil
 	}
-	return o.Object
+	return r.Object
 }
 
-func (o *ReplayEventsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (r *ReplayEventsResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if r == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return r.ErrorResponseBase
 }

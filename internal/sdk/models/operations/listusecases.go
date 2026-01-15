@@ -12,11 +12,11 @@ type ListUseCasesRequest struct {
 	IntegrationID string `pathParam:"style=simple,explode=false,name=integrationId"`
 }
 
-func (o *ListUseCasesRequest) GetIntegrationID() string {
-	if o == nil {
+func (l *ListUseCasesRequest) GetIntegrationID() string {
+	if l == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return l.IntegrationID
 }
 
 // ListUseCasesResponseBody - Successfully retrieved use cases
@@ -24,11 +24,11 @@ type ListUseCasesResponseBody struct {
 	UseCases []shared.UseCase `json:"use_cases"`
 }
 
-func (o *ListUseCasesResponseBody) GetUseCases() []shared.UseCase {
-	if o == nil {
+func (l *ListUseCasesResponseBody) GetUseCases() []shared.UseCase {
+	if l == nil {
 		return []shared.UseCase{}
 	}
-	return o.UseCases
+	return l.UseCases
 }
 
 type ListUseCasesResponse struct {
@@ -44,37 +44,37 @@ type ListUseCasesResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *ListUseCasesResponse) GetContentType() string {
-	if o == nil {
+func (l *ListUseCasesResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *ListUseCasesResponse) GetStatusCode() int {
-	if o == nil {
+func (l *ListUseCasesResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *ListUseCasesResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *ListUseCasesResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *ListUseCasesResponse) GetObject() *ListUseCasesResponseBody {
-	if o == nil {
+func (l *ListUseCasesResponse) GetObject() *ListUseCasesResponseBody {
+	if l == nil {
 		return nil
 	}
-	return o.Object
+	return l.Object
 }
 
-func (o *ListUseCasesResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (l *ListUseCasesResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if l == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return l.ErrorResponseBase
 }

@@ -9,16 +9,16 @@ type UpdateIntegrationRequest struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func (o *UpdateIntegrationRequest) GetName() *string {
-	if o == nil {
+func (u *UpdateIntegrationRequest) GetName() *string {
+	if u == nil {
 		return nil
 	}
-	return o.Name
+	return u.Name
 }
 
-func (o *UpdateIntegrationRequest) GetDescription() *string {
-	if o == nil {
+func (u *UpdateIntegrationRequest) GetDescription() *string {
+	if u == nil {
 		return nil
 	}
-	return o.Description
+	return u.Description
 }

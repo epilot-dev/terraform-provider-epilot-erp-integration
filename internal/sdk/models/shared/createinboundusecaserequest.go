@@ -48,36 +48,36 @@ func (c CreateInboundUseCaseRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CreateInboundUseCaseRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, []string{"name", "enabled", "type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *CreateInboundUseCaseRequest) GetName() string {
-	if o == nil {
+func (c *CreateInboundUseCaseRequest) GetName() string {
+	if c == nil {
 		return ""
 	}
-	return o.Name
+	return c.Name
 }
 
-func (o *CreateInboundUseCaseRequest) GetEnabled() bool {
-	if o == nil {
+func (c *CreateInboundUseCaseRequest) GetEnabled() bool {
+	if c == nil {
 		return false
 	}
-	return o.Enabled
+	return c.Enabled
 }
 
-func (o *CreateInboundUseCaseRequest) GetType() CreateInboundUseCaseRequestType {
-	if o == nil {
+func (c *CreateInboundUseCaseRequest) GetType() CreateInboundUseCaseRequestType {
+	if c == nil {
 		return CreateInboundUseCaseRequestType("")
 	}
-	return o.Type
+	return c.Type
 }
 
-func (o *CreateInboundUseCaseRequest) GetConfiguration() *InboundIntegrationEventConfiguration {
-	if o == nil {
+func (c *CreateInboundUseCaseRequest) GetConfiguration() *InboundIntegrationEventConfiguration {
+	if c == nil {
 		return nil
 	}
-	return o.Configuration
+	return c.Configuration
 }

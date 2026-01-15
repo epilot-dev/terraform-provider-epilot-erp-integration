@@ -22,36 +22,36 @@ func (i IntegrationFieldV1) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationFieldV1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"entity", "attribute"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationFieldV1) GetEntity() string {
-	if o == nil {
+func (i *IntegrationFieldV1) GetEntity() string {
+	if i == nil {
 		return ""
 	}
-	return o.Entity
+	return i.Entity
 }
 
-func (o *IntegrationFieldV1) GetAttribute() string {
-	if o == nil {
+func (i *IntegrationFieldV1) GetAttribute() string {
+	if i == nil {
 		return ""
 	}
-	return o.Attribute
+	return i.Attribute
 }
 
-func (o *IntegrationFieldV1) GetField() *string {
-	if o == nil {
+func (i *IntegrationFieldV1) GetField() *string {
+	if i == nil {
 		return nil
 	}
-	return o.Field
+	return i.Field
 }
 
-func (o *IntegrationFieldV1) GetJsonataExpression() *string {
-	if o == nil {
+func (i *IntegrationFieldV1) GetJsonataExpression() *string {
+	if i == nil {
 		return nil
 	}
-	return o.JsonataExpression
+	return i.JsonataExpression
 }

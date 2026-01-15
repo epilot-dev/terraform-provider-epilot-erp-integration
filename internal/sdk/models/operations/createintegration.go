@@ -20,37 +20,37 @@ type CreateIntegrationResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *CreateIntegrationResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateIntegrationResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateIntegrationResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateIntegrationResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateIntegrationResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateIntegrationResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CreateIntegrationResponse) GetIntegration() *shared.Integration {
-	if o == nil {
+func (c *CreateIntegrationResponse) GetIntegration() *shared.Integration {
+	if c == nil {
 		return nil
 	}
-	return o.Integration
+	return c.Integration
 }
 
-func (o *CreateIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (c *CreateIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if c == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return c.ErrorResponseBase
 }

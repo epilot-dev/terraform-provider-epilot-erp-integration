@@ -20,37 +20,37 @@ type SimulateMappingV2Response struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *SimulateMappingV2Response) GetContentType() string {
-	if o == nil {
+func (s *SimulateMappingV2Response) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SimulateMappingV2Response) GetStatusCode() int {
-	if o == nil {
+func (s *SimulateMappingV2Response) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SimulateMappingV2Response) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SimulateMappingV2Response) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
 }
 
-func (o *SimulateMappingV2Response) GetMappingSimulationResponse() *shared.MappingSimulationResponse {
-	if o == nil {
+func (s *SimulateMappingV2Response) GetMappingSimulationResponse() *shared.MappingSimulationResponse {
+	if s == nil {
 		return nil
 	}
-	return o.MappingSimulationResponse
+	return s.MappingSimulationResponse
 }
 
-func (o *SimulateMappingV2Response) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (s *SimulateMappingV2Response) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if s == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return s.ErrorResponseBase
 }

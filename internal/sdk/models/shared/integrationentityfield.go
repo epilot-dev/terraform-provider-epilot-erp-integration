@@ -17,8 +17,8 @@ const (
 
 // IntegrationEntityFieldEnabled - Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted.
 type IntegrationEntityFieldEnabled struct {
-	Boolean *bool   `queryParam:"inline" name:"enabled"`
-	Str     *string `queryParam:"inline" name:"enabled"`
+	Boolean *bool   `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type IntegrationEntityFieldEnabledType
 }
@@ -43,17 +43,43 @@ func CreateIntegrationEntityFieldEnabledStr(str string) IntegrationEntityFieldEn
 
 func (u *IntegrationEntityFieldEnabled) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var boolean bool = false
 	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		u.Boolean = &boolean
-		u.Type = IntegrationEntityFieldEnabledTypeBoolean
-		return nil
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  IntegrationEntityFieldEnabledTypeBoolean,
+			Value: &boolean,
+		})
 	}
 
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		u.Str = &str
-		u.Type = IntegrationEntityFieldEnabledTypeStr
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  IntegrationEntityFieldEnabledTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for IntegrationEntityFieldEnabled", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for IntegrationEntityFieldEnabled", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(IntegrationEntityFieldEnabledType)
+	switch best.Type {
+	case IntegrationEntityFieldEnabledTypeBoolean:
+		u.Boolean = best.Value.(*bool)
+		return nil
+	case IntegrationEntityFieldEnabledTypeStr:
+		u.Str = best.Value.(*string)
 		return nil
 	}
 
@@ -100,64 +126,64 @@ func (i IntegrationEntityField) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationEntityField) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"attribute"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationEntityField) GetAttribute() string {
-	if o == nil {
+func (i *IntegrationEntityField) GetAttribute() string {
+	if i == nil {
 		return ""
 	}
-	return o.Attribute
+	return i.Attribute
 }
 
-func (o *IntegrationEntityField) GetField() *string {
-	if o == nil {
+func (i *IntegrationEntityField) GetField() *string {
+	if i == nil {
 		return nil
 	}
-	return o.Field
+	return i.Field
 }
 
-func (o *IntegrationEntityField) GetJsonataExpression() *string {
-	if o == nil {
+func (i *IntegrationEntityField) GetJsonataExpression() *string {
+	if i == nil {
 		return nil
 	}
-	return o.JsonataExpression
+	return i.JsonataExpression
 }
 
-func (o *IntegrationEntityField) GetConstant() any {
-	if o == nil {
+func (i *IntegrationEntityField) GetConstant() any {
+	if i == nil {
 		return nil
 	}
-	return o.Constant
+	return i.Constant
 }
 
-func (o *IntegrationEntityField) GetType() *RepeatableFieldType {
-	if o == nil {
+func (i *IntegrationEntityField) GetType() *RepeatableFieldType {
+	if i == nil {
 		return nil
 	}
-	return o.Type
+	return i.Type
 }
 
-func (o *IntegrationEntityField) GetEnabled() *IntegrationEntityFieldEnabled {
-	if o == nil {
+func (i *IntegrationEntityField) GetEnabled() *IntegrationEntityFieldEnabled {
+	if i == nil {
 		return nil
 	}
-	return o.Enabled
+	return i.Enabled
 }
 
-func (o *IntegrationEntityField) GetRelations() *RelationConfig {
-	if o == nil {
+func (i *IntegrationEntityField) GetRelations() *RelationConfig {
+	if i == nil {
 		return nil
 	}
-	return o.Relations
+	return i.Relations
 }
 
-func (o *IntegrationEntityField) GetRelationRefs() *RelationRefsConfig {
-	if o == nil {
+func (i *IntegrationEntityField) GetRelationRefs() *RelationRefsConfig {
+	if i == nil {
 		return nil
 	}
-	return o.RelationRefs
+	return i.RelationRefs
 }

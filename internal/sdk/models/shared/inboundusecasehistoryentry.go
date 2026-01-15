@@ -63,85 +63,85 @@ func (i InboundUseCaseHistoryEntry) MarshalJSON() ([]byte, error) {
 }
 
 func (i *InboundUseCaseHistoryEntry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"id", "useCaseId", "integrationId", "name", "enabled", "created_at", "updated_at", "history_created_at", "type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *InboundUseCaseHistoryEntry) GetID() string {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetID() string {
+	if i == nil {
 		return ""
 	}
-	return o.ID
+	return i.ID
 }
 
-func (o *InboundUseCaseHistoryEntry) GetUseCaseID() string {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetUseCaseID() string {
+	if i == nil {
 		return ""
 	}
-	return o.UseCaseID
+	return i.UseCaseID
 }
 
-func (o *InboundUseCaseHistoryEntry) GetIntegrationID() string {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetIntegrationID() string {
+	if i == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return i.IntegrationID
 }
 
-func (o *InboundUseCaseHistoryEntry) GetName() string {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetName() string {
+	if i == nil {
 		return ""
 	}
-	return o.Name
+	return i.Name
 }
 
-func (o *InboundUseCaseHistoryEntry) GetEnabled() bool {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetEnabled() bool {
+	if i == nil {
 		return false
 	}
-	return o.Enabled
+	return i.Enabled
 }
 
-func (o *InboundUseCaseHistoryEntry) GetChangeDescription() *string {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetChangeDescription() *string {
+	if i == nil {
 		return nil
 	}
-	return o.ChangeDescription
+	return i.ChangeDescription
 }
 
-func (o *InboundUseCaseHistoryEntry) GetCreatedAt() time.Time {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetCreatedAt() time.Time {
+	if i == nil {
 		return time.Time{}
 	}
-	return o.CreatedAt
+	return i.CreatedAt
 }
 
-func (o *InboundUseCaseHistoryEntry) GetUpdatedAt() time.Time {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetUpdatedAt() time.Time {
+	if i == nil {
 		return time.Time{}
 	}
-	return o.UpdatedAt
+	return i.UpdatedAt
 }
 
-func (o *InboundUseCaseHistoryEntry) GetHistoryCreatedAt() time.Time {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetHistoryCreatedAt() time.Time {
+	if i == nil {
 		return time.Time{}
 	}
-	return o.HistoryCreatedAt
+	return i.HistoryCreatedAt
 }
 
-func (o *InboundUseCaseHistoryEntry) GetType() InboundUseCaseHistoryEntryType {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetType() InboundUseCaseHistoryEntryType {
+	if i == nil {
 		return InboundUseCaseHistoryEntryType("")
 	}
-	return o.Type
+	return i.Type
 }
 
-func (o *InboundUseCaseHistoryEntry) GetConfiguration() *InboundIntegrationEventConfiguration {
-	if o == nil {
+func (i *InboundUseCaseHistoryEntry) GetConfiguration() *InboundIntegrationEventConfiguration {
+	if i == nil {
 		return nil
 	}
-	return o.Configuration
+	return i.Configuration
 }

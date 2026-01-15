@@ -26,43 +26,43 @@ func (r RelationUniqueIDField) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RelationUniqueIDField) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"attribute"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *RelationUniqueIDField) GetAttribute() string {
-	if o == nil {
+func (r *RelationUniqueIDField) GetAttribute() string {
+	if r == nil {
 		return ""
 	}
-	return o.Attribute
+	return r.Attribute
 }
 
-func (o *RelationUniqueIDField) GetType() *RepeatableFieldType {
-	if o == nil {
+func (r *RelationUniqueIDField) GetType() *RepeatableFieldType {
+	if r == nil {
 		return nil
 	}
-	return o.Type
+	return r.Type
 }
 
-func (o *RelationUniqueIDField) GetField() *string {
-	if o == nil {
+func (r *RelationUniqueIDField) GetField() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Field
+	return r.Field
 }
 
-func (o *RelationUniqueIDField) GetJsonataExpression() *string {
-	if o == nil {
+func (r *RelationUniqueIDField) GetJsonataExpression() *string {
+	if r == nil {
 		return nil
 	}
-	return o.JsonataExpression
+	return r.JsonataExpression
 }
 
-func (o *RelationUniqueIDField) GetConstant() any {
-	if o == nil {
+func (r *RelationUniqueIDField) GetConstant() any {
+	if r == nil {
 		return nil
 	}
-	return o.Constant
+	return r.Constant
 }

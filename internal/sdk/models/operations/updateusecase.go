@@ -15,33 +15,33 @@ type UpdateUseCaseRequest struct {
 	UpdateUseCaseRequest shared.UpdateUseCaseRequest `request:"mediaType=application/json"`
 }
 
-func (o *UpdateUseCaseRequest) GetIntegrationID() string {
-	if o == nil {
+func (u *UpdateUseCaseRequest) GetIntegrationID() string {
+	if u == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return u.IntegrationID
 }
 
-func (o *UpdateUseCaseRequest) GetUseCaseID() string {
-	if o == nil {
+func (u *UpdateUseCaseRequest) GetUseCaseID() string {
+	if u == nil {
 		return ""
 	}
-	return o.UseCaseID
+	return u.UseCaseID
 }
 
-func (o *UpdateUseCaseRequest) GetUpdateUseCaseRequest() shared.UpdateUseCaseRequest {
-	if o == nil {
+func (u *UpdateUseCaseRequest) GetUpdateUseCaseRequest() shared.UpdateUseCaseRequest {
+	if u == nil {
 		return shared.UpdateUseCaseRequest{}
 	}
-	return o.UpdateUseCaseRequest
+	return u.UpdateUseCaseRequest
 }
 
-func (o *UpdateUseCaseRequest) GetUpdateUseCaseRequestInbound() *shared.UpdateInboundUseCaseRequest {
-	return o.GetUpdateUseCaseRequest().UpdateInboundUseCaseRequest
+func (u *UpdateUseCaseRequest) GetUpdateUseCaseRequestInbound() *shared.UpdateInboundUseCaseRequest {
+	return u.GetUpdateUseCaseRequest().UpdateInboundUseCaseRequest
 }
 
-func (o *UpdateUseCaseRequest) GetUpdateUseCaseRequestOutbound() *shared.UpdateOutboundUseCaseRequest {
-	return o.GetUpdateUseCaseRequest().UpdateOutboundUseCaseRequest
+func (u *UpdateUseCaseRequest) GetUpdateUseCaseRequestOutbound() *shared.UpdateOutboundUseCaseRequest {
+	return u.GetUpdateUseCaseRequest().UpdateOutboundUseCaseRequest
 }
 
 type UpdateUseCaseResponse struct {
@@ -57,51 +57,51 @@ type UpdateUseCaseResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *UpdateUseCaseResponse) GetContentType() string {
-	if o == nil {
+func (u *UpdateUseCaseResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UpdateUseCaseResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UpdateUseCaseResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UpdateUseCaseResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UpdateUseCaseResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
 
-func (o *UpdateUseCaseResponse) GetUseCase() *shared.UseCase {
-	if o == nil {
+func (u *UpdateUseCaseResponse) GetUseCase() *shared.UseCase {
+	if u == nil {
 		return nil
 	}
-	return o.UseCase
+	return u.UseCase
 }
 
-func (o *UpdateUseCaseResponse) GetUseCaseInbound() *shared.Schemas {
-	if v := o.GetUseCase(); v != nil {
+func (u *UpdateUseCaseResponse) GetUseCaseInbound() *shared.Schemas {
+	if v := u.GetUseCase(); v != nil {
 		return v.Schemas
 	}
 	return nil
 }
 
-func (o *UpdateUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCaseSchemas {
-	if v := o.GetUseCase(); v != nil {
+func (u *UpdateUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCaseSchemas {
+	if v := u.GetUseCase(); v != nil {
 		return v.OutboundUseCaseSchemas
 	}
 	return nil
 }
 
-func (o *UpdateUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (u *UpdateUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if u == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return u.ErrorResponseBase
 }

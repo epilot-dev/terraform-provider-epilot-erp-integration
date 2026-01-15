@@ -11,23 +11,23 @@ type ErpUpdatesEventsV2Request struct {
 	Events []ErpEvent `json:"events"`
 }
 
-func (o *ErpUpdatesEventsV2Request) GetIntegrationID() string {
-	if o == nil {
+func (e *ErpUpdatesEventsV2Request) GetIntegrationID() string {
+	if e == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return e.IntegrationID
 }
 
-func (o *ErpUpdatesEventsV2Request) GetCorrelationID() *string {
-	if o == nil {
+func (e *ErpUpdatesEventsV2Request) GetCorrelationID() *string {
+	if e == nil {
 		return nil
 	}
-	return o.CorrelationID
+	return e.CorrelationID
 }
 
-func (o *ErpUpdatesEventsV2Request) GetEvents() []ErpEvent {
-	if o == nil {
+func (e *ErpUpdatesEventsV2Request) GetEvents() []ErpEvent {
+	if e == nil {
 		return []ErpEvent{}
 	}
-	return o.Events
+	return e.Events
 }

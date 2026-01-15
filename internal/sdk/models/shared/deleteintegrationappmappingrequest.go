@@ -9,16 +9,16 @@ type DeleteIntegrationAppMappingRequest struct {
 	ComponentID string `json:"component_id"`
 }
 
-func (o *DeleteIntegrationAppMappingRequest) GetAppID() string {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingRequest) GetAppID() string {
+	if d == nil {
 		return ""
 	}
-	return o.AppID
+	return d.AppID
 }
 
-func (o *DeleteIntegrationAppMappingRequest) GetComponentID() string {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingRequest) GetComponentID() string {
+	if d == nil {
 		return ""
 	}
-	return o.ComponentID
+	return d.ComponentID
 }

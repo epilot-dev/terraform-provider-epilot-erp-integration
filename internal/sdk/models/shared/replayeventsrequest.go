@@ -7,9 +7,9 @@ type ReplayEventsRequest struct {
 	EventIds []string `json:"event_ids"`
 }
 
-func (o *ReplayEventsRequest) GetEventIds() []string {
-	if o == nil {
+func (r *ReplayEventsRequest) GetEventIds() []string {
+	if r == nil {
 		return []string{}
 	}
-	return o.EventIds
+	return r.EventIds
 }

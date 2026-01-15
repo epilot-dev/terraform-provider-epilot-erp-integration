@@ -11,23 +11,23 @@ type EntityUpdate struct {
 	Attributes map[string]any `json:"attributes"`
 }
 
-func (o *EntityUpdate) GetEntitySlug() string {
-	if o == nil {
+func (e *EntityUpdate) GetEntitySlug() string {
+	if e == nil {
 		return ""
 	}
-	return o.EntitySlug
+	return e.EntitySlug
 }
 
-func (o *EntityUpdate) GetUniqueIdentifiers() map[string]any {
-	if o == nil {
+func (e *EntityUpdate) GetUniqueIdentifiers() map[string]any {
+	if e == nil {
 		return map[string]any{}
 	}
-	return o.UniqueIdentifiers
+	return e.UniqueIdentifiers
 }
 
-func (o *EntityUpdate) GetAttributes() map[string]any {
-	if o == nil {
+func (e *EntityUpdate) GetAttributes() map[string]any {
+	if e == nil {
 		return map[string]any{}
 	}
-	return o.Attributes
+	return e.Attributes
 }

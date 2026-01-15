@@ -17,8 +17,8 @@ const (
 )
 
 type UseCaseHistoryEntry struct {
-	InboundUseCaseHistoryEntry  *InboundUseCaseHistoryEntry  `queryParam:"inline" name:"UseCaseHistoryEntry"`
-	OutboundUseCaseHistoryEntry *OutboundUseCaseHistoryEntry `queryParam:"inline" name:"UseCaseHistoryEntry"`
+	InboundUseCaseHistoryEntry  *InboundUseCaseHistoryEntry  `queryParam:"inline" union:"member"`
+	OutboundUseCaseHistoryEntry *OutboundUseCaseHistoryEntry `queryParam:"inline" union:"member"`
 
 	Type UseCaseHistoryEntryType
 }

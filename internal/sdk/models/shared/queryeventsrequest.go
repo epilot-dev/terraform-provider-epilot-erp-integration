@@ -58,18 +58,18 @@ func (c *Cursor) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *Cursor) GetEventTime() *time.Time {
-	if o == nil {
+func (c *Cursor) GetEventTime() *time.Time {
+	if c == nil {
 		return nil
 	}
-	return o.EventTime
+	return c.EventTime
 }
 
-func (o *Cursor) GetEventID() *string {
-	if o == nil {
+func (c *Cursor) GetEventID() *string {
+	if c == nil {
 		return nil
 	}
-	return o.EventID
+	return c.EventID
 }
 
 type QueryEventsRequest struct {
@@ -98,44 +98,44 @@ func (q *QueryEventsRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *QueryEventsRequest) GetEventID() *string {
-	if o == nil {
+func (q *QueryEventsRequest) GetEventID() *string {
+	if q == nil {
 		return nil
 	}
-	return o.EventID
+	return q.EventID
 }
 
-func (o *QueryEventsRequest) GetEventType() *QueryEventsRequestEventType {
-	if o == nil {
+func (q *QueryEventsRequest) GetEventType() *QueryEventsRequestEventType {
+	if q == nil {
 		return nil
 	}
-	return o.EventType
+	return q.EventType
 }
 
-func (o *QueryEventsRequest) GetCorrelationID() *string {
-	if o == nil {
+func (q *QueryEventsRequest) GetCorrelationID() *string {
+	if q == nil {
 		return nil
 	}
-	return o.CorrelationID
+	return q.CorrelationID
 }
 
-func (o *QueryEventsRequest) GetObjectType() *string {
-	if o == nil {
+func (q *QueryEventsRequest) GetObjectType() *string {
+	if q == nil {
 		return nil
 	}
-	return o.ObjectType
+	return q.ObjectType
 }
 
-func (o *QueryEventsRequest) GetLimit() *int64 {
-	if o == nil {
+func (q *QueryEventsRequest) GetLimit() *int64 {
+	if q == nil {
 		return nil
 	}
-	return o.Limit
+	return q.Limit
 }
 
-func (o *QueryEventsRequest) GetCursor() *Cursor {
-	if o == nil {
+func (q *QueryEventsRequest) GetCursor() *Cursor {
+	if q == nil {
 		return nil
 	}
-	return o.Cursor
+	return q.Cursor
 }

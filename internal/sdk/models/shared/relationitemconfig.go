@@ -20,29 +20,29 @@ func (r RelationItemConfig) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RelationItemConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"entity_schema", "unique_ids"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *RelationItemConfig) GetEntitySchema() string {
-	if o == nil {
+func (r *RelationItemConfig) GetEntitySchema() string {
+	if r == nil {
 		return ""
 	}
-	return o.EntitySchema
+	return r.EntitySchema
 }
 
-func (o *RelationItemConfig) GetTags() []string {
-	if o == nil {
+func (r *RelationItemConfig) GetTags() []string {
+	if r == nil {
 		return nil
 	}
-	return o.Tags
+	return r.Tags
 }
 
-func (o *RelationItemConfig) GetUniqueIds() []RelationUniqueIDField {
-	if o == nil {
+func (r *RelationItemConfig) GetUniqueIds() []RelationUniqueIDField {
+	if r == nil {
 		return []RelationUniqueIDField{}
 	}
-	return o.UniqueIds
+	return r.UniqueIds
 }

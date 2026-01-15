@@ -13,18 +13,18 @@ type SetIntegrationAppMappingRequest struct {
 	SetIntegrationAppMappingRequest shared.SetIntegrationAppMappingRequest `request:"mediaType=application/json"`
 }
 
-func (o *SetIntegrationAppMappingRequest) GetIntegrationID() string {
-	if o == nil {
+func (s *SetIntegrationAppMappingRequest) GetIntegrationID() string {
+	if s == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return s.IntegrationID
 }
 
-func (o *SetIntegrationAppMappingRequest) GetSetIntegrationAppMappingRequest() shared.SetIntegrationAppMappingRequest {
-	if o == nil {
+func (s *SetIntegrationAppMappingRequest) GetSetIntegrationAppMappingRequest() shared.SetIntegrationAppMappingRequest {
+	if s == nil {
 		return shared.SetIntegrationAppMappingRequest{}
 	}
-	return o.SetIntegrationAppMappingRequest
+	return s.SetIntegrationAppMappingRequest
 }
 
 type SetIntegrationAppMappingResponse struct {
@@ -40,37 +40,37 @@ type SetIntegrationAppMappingResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *SetIntegrationAppMappingResponse) GetContentType() string {
-	if o == nil {
+func (s *SetIntegrationAppMappingResponse) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SetIntegrationAppMappingResponse) GetStatusCode() int {
-	if o == nil {
+func (s *SetIntegrationAppMappingResponse) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SetIntegrationAppMappingResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SetIntegrationAppMappingResponse) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
 }
 
-func (o *SetIntegrationAppMappingResponse) GetIntegrationAppMapping() *shared.IntegrationAppMapping {
-	if o == nil {
+func (s *SetIntegrationAppMappingResponse) GetIntegrationAppMapping() *shared.IntegrationAppMapping {
+	if s == nil {
 		return nil
 	}
-	return o.IntegrationAppMapping
+	return s.IntegrationAppMapping
 }
 
-func (o *SetIntegrationAppMappingResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (s *SetIntegrationAppMappingResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if s == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return s.ErrorResponseBase
 }

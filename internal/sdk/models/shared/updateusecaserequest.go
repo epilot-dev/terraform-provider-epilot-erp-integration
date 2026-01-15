@@ -17,8 +17,8 @@ const (
 )
 
 type UpdateUseCaseRequest struct {
-	UpdateInboundUseCaseRequest  *UpdateInboundUseCaseRequest  `queryParam:"inline" name:"UpdateUseCaseRequest"`
-	UpdateOutboundUseCaseRequest *UpdateOutboundUseCaseRequest `queryParam:"inline" name:"UpdateUseCaseRequest"`
+	UpdateInboundUseCaseRequest  *UpdateInboundUseCaseRequest  `queryParam:"inline" union:"member"`
+	UpdateOutboundUseCaseRequest *UpdateOutboundUseCaseRequest `queryParam:"inline" union:"member"`
 
 	Type UpdateUseCaseRequestType
 }

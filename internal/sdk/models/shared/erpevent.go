@@ -76,8 +76,8 @@ const (
 
 // Payload - The object data payload - can be either a serialized string or a direct JSON object
 type Payload struct {
-	Str      *string        `queryParam:"inline" name:"payload"`
-	MapOfAny map[string]any `queryParam:"inline" name:"payload"`
+	Str      *string        `queryParam:"inline" union:"member"`
+	MapOfAny map[string]any `queryParam:"inline" union:"member"`
 
 	Type PayloadType
 }
@@ -102,17 +102,43 @@ func CreatePayloadMapOfAny(mapOfAny map[string]any) Payload {
 
 func (u *Payload) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		u.Str = &str
-		u.Type = PayloadTypeStr
-		return nil
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  PayloadTypeStr,
+			Value: &str,
+		})
 	}
 
 	var mapOfAny map[string]any = map[string]any{}
 	if err := utils.UnmarshalJSON(data, &mapOfAny, "", true, nil); err == nil {
-		u.MapOfAny = mapOfAny
-		u.Type = PayloadTypeMapOfAny
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  PayloadTypeMapOfAny,
+			Value: mapOfAny,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Payload", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Payload", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(PayloadType)
+	switch best.Type {
+	case PayloadTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	case PayloadTypeMapOfAny:
+		u.MapOfAny = best.Value.(map[string]any)
 		return nil
 	}
 
@@ -152,50 +178,50 @@ func (e ErpEvent) MarshalJSON() ([]byte, error) {
 }
 
 func (e *ErpEvent) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &e, "", false, []string{"event_type", "object_type", "timestamp", "payload"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *ErpEvent) GetEventType() EventType {
-	if o == nil {
+func (e *ErpEvent) GetEventType() EventType {
+	if e == nil {
 		return EventType("")
 	}
-	return o.EventType
+	return e.EventType
 }
 
-func (o *ErpEvent) GetObjectType() string {
-	if o == nil {
+func (e *ErpEvent) GetObjectType() string {
+	if e == nil {
 		return ""
 	}
-	return o.ObjectType
+	return e.ObjectType
 }
 
-func (o *ErpEvent) GetTimestamp() time.Time {
-	if o == nil {
+func (e *ErpEvent) GetTimestamp() time.Time {
+	if e == nil {
 		return time.Time{}
 	}
-	return o.Timestamp
+	return e.Timestamp
 }
 
-func (o *ErpEvent) GetFormat() *Format {
-	if o == nil {
+func (e *ErpEvent) GetFormat() *Format {
+	if e == nil {
 		return nil
 	}
-	return o.Format
+	return e.Format
 }
 
-func (o *ErpEvent) GetPayload() Payload {
-	if o == nil {
+func (e *ErpEvent) GetPayload() Payload {
+	if e == nil {
 		return Payload{}
 	}
-	return o.Payload
+	return e.Payload
 }
 
-func (o *ErpEvent) GetDeduplicationID() *string {
-	if o == nil {
+func (e *ErpEvent) GetDeduplicationID() *string {
+	if e == nil {
 		return nil
 	}
-	return o.DeduplicationID
+	return e.DeduplicationID
 }

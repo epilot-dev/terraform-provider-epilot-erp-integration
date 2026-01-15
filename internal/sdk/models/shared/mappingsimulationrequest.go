@@ -17,8 +17,8 @@ const (
 )
 
 type MappingConfiguration struct {
-	IntegrationConfigurationV1 *IntegrationConfigurationV1 `queryParam:"inline" name:"mapping_configuration"`
-	IntegrationConfigurationV2 *IntegrationConfigurationV2 `queryParam:"inline" name:"mapping_configuration"`
+	IntegrationConfigurationV1 *IntegrationConfigurationV1 `queryParam:"inline" union:"member"`
+	IntegrationConfigurationV2 *IntegrationConfigurationV2 `queryParam:"inline" union:"member"`
 
 	Type MappingConfigurationType
 }
@@ -43,17 +43,43 @@ func CreateMappingConfigurationIntegrationConfigurationV2(integrationConfigurati
 
 func (u *MappingConfiguration) UnmarshalJSON(data []byte) error {
 
-	var integrationConfigurationV2 IntegrationConfigurationV2 = IntegrationConfigurationV2{}
-	if err := utils.UnmarshalJSON(data, &integrationConfigurationV2, "", true, nil); err == nil {
-		u.IntegrationConfigurationV2 = &integrationConfigurationV2
-		u.Type = MappingConfigurationTypeIntegrationConfigurationV2
-		return nil
-	}
+	var candidates []utils.UnionCandidate
 
+	// Collect all valid candidates
 	var integrationConfigurationV1 IntegrationConfigurationV1 = IntegrationConfigurationV1{}
 	if err := utils.UnmarshalJSON(data, &integrationConfigurationV1, "", true, nil); err == nil {
-		u.IntegrationConfigurationV1 = &integrationConfigurationV1
-		u.Type = MappingConfigurationTypeIntegrationConfigurationV1
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MappingConfigurationTypeIntegrationConfigurationV1,
+			Value: &integrationConfigurationV1,
+		})
+	}
+
+	var integrationConfigurationV2 IntegrationConfigurationV2 = IntegrationConfigurationV2{}
+	if err := utils.UnmarshalJSON(data, &integrationConfigurationV2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MappingConfigurationTypeIntegrationConfigurationV2,
+			Value: &integrationConfigurationV2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MappingConfiguration", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MappingConfiguration", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MappingConfigurationType)
+	switch best.Type {
+	case MappingConfigurationTypeIntegrationConfigurationV1:
+		u.IntegrationConfigurationV1 = best.Value.(*IntegrationConfigurationV1)
+		return nil
+	case MappingConfigurationTypeIntegrationConfigurationV2:
+		u.IntegrationConfigurationV2 = best.Value.(*IntegrationConfigurationV2)
 		return nil
 	}
 
@@ -108,8 +134,8 @@ const (
 
 // MappingSimulationRequestPayload - The object data payload - can be either a serialized string or a direct JSON object
 type MappingSimulationRequestPayload struct {
-	Str      *string        `queryParam:"inline" name:"payload"`
-	MapOfAny map[string]any `queryParam:"inline" name:"payload"`
+	Str      *string        `queryParam:"inline" union:"member"`
+	MapOfAny map[string]any `queryParam:"inline" union:"member"`
 
 	Type MappingSimulationRequestPayloadType
 }
@@ -134,17 +160,43 @@ func CreateMappingSimulationRequestPayloadMapOfAny(mapOfAny map[string]any) Mapp
 
 func (u *MappingSimulationRequestPayload) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		u.Str = &str
-		u.Type = MappingSimulationRequestPayloadTypeStr
-		return nil
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MappingSimulationRequestPayloadTypeStr,
+			Value: &str,
+		})
 	}
 
 	var mapOfAny map[string]any = map[string]any{}
 	if err := utils.UnmarshalJSON(data, &mapOfAny, "", true, nil); err == nil {
-		u.MapOfAny = mapOfAny
-		u.Type = MappingSimulationRequestPayloadTypeMapOfAny
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MappingSimulationRequestPayloadTypeMapOfAny,
+			Value: mapOfAny,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MappingSimulationRequestPayload", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MappingSimulationRequestPayload", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MappingSimulationRequestPayloadType)
+	switch best.Type {
+	case MappingSimulationRequestPayloadTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	case MappingSimulationRequestPayloadTypeMapOfAny:
+		u.MapOfAny = best.Value.(map[string]any)
 		return nil
 	}
 
@@ -181,36 +233,36 @@ func (m MappingSimulationRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MappingSimulationRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"mapping_configuration", "object_type", "payload"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MappingSimulationRequest) GetMappingConfiguration() MappingConfiguration {
-	if o == nil {
+func (m *MappingSimulationRequest) GetMappingConfiguration() MappingConfiguration {
+	if m == nil {
 		return MappingConfiguration{}
 	}
-	return o.MappingConfiguration
+	return m.MappingConfiguration
 }
 
-func (o *MappingSimulationRequest) GetObjectType() string {
-	if o == nil {
+func (m *MappingSimulationRequest) GetObjectType() string {
+	if m == nil {
 		return ""
 	}
-	return o.ObjectType
+	return m.ObjectType
 }
 
-func (o *MappingSimulationRequest) GetFormat() *MappingSimulationRequestFormat {
-	if o == nil {
+func (m *MappingSimulationRequest) GetFormat() *MappingSimulationRequestFormat {
+	if m == nil {
 		return nil
 	}
-	return o.Format
+	return m.Format
 }
 
-func (o *MappingSimulationRequest) GetPayload() MappingSimulationRequestPayload {
-	if o == nil {
+func (m *MappingSimulationRequest) GetPayload() MappingSimulationRequestPayload {
+	if m == nil {
 		return MappingSimulationRequestPayload{}
 	}
-	return o.Payload
+	return m.Payload
 }

@@ -42,17 +42,17 @@ func (i IntegrationConfigurationV2Mapping) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationConfigurationV2Mapping) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"events"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationConfigurationV2Mapping) GetEvents() map[string]InboundIntegrationEventConfiguration {
-	if o == nil {
+func (i *IntegrationConfigurationV2Mapping) GetEvents() map[string]InboundIntegrationEventConfiguration {
+	if i == nil {
 		return map[string]InboundIntegrationEventConfiguration{}
 	}
-	return o.Events
+	return i.Events
 }
 
 type IntegrationConfigurationV2 struct {
@@ -66,22 +66,22 @@ func (i IntegrationConfigurationV2) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationConfigurationV2) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"version", "mapping"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationConfigurationV2) GetVersion() IntegrationConfigurationV2Version {
-	if o == nil {
+func (i *IntegrationConfigurationV2) GetVersion() IntegrationConfigurationV2Version {
+	if i == nil {
 		return IntegrationConfigurationV2Version("")
 	}
-	return o.Version
+	return i.Version
 }
 
-func (o *IntegrationConfigurationV2) GetMapping() IntegrationConfigurationV2Mapping {
-	if o == nil {
+func (i *IntegrationConfigurationV2) GetMapping() IntegrationConfigurationV2Mapping {
+	if i == nil {
 		return IntegrationConfigurationV2Mapping{}
 	}
-	return o.Mapping
+	return i.Mapping
 }

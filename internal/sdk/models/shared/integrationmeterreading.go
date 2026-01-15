@@ -20,36 +20,36 @@ func (i IntegrationMeterReading) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationMeterReading) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"jsonataExpression", "meter", "fields"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationMeterReading) GetJsonataExpression() string {
-	if o == nil {
+func (i *IntegrationMeterReading) GetJsonataExpression() string {
+	if i == nil {
 		return ""
 	}
-	return o.JsonataExpression
+	return i.JsonataExpression
 }
 
-func (o *IntegrationMeterReading) GetMeter() MeterUniqueIdsConfig {
-	if o == nil {
+func (i *IntegrationMeterReading) GetMeter() MeterUniqueIdsConfig {
+	if i == nil {
 		return MeterUniqueIdsConfig{}
 	}
-	return o.Meter
+	return i.Meter
 }
 
-func (o *IntegrationMeterReading) GetMeterCounter() *MeterUniqueIdsConfig {
-	if o == nil {
+func (i *IntegrationMeterReading) GetMeterCounter() *MeterUniqueIdsConfig {
+	if i == nil {
 		return nil
 	}
-	return o.MeterCounter
+	return i.MeterCounter
 }
 
-func (o *IntegrationMeterReading) GetFields() []IntegrationEntityField {
-	if o == nil {
+func (i *IntegrationMeterReading) GetFields() []IntegrationEntityField {
+	if i == nil {
 		return []IntegrationEntityField{}
 	}
-	return o.Fields
+	return i.Fields
 }

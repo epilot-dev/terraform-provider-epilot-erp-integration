@@ -12,11 +12,11 @@ type DeleteIntegrationRequest struct {
 	IntegrationID string `pathParam:"style=simple,explode=false,name=integrationId"`
 }
 
-func (o *DeleteIntegrationRequest) GetIntegrationID() string {
-	if o == nil {
+func (d *DeleteIntegrationRequest) GetIntegrationID() string {
+	if d == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return d.IntegrationID
 }
 
 // DeleteIntegrationResponseBody - Integration deleted successfully
@@ -24,11 +24,11 @@ type DeleteIntegrationResponseBody struct {
 	Message *string `json:"message,omitempty"`
 }
 
-func (o *DeleteIntegrationResponseBody) GetMessage() *string {
-	if o == nil {
+func (d *DeleteIntegrationResponseBody) GetMessage() *string {
+	if d == nil {
 		return nil
 	}
-	return o.Message
+	return d.Message
 }
 
 type DeleteIntegrationResponse struct {
@@ -44,37 +44,37 @@ type DeleteIntegrationResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *DeleteIntegrationResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteIntegrationResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteIntegrationResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteIntegrationResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteIntegrationResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteIntegrationResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteIntegrationResponse) GetObject() *DeleteIntegrationResponseBody {
-	if o == nil {
+func (d *DeleteIntegrationResponse) GetObject() *DeleteIntegrationResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Object
+	return d.Object
 }
 
-func (o *DeleteIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (d *DeleteIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if d == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return d.ErrorResponseBase
 }

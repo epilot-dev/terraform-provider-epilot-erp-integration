@@ -14,18 +14,18 @@ type GetUseCaseRequest struct {
 	UseCaseID string `pathParam:"style=simple,explode=false,name=useCaseId"`
 }
 
-func (o *GetUseCaseRequest) GetIntegrationID() string {
-	if o == nil {
+func (g *GetUseCaseRequest) GetIntegrationID() string {
+	if g == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return g.IntegrationID
 }
 
-func (o *GetUseCaseRequest) GetUseCaseID() string {
-	if o == nil {
+func (g *GetUseCaseRequest) GetUseCaseID() string {
+	if g == nil {
 		return ""
 	}
-	return o.UseCaseID
+	return g.UseCaseID
 }
 
 type GetUseCaseResponse struct {
@@ -41,51 +41,51 @@ type GetUseCaseResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *GetUseCaseResponse) GetContentType() string {
-	if o == nil {
+func (g *GetUseCaseResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetUseCaseResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetUseCaseResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetUseCaseResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetUseCaseResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetUseCaseResponse) GetUseCase() *shared.UseCase {
-	if o == nil {
+func (g *GetUseCaseResponse) GetUseCase() *shared.UseCase {
+	if g == nil {
 		return nil
 	}
-	return o.UseCase
+	return g.UseCase
 }
 
-func (o *GetUseCaseResponse) GetUseCaseInbound() *shared.Schemas {
-	if v := o.GetUseCase(); v != nil {
+func (g *GetUseCaseResponse) GetUseCaseInbound() *shared.Schemas {
+	if v := g.GetUseCase(); v != nil {
 		return v.Schemas
 	}
 	return nil
 }
 
-func (o *GetUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCaseSchemas {
-	if v := o.GetUseCase(); v != nil {
+func (g *GetUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCaseSchemas {
+	if v := g.GetUseCase(); v != nil {
 		return v.OutboundUseCaseSchemas
 	}
 	return nil
 }
 
-func (o *GetUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (g *GetUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if g == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return g.ErrorResponseBase
 }

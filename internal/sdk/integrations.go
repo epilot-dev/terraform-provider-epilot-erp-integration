@@ -64,7 +64,7 @@ func (s *Integrations) ListIntegrations(ctx context.Context, opts ...operations.
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "listIntegrations",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -305,7 +305,7 @@ func (s *Integrations) CreateIntegration(ctx context.Context, request shared.Cre
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "createIntegration",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -555,7 +555,7 @@ func (s *Integrations) GetIntegration(ctx context.Context, request operations.Ge
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getIntegration",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -797,7 +797,7 @@ func (s *Integrations) UpdateIntegration(ctx context.Context, request operations
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "updateIntegration",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "UpdateIntegrationRequest", "json", `request:"mediaType=application/json"`)
@@ -1048,7 +1048,7 @@ func (s *Integrations) DeleteIntegration(ctx context.Context, request operations
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteIntegration",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -1290,7 +1290,7 @@ func (s *Integrations) QueryEvents(ctx context.Context, request operations.Query
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "queryEvents",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "QueryEventsRequest", "json", `request:"mediaType=application/json"`)
@@ -1542,7 +1542,7 @@ func (s *Integrations) ReplayEvents(ctx context.Context, request operations.Repl
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "replayEvents",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "ReplayEventsRequest", "json", `request:"mediaType=application/json"`)
@@ -1794,7 +1794,7 @@ func (s *Integrations) ListUseCases(ctx context.Context, request operations.List
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "listUseCases",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2035,7 +2035,7 @@ func (s *Integrations) CreateUseCase(ctx context.Context, request operations.Cre
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "createUseCase",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "CreateUseCaseRequest", "json", `request:"mediaType=application/json"`)
@@ -2286,7 +2286,7 @@ func (s *Integrations) GetUseCase(ctx context.Context, request operations.GetUse
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getUseCase",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2528,7 +2528,7 @@ func (s *Integrations) UpdateUseCase(ctx context.Context, request operations.Upd
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "updateUseCase",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "UpdateUseCaseRequest", "json", `request:"mediaType=application/json"`)
@@ -2779,7 +2779,7 @@ func (s *Integrations) DeleteUseCase(ctx context.Context, request operations.Del
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteUseCase",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3023,7 +3023,7 @@ func (s *Integrations) ListUseCaseHistory(ctx context.Context, request operation
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "listUseCaseHistory",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3045,7 +3045,7 @@ func (s *Integrations) ListUseCaseHistory(ctx context.Context, request operation
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -3271,7 +3271,7 @@ func (s *Integrations) SetIntegrationAppMapping(ctx context.Context, request ope
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "setIntegrationAppMapping",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "SetIntegrationAppMappingRequest", "json", `request:"mediaType=application/json"`)
@@ -3524,7 +3524,7 @@ func (s *Integrations) DeleteIntegrationAppMapping(ctx context.Context, request 
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteIntegrationAppMapping",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "DeleteIntegrationAppMappingRequest", "json", `request:"mediaType=application/json"`)

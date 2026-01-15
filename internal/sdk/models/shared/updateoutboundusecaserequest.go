@@ -56,37 +56,37 @@ func (u *UpdateOutboundUseCaseRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *UpdateOutboundUseCaseRequest) GetName() *string {
-	if o == nil {
+func (u *UpdateOutboundUseCaseRequest) GetName() *string {
+	if u == nil {
 		return nil
 	}
-	return o.Name
+	return u.Name
 }
 
-func (o *UpdateOutboundUseCaseRequest) GetEnabled() *bool {
-	if o == nil {
+func (u *UpdateOutboundUseCaseRequest) GetEnabled() *bool {
+	if u == nil {
 		return nil
 	}
-	return o.Enabled
+	return u.Enabled
 }
 
-func (o *UpdateOutboundUseCaseRequest) GetChangeDescription() *string {
-	if o == nil {
+func (u *UpdateOutboundUseCaseRequest) GetChangeDescription() *string {
+	if u == nil {
 		return nil
 	}
-	return o.ChangeDescription
+	return u.ChangeDescription
 }
 
-func (o *UpdateOutboundUseCaseRequest) GetType() *UpdateOutboundUseCaseRequestType {
-	if o == nil {
+func (u *UpdateOutboundUseCaseRequest) GetType() *UpdateOutboundUseCaseRequestType {
+	if u == nil {
 		return nil
 	}
-	return o.Type
+	return u.Type
 }
 
-func (o *UpdateOutboundUseCaseRequest) GetConfiguration() map[string]any {
-	if o == nil {
+func (u *UpdateOutboundUseCaseRequest) GetConfiguration() map[string]any {
+	if u == nil {
 		return nil
 	}
-	return o.Configuration
+	return u.Configuration
 }

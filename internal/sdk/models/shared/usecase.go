@@ -63,7 +63,7 @@ func (o OutboundUseCaseSchemas) MarshalJSON() ([]byte, error) {
 }
 
 func (o *OutboundUseCaseSchemas) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &o, "", false, []string{"type", "id", "integrationId", "name", "enabled", "created_at", "updated_at"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -185,73 +185,73 @@ func (s Schemas) MarshalJSON() ([]byte, error) {
 }
 
 func (s *Schemas) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, []string{"type", "id", "integrationId", "name", "enabled", "created_at", "updated_at"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Schemas) GetType() Type {
-	if o == nil {
+func (s *Schemas) GetType() Type {
+	if s == nil {
 		return Type("")
 	}
-	return o.Type
+	return s.Type
 }
 
-func (o *Schemas) GetConfiguration() *InboundIntegrationEventConfiguration {
-	if o == nil {
+func (s *Schemas) GetConfiguration() *InboundIntegrationEventConfiguration {
+	if s == nil {
 		return nil
 	}
-	return o.Configuration
+	return s.Configuration
 }
 
-func (o *Schemas) GetID() string {
-	if o == nil {
+func (s *Schemas) GetID() string {
+	if s == nil {
 		return ""
 	}
-	return o.ID
+	return s.ID
 }
 
-func (o *Schemas) GetIntegrationID() string {
-	if o == nil {
+func (s *Schemas) GetIntegrationID() string {
+	if s == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return s.IntegrationID
 }
 
-func (o *Schemas) GetName() string {
-	if o == nil {
+func (s *Schemas) GetName() string {
+	if s == nil {
 		return ""
 	}
-	return o.Name
+	return s.Name
 }
 
-func (o *Schemas) GetEnabled() bool {
-	if o == nil {
+func (s *Schemas) GetEnabled() bool {
+	if s == nil {
 		return false
 	}
-	return o.Enabled
+	return s.Enabled
 }
 
-func (o *Schemas) GetChangeDescription() *string {
-	if o == nil {
+func (s *Schemas) GetChangeDescription() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ChangeDescription
+	return s.ChangeDescription
 }
 
-func (o *Schemas) GetCreatedAt() time.Time {
-	if o == nil {
+func (s *Schemas) GetCreatedAt() time.Time {
+	if s == nil {
 		return time.Time{}
 	}
-	return o.CreatedAt
+	return s.CreatedAt
 }
 
-func (o *Schemas) GetUpdatedAt() time.Time {
-	if o == nil {
+func (s *Schemas) GetUpdatedAt() time.Time {
+	if s == nil {
 		return time.Time{}
 	}
-	return o.UpdatedAt
+	return s.UpdatedAt
 }
 
 type UseCaseType string
@@ -262,8 +262,8 @@ const (
 )
 
 type UseCase struct {
-	Schemas                *Schemas                `queryParam:"inline" name:"UseCase"`
-	OutboundUseCaseSchemas *OutboundUseCaseSchemas `queryParam:"inline" name:"UseCase"`
+	Schemas                *Schemas                `queryParam:"inline" union:"member"`
+	OutboundUseCaseSchemas *OutboundUseCaseSchemas `queryParam:"inline" union:"member"`
 
 	Type UseCaseType
 }

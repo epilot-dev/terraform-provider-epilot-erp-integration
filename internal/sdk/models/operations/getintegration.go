@@ -12,11 +12,11 @@ type GetIntegrationRequest struct {
 	IntegrationID string `pathParam:"style=simple,explode=false,name=integrationId"`
 }
 
-func (o *GetIntegrationRequest) GetIntegrationID() string {
-	if o == nil {
+func (g *GetIntegrationRequest) GetIntegrationID() string {
+	if g == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return g.IntegrationID
 }
 
 type GetIntegrationResponse struct {
@@ -32,37 +32,37 @@ type GetIntegrationResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *GetIntegrationResponse) GetContentType() string {
-	if o == nil {
+func (g *GetIntegrationResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetIntegrationResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetIntegrationResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetIntegrationResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetIntegrationResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetIntegrationResponse) GetIntegration() *shared.Integration {
-	if o == nil {
+func (g *GetIntegrationResponse) GetIntegration() *shared.Integration {
+	if g == nil {
 		return nil
 	}
-	return o.Integration
+	return g.Integration
 }
 
-func (o *GetIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (g *GetIntegrationResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if g == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return g.ErrorResponseBase
 }

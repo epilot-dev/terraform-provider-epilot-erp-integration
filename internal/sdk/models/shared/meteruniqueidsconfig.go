@@ -16,15 +16,15 @@ func (m MeterUniqueIdsConfig) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeterUniqueIdsConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"unique_ids"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeterUniqueIdsConfig) GetUniqueIds() []RelationUniqueIDField {
-	if o == nil {
+func (m *MeterUniqueIdsConfig) GetUniqueIds() []RelationUniqueIDField {
+	if m == nil {
 		return []RelationUniqueIDField{}
 	}
-	return o.UniqueIds
+	return m.UniqueIds
 }

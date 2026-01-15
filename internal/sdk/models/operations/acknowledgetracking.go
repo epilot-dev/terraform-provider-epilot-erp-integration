@@ -11,11 +11,11 @@ type AcknowledgeTrackingRequestBody struct {
 	AckID string `json:"ack_id"`
 }
 
-func (o *AcknowledgeTrackingRequestBody) GetAckID() string {
-	if o == nil {
+func (a *AcknowledgeTrackingRequestBody) GetAckID() string {
+	if a == nil {
 		return ""
 	}
-	return o.AckID
+	return a.AckID
 }
 
 // AcknowledgeTrackingResponseBody - Acknowledgment successful
@@ -23,11 +23,11 @@ type AcknowledgeTrackingResponseBody struct {
 	Message *string `json:"message,omitempty"`
 }
 
-func (o *AcknowledgeTrackingResponseBody) GetMessage() *string {
-	if o == nil {
+func (a *AcknowledgeTrackingResponseBody) GetMessage() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Message
+	return a.Message
 }
 
 type AcknowledgeTrackingResponse struct {
@@ -41,30 +41,30 @@ type AcknowledgeTrackingResponse struct {
 	Object *AcknowledgeTrackingResponseBody
 }
 
-func (o *AcknowledgeTrackingResponse) GetContentType() string {
-	if o == nil {
+func (a *AcknowledgeTrackingResponse) GetContentType() string {
+	if a == nil {
 		return ""
 	}
-	return o.ContentType
+	return a.ContentType
 }
 
-func (o *AcknowledgeTrackingResponse) GetStatusCode() int {
-	if o == nil {
+func (a *AcknowledgeTrackingResponse) GetStatusCode() int {
+	if a == nil {
 		return 0
 	}
-	return o.StatusCode
+	return a.StatusCode
 }
 
-func (o *AcknowledgeTrackingResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (a *AcknowledgeTrackingResponse) GetRawResponse() *http.Response {
+	if a == nil {
 		return nil
 	}
-	return o.RawResponse
+	return a.RawResponse
 }
 
-func (o *AcknowledgeTrackingResponse) GetObject() *AcknowledgeTrackingResponseBody {
-	if o == nil {
+func (a *AcknowledgeTrackingResponse) GetObject() *AcknowledgeTrackingResponseBody {
+	if a == nil {
 		return nil
 	}
-	return o.Object
+	return a.Object
 }

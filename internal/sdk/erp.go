@@ -64,7 +64,7 @@ func (s *Erp) AcknowledgeTracking(ctx context.Context, request *operations.Ackno
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "acknowledgeTracking",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
@@ -276,7 +276,7 @@ func (s *Erp) TriggerErp(ctx context.Context, request shared.TriggerErpActionReq
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "triggerErp",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -486,7 +486,7 @@ func (s *Erp) ProcessErpUpdatesEvents(ctx context.Context, request *operations.P
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "processErpUpdatesEvents",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
@@ -759,7 +759,7 @@ func (s *Erp) ProcessErpUpdatesEventsV2(ctx context.Context, request *shared.Erp
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "processErpUpdatesEventsV2",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
@@ -1035,7 +1035,7 @@ func (s *Erp) SimulateMappingV2(ctx context.Context, request shared.MappingSimul
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "simulateMappingV2",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -1290,7 +1290,7 @@ func (s *Erp) SimulateMapping(ctx context.Context, request shared.MappingSimulat
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "simulateMapping",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)

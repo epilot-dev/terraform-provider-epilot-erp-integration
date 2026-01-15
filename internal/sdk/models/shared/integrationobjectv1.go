@@ -16,8 +16,8 @@ const (
 )
 
 type UniqueIds struct {
-	ArrayOfStr []string          `queryParam:"inline" name:"unique_ids"`
-	MapOfStr   map[string]string `queryParam:"inline" name:"unique_ids"`
+	ArrayOfStr []string          `queryParam:"inline" union:"member"`
+	MapOfStr   map[string]string `queryParam:"inline" union:"member"`
 
 	Type UniqueIdsType
 }
@@ -42,17 +42,43 @@ func CreateUniqueIdsMapOfStr(mapOfStr map[string]string) UniqueIds {
 
 func (u *UniqueIds) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var arrayOfStr []string = []string{}
 	if err := utils.UnmarshalJSON(data, &arrayOfStr, "", true, nil); err == nil {
-		u.ArrayOfStr = arrayOfStr
-		u.Type = UniqueIdsTypeArrayOfStr
-		return nil
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  UniqueIdsTypeArrayOfStr,
+			Value: arrayOfStr,
+		})
 	}
 
 	var mapOfStr map[string]string = map[string]string{}
 	if err := utils.UnmarshalJSON(data, &mapOfStr, "", true, nil); err == nil {
-		u.MapOfStr = mapOfStr
-		u.Type = UniqueIdsTypeMapOfStr
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  UniqueIdsTypeMapOfStr,
+			Value: mapOfStr,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for UniqueIds", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for UniqueIds", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(UniqueIdsType)
+	switch best.Type {
+	case UniqueIdsTypeArrayOfStr:
+		u.ArrayOfStr = best.Value.([]string)
+		return nil
+	case UniqueIdsTypeMapOfStr:
+		u.MapOfStr = best.Value.(map[string]string)
 		return nil
 	}
 
@@ -83,22 +109,22 @@ func (i IntegrationObjectV1) MarshalJSON() ([]byte, error) {
 }
 
 func (i *IntegrationObjectV1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"unique_ids", "fields"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *IntegrationObjectV1) GetUniqueIds() map[string]UniqueIds {
-	if o == nil {
+func (i *IntegrationObjectV1) GetUniqueIds() map[string]UniqueIds {
+	if i == nil {
 		return map[string]UniqueIds{}
 	}
-	return o.UniqueIds
+	return i.UniqueIds
 }
 
-func (o *IntegrationObjectV1) GetFields() []IntegrationFieldV1 {
-	if o == nil {
+func (i *IntegrationObjectV1) GetFields() []IntegrationFieldV1 {
+	if i == nil {
 		return []IntegrationFieldV1{}
 	}
-	return o.Fields
+	return i.Fields
 }

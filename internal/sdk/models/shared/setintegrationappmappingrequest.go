@@ -20,29 +20,29 @@ func (s SetIntegrationAppMappingRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SetIntegrationAppMappingRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, []string{"app_id", "component_id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *SetIntegrationAppMappingRequest) GetAppID() string {
-	if o == nil {
+func (s *SetIntegrationAppMappingRequest) GetAppID() string {
+	if s == nil {
 		return ""
 	}
-	return o.AppID
+	return s.AppID
 }
 
-func (o *SetIntegrationAppMappingRequest) GetComponentID() string {
-	if o == nil {
+func (s *SetIntegrationAppMappingRequest) GetComponentID() string {
+	if s == nil {
 		return ""
 	}
-	return o.ComponentID
+	return s.ComponentID
 }
 
-func (o *SetIntegrationAppMappingRequest) GetOverwrite() *bool {
-	if o == nil {
+func (s *SetIntegrationAppMappingRequest) GetOverwrite() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Overwrite
+	return s.Overwrite
 }

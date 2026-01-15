@@ -35,78 +35,78 @@ func (t TriggerErpActionRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (t *TriggerErpActionRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, []string{"execution_id", "org_id", "webhook_id", "flow_id", "created_at", "action_id", "flow_action_id", "flow_name", "activity_id", "entity_id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *TriggerErpActionRequest) GetExecutionID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetExecutionID() string {
+	if t == nil {
 		return ""
 	}
-	return o.ExecutionID
+	return t.ExecutionID
 }
 
-func (o *TriggerErpActionRequest) GetOrgID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetOrgID() string {
+	if t == nil {
 		return ""
 	}
-	return o.OrgID
+	return t.OrgID
 }
 
-func (o *TriggerErpActionRequest) GetWebhookID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetWebhookID() string {
+	if t == nil {
 		return ""
 	}
-	return o.WebhookID
+	return t.WebhookID
 }
 
-func (o *TriggerErpActionRequest) GetFlowID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetFlowID() string {
+	if t == nil {
 		return ""
 	}
-	return o.FlowID
+	return t.FlowID
 }
 
-func (o *TriggerErpActionRequest) GetCreatedAt() time.Time {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetCreatedAt() time.Time {
+	if t == nil {
 		return time.Time{}
 	}
-	return o.CreatedAt
+	return t.CreatedAt
 }
 
-func (o *TriggerErpActionRequest) GetActionID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetActionID() string {
+	if t == nil {
 		return ""
 	}
-	return o.ActionID
+	return t.ActionID
 }
 
-func (o *TriggerErpActionRequest) GetFlowActionID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetFlowActionID() string {
+	if t == nil {
 		return ""
 	}
-	return o.FlowActionID
+	return t.FlowActionID
 }
 
-func (o *TriggerErpActionRequest) GetFlowName() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetFlowName() string {
+	if t == nil {
 		return ""
 	}
-	return o.FlowName
+	return t.FlowName
 }
 
-func (o *TriggerErpActionRequest) GetActivityID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetActivityID() string {
+	if t == nil {
 		return ""
 	}
-	return o.ActivityID
+	return t.ActivityID
 }
 
-func (o *TriggerErpActionRequest) GetEntityID() string {
-	if o == nil {
+func (t *TriggerErpActionRequest) GetEntityID() string {
+	if t == nil {
 		return ""
 	}
-	return o.EntityID
+	return t.EntityID
 }

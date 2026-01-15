@@ -25,16 +25,16 @@ func (i *InboundIntegrationEventConfiguration) UnmarshalJSON(data []byte) error 
 	return nil
 }
 
-func (o *InboundIntegrationEventConfiguration) GetEntities() []IntegrationEntity {
-	if o == nil {
+func (i *InboundIntegrationEventConfiguration) GetEntities() []IntegrationEntity {
+	if i == nil {
 		return nil
 	}
-	return o.Entities
+	return i.Entities
 }
 
-func (o *InboundIntegrationEventConfiguration) GetMeterReadings() []IntegrationMeterReading {
-	if o == nil {
+func (i *InboundIntegrationEventConfiguration) GetMeterReadings() []IntegrationMeterReading {
+	if i == nil {
 		return nil
 	}
-	return o.MeterReadings
+	return i.MeterReadings
 }

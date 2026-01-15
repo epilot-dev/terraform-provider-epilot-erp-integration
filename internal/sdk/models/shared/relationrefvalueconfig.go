@@ -64,43 +64,43 @@ func (r RelationRefValueConfig) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RelationRefValueConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"attribute"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *RelationRefValueConfig) GetAttribute() string {
-	if o == nil {
+func (r *RelationRefValueConfig) GetAttribute() string {
+	if r == nil {
 		return ""
 	}
-	return o.Attribute
+	return r.Attribute
 }
 
-func (o *RelationRefValueConfig) GetOperation() *RelationRefValueConfigOperation {
-	if o == nil {
+func (r *RelationRefValueConfig) GetOperation() *RelationRefValueConfigOperation {
+	if r == nil {
 		return nil
 	}
-	return o.Operation
+	return r.Operation
 }
 
-func (o *RelationRefValueConfig) GetField() *string {
-	if o == nil {
+func (r *RelationRefValueConfig) GetField() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Field
+	return r.Field
 }
 
-func (o *RelationRefValueConfig) GetJsonataExpression() *string {
-	if o == nil {
+func (r *RelationRefValueConfig) GetJsonataExpression() *string {
+	if r == nil {
 		return nil
 	}
-	return o.JsonataExpression
+	return r.JsonataExpression
 }
 
-func (o *RelationRefValueConfig) GetConstant() any {
-	if o == nil {
+func (r *RelationRefValueConfig) GetConstant() any {
+	if r == nil {
 		return nil
 	}
-	return o.Constant
+	return r.Constant
 }

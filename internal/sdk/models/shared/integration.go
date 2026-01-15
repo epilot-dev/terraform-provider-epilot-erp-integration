@@ -27,50 +27,50 @@ func (i Integration) MarshalJSON() ([]byte, error) {
 }
 
 func (i *Integration) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, []string{"id", "orgId", "name", "created_at", "updated_at"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Integration) GetID() string {
-	if o == nil {
+func (i *Integration) GetID() string {
+	if i == nil {
 		return ""
 	}
-	return o.ID
+	return i.ID
 }
 
-func (o *Integration) GetOrgID() string {
-	if o == nil {
+func (i *Integration) GetOrgID() string {
+	if i == nil {
 		return ""
 	}
-	return o.OrgID
+	return i.OrgID
 }
 
-func (o *Integration) GetName() string {
-	if o == nil {
+func (i *Integration) GetName() string {
+	if i == nil {
 		return ""
 	}
-	return o.Name
+	return i.Name
 }
 
-func (o *Integration) GetDescription() *string {
-	if o == nil {
+func (i *Integration) GetDescription() *string {
+	if i == nil {
 		return nil
 	}
-	return o.Description
+	return i.Description
 }
 
-func (o *Integration) GetCreatedAt() time.Time {
-	if o == nil {
+func (i *Integration) GetCreatedAt() time.Time {
+	if i == nil {
 		return time.Time{}
 	}
-	return o.CreatedAt
+	return i.CreatedAt
 }
 
-func (o *Integration) GetUpdatedAt() time.Time {
-	if o == nil {
+func (i *Integration) GetUpdatedAt() time.Time {
+	if i == nil {
 		return time.Time{}
 	}
-	return o.UpdatedAt
+	return i.UpdatedAt
 }

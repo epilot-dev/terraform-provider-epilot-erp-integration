@@ -13,18 +13,18 @@ type DeleteIntegrationAppMappingRequest struct {
 	DeleteIntegrationAppMappingRequest shared.DeleteIntegrationAppMappingRequest `request:"mediaType=application/json"`
 }
 
-func (o *DeleteIntegrationAppMappingRequest) GetIntegrationID() string {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingRequest) GetIntegrationID() string {
+	if d == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return d.IntegrationID
 }
 
-func (o *DeleteIntegrationAppMappingRequest) GetDeleteIntegrationAppMappingRequest() shared.DeleteIntegrationAppMappingRequest {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingRequest) GetDeleteIntegrationAppMappingRequest() shared.DeleteIntegrationAppMappingRequest {
+	if d == nil {
 		return shared.DeleteIntegrationAppMappingRequest{}
 	}
-	return o.DeleteIntegrationAppMappingRequest
+	return d.DeleteIntegrationAppMappingRequest
 }
 
 // DeleteIntegrationAppMappingResponseBody - App mapping deleted successfully
@@ -32,11 +32,11 @@ type DeleteIntegrationAppMappingResponseBody struct {
 	Message *string `json:"message,omitempty"`
 }
 
-func (o *DeleteIntegrationAppMappingResponseBody) GetMessage() *string {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingResponseBody) GetMessage() *string {
+	if d == nil {
 		return nil
 	}
-	return o.Message
+	return d.Message
 }
 
 type DeleteIntegrationAppMappingResponse struct {
@@ -52,37 +52,37 @@ type DeleteIntegrationAppMappingResponse struct {
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (o *DeleteIntegrationAppMappingResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteIntegrationAppMappingResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteIntegrationAppMappingResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteIntegrationAppMappingResponse) GetObject() *DeleteIntegrationAppMappingResponseBody {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingResponse) GetObject() *DeleteIntegrationAppMappingResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Object
+	return d.Object
 }
 
-func (o *DeleteIntegrationAppMappingResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
-	if o == nil {
+func (d *DeleteIntegrationAppMappingResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
+	if d == nil {
 		return nil
 	}
-	return o.ErrorResponseBase
+	return d.ErrorResponseBase
 }

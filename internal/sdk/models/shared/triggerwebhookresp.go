@@ -48,58 +48,58 @@ type TriggerWebhookResp struct {
 	EventID    *string `json:"event_id,omitempty"`
 }
 
-func (o *TriggerWebhookResp) GetStatusCode() *string {
-	if o == nil {
+func (t *TriggerWebhookResp) GetStatusCode() *string {
+	if t == nil {
 		return nil
 	}
-	return o.StatusCode
+	return t.StatusCode
 }
 
-func (o *TriggerWebhookResp) GetMessage() *string {
-	if o == nil {
+func (t *TriggerWebhookResp) GetMessage() *string {
+	if t == nil {
 		return nil
 	}
-	return o.Message
+	return t.Message
 }
 
-func (o *TriggerWebhookResp) GetBody() *Body {
-	if o == nil {
+func (t *TriggerWebhookResp) GetBody() *Body {
+	if t == nil {
 		return nil
 	}
-	return o.Body
+	return t.Body
 }
 
-func (o *TriggerWebhookResp) GetCode() *string {
-	if o == nil {
+func (t *TriggerWebhookResp) GetCode() *string {
+	if t == nil {
 		return nil
 	}
-	return o.Code
+	return t.Code
 }
 
-func (o *TriggerWebhookResp) GetStatus() *Status {
-	if o == nil {
+func (t *TriggerWebhookResp) GetStatus() *Status {
+	if t == nil {
 		return nil
 	}
-	return o.Status
+	return t.Status
 }
 
-func (o *TriggerWebhookResp) GetStartDate() *string {
-	if o == nil {
+func (t *TriggerWebhookResp) GetStartDate() *string {
+	if t == nil {
 		return nil
 	}
-	return o.StartDate
+	return t.StartDate
 }
 
-func (o *TriggerWebhookResp) GetEndDate() *string {
-	if o == nil {
+func (t *TriggerWebhookResp) GetEndDate() *string {
+	if t == nil {
 		return nil
 	}
-	return o.EndDate
+	return t.EndDate
 }
 
-func (o *TriggerWebhookResp) GetEventID() *string {
-	if o == nil {
+func (t *TriggerWebhookResp) GetEventID() *string {
+	if t == nil {
 		return nil
 	}
-	return o.EventID
+	return t.EventID
 }

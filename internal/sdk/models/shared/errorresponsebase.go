@@ -10,16 +10,16 @@ type ErrorResponseBase struct {
 	Message *string `json:"message,omitempty"`
 }
 
-func (o *ErrorResponseBase) GetCode() *string {
-	if o == nil {
+func (e *ErrorResponseBase) GetCode() *string {
+	if e == nil {
 		return nil
 	}
-	return o.Code
+	return e.Code
 }
 
-func (o *ErrorResponseBase) GetMessage() *string {
-	if o == nil {
+func (e *ErrorResponseBase) GetMessage() *string {
+	if e == nil {
 		return nil
 	}
-	return o.Message
+	return e.Message
 }

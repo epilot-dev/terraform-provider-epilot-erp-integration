@@ -7,16 +7,16 @@ type MappingSimulationResponse struct {
 	MeterReadingsUpdates []MeterReadingUpdate `json:"meter_readings_updates,omitempty"`
 }
 
-func (o *MappingSimulationResponse) GetEntityUpdates() []EntityUpdate {
-	if o == nil {
+func (m *MappingSimulationResponse) GetEntityUpdates() []EntityUpdate {
+	if m == nil {
 		return []EntityUpdate{}
 	}
-	return o.EntityUpdates
+	return m.EntityUpdates
 }
 
-func (o *MappingSimulationResponse) GetMeterReadingsUpdates() []MeterReadingUpdate {
-	if o == nil {
+func (m *MappingSimulationResponse) GetMeterReadingsUpdates() []MeterReadingUpdate {
+	if m == nil {
 		return nil
 	}
-	return o.MeterReadingsUpdates
+	return m.MeterReadingsUpdates
 }

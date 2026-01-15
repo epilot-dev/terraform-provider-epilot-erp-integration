@@ -7,9 +7,9 @@ type IntegrationAppMapping struct {
 	IntegrationID string `json:"integration_id"`
 }
 
-func (o *IntegrationAppMapping) GetIntegrationID() string {
-	if o == nil {
+func (i *IntegrationAppMapping) GetIntegrationID() string {
+	if i == nil {
 		return ""
 	}
-	return o.IntegrationID
+	return i.IntegrationID
 }
