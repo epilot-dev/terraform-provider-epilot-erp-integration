@@ -1,0 +1,50 @@
+configVersion: 2.0.0
+generation:
+  sdkClassName: SDK
+  maintainOpenAPIOrder: true
+  usageSnippets:
+    optionalPropertyRendering: withExample
+    sdkInitStyle: constructor
+  useClassNamesForArrayFields: true
+  fixes:
+    nameResolutionFeb2025: false
+    parameterOrderingFeb2024: false
+    requestResponseComponentNamesFeb2024: false
+    securityFeb2025: false
+    sharedErrorComponentsApr2025: false
+  auth:
+    oAuth2ClientCredentialsEnabled: false
+    oAuth2PasswordEnabled: false
+  sdkHooksConfigAccess: true
+  tests:
+    generateTests: true
+    generateNewTests: false
+    skipResponseBodyAssertions: false
+  sdkFlattening: true
+  telemetryEnabled: false
+terraform:
+  version: 0.10.4
+  additionalDataSources: []
+  additionalDependencies: {}
+  additionalEphemeralResources: []
+  additionalProviderAttributes:
+    httpHeaders: ""
+    tlsSkipVerify: ""
+  additionalResources: []
+  allowUnknownFieldsInWeakUnions: true
+  author: epilot-dev
+  baseErrorName: SDKBaseError
+  defaultErrorName: SDKError
+  enableTypeDeduplication: true
+  environmentVariables: []
+  imports:
+    option: openapi
+    paths:
+      callbacks: callbacks
+      errors: sdkerrors
+      operations: operations
+      shared: shared
+      webhooks: webhooks
+  inputModelSuffix: input
+  outputModelSuffix: output
+  packageName: epilot-erp-integration

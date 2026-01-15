@@ -1,0 +1,49 @@
+overlay: 1.0.0
+info:
+  title: Overlay epilot ERP Integration to make a ERP Integration resource
+  version: 0.0.1
+actions:
+  - target: $
+    update:
+      x-speakeasy-retries:
+        strategy: backoff
+        backoff:
+          initialInterval: 5000 # 5 seconds
+          maxInterval: 60000 # 60 seconds
+          maxElapsedTime: 3600000 # 5 minutes
+          exponent: 1.5
+        statusCodes:
+          - 5XX
+        retryConnectionErrors: true
+
+
+  # Uses PUT for create/update
+
+  - target: $["paths"]["/v1/integrations"]["post"]
+    update:
+      x-speakeasy-entity-operation: Integration#create
+  - target: $["paths"]["/v1/integrations/{integrationId}"]["put"]
+    update:
+      x-speakeasy-entity-operation: Integration#update
+  - target: $["paths"]["/v1/integrations/{integrationId}"]["get"]
+    update:
+      x-speakeasy-entity-operation: Integration#read
+  - target: $["paths"]["/v1/integrations/{integrationId}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: Integration#delete
+
+  # Integration parameter matchers for v1 endpoints
+  - target: $["paths"]["/v1/integrations/{integrationId}"]["get"]["parameters"][0]
+    update:
+      x-speakeasy-match: id
+  - target: $["paths"]["/v1/integrations/{integrationId}"]["put"]["parameters"][0]
+    update:
+      x-speakeasy-match: id
+  - target: $["paths"]["/v1/integrations/{integrationId}"]["delete"]["parameters"][0]
+    update:
+      x-speakeasy-match: id
+
+  # Integration entity schema
+  - target: $["components"]["schemas"]["Integration"]
+    update:
+      x-speakeasy-entity: Integration

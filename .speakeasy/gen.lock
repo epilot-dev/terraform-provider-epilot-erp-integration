@@ -1,0 +1,505 @@
+lockVersion: 2.0.0
+id: 15fc1ae3-2912-47ad-8b62-703c6db72e27
+management:
+  docChecksum: 8be2ffed12bda25471204c09f271638b
+  docVersion: 0.17.1
+  speakeasyVersion: 1.611.0
+  generationVersion: 2.694.1
+  releaseVersion: 0.10.4
+  configChecksum: c47428669dc6d73dc7519dc43b296971
+features:
+  terraform:
+    additionalDependencies: 0.1.0
+    additionalProperties: 0.1.2
+    constsAndDefaults: 0.2.1
+    core: 3.44.1
+    globalSecurity: 2.82.0
+    globalServerURLs: 2.83.0
+    nullables: 0.0.0
+    retries: 2.81.4
+    unions: 2.81.17
+generatedFiles:
+  - .gitattributes
+  - USAGE.md
+  - examples/README.md
+  - examples/data-sources/epilot-erp-integration_integration/data-source.tf
+  - examples/provider/provider.tf
+  - examples/resources/epilot-erp-integration_integration/import-by-string-id.tf
+  - examples/resources/epilot-erp-integration_integration/import.sh
+  - examples/resources/epilot-erp-integration_integration/resource.tf
+  - go.mod
+  - go.sum
+  - internal/planmodifiers/boolplanmodifier/suppress_diff.go
+  - internal/planmodifiers/float32planmodifier/suppress_diff.go
+  - internal/planmodifiers/float64planmodifier/suppress_diff.go
+  - internal/planmodifiers/int32planmodifier/suppress_diff.go
+  - internal/planmodifiers/int64planmodifier/suppress_diff.go
+  - internal/planmodifiers/listplanmodifier/suppress_diff.go
+  - internal/planmodifiers/mapplanmodifier/suppress_diff.go
+  - internal/planmodifiers/numberplanmodifier/suppress_diff.go
+  - internal/planmodifiers/objectplanmodifier/suppress_diff.go
+  - internal/planmodifiers/setplanmodifier/suppress_diff.go
+  - internal/planmodifiers/stringplanmodifier/suppress_diff.go
+  - internal/planmodifiers/utils/state_check.go
+  - internal/provider/integration_data_source.go
+  - internal/provider/integration_data_source_sdk.go
+  - internal/provider/integration_resource.go
+  - internal/provider/integration_resource_sdk.go
+  - internal/provider/provider.go
+  - internal/provider/reflect/diags.go
+  - internal/provider/reflect/doc.go
+  - internal/provider/reflect/generic_attr_value.go
+  - internal/provider/reflect/helpers.go
+  - internal/provider/reflect/interfaces.go
+  - internal/provider/reflect/into.go
+  - internal/provider/reflect/map.go
+  - internal/provider/reflect/number.go
+  - internal/provider/reflect/options.go
+  - internal/provider/reflect/outof.go
+  - internal/provider/reflect/pointer.go
+  - internal/provider/reflect/primitive.go
+  - internal/provider/reflect/slice.go
+  - internal/provider/reflect/struct.go
+  - internal/provider/typeconvert/date.go
+  - internal/provider/typeconvert/datetime.go
+  - internal/provider/typeconvert/int.go
+  - internal/provider/utils.go
+  - internal/sdk/.gitattributes
+  - internal/sdk/docs/models/operations/option.md
+  - internal/sdk/erp.go
+  - internal/sdk/integrations.go
+  - internal/sdk/internal/config/sdkconfiguration.go
+  - internal/sdk/internal/hooks/hooks.go
+  - internal/sdk/internal/utils/contenttype.go
+  - internal/sdk/internal/utils/env.go
+  - internal/sdk/internal/utils/form.go
+  - internal/sdk/internal/utils/headers.go
+  - internal/sdk/internal/utils/json.go
+  - internal/sdk/internal/utils/pathparams.go
+  - internal/sdk/internal/utils/queryparams.go
+  - internal/sdk/internal/utils/requestbody.go
+  - internal/sdk/internal/utils/retries.go
+  - internal/sdk/internal/utils/security.go
+  - internal/sdk/internal/utils/utils.go
+  - internal/sdk/models/errors/sdkerror.go
+  - internal/sdk/models/operations/acknowledgetracking.go
+  - internal/sdk/models/operations/createintegration.go
+  - internal/sdk/models/operations/createusecase.go
+  - internal/sdk/models/operations/deleteintegration.go
+  - internal/sdk/models/operations/deleteintegrationappmapping.go
+  - internal/sdk/models/operations/deleteusecase.go
+  - internal/sdk/models/operations/getintegration.go
+  - internal/sdk/models/operations/getusecase.go
+  - internal/sdk/models/operations/listintegrations.go
+  - internal/sdk/models/operations/listusecasehistory.go
+  - internal/sdk/models/operations/listusecases.go
+  - internal/sdk/models/operations/options.go
+  - internal/sdk/models/operations/processerpupdatesevents.go
+  - internal/sdk/models/operations/processerpupdateseventsv2.go
+  - internal/sdk/models/operations/queryevents.go
+  - internal/sdk/models/operations/replayevents.go
+  - internal/sdk/models/operations/setintegrationappmapping.go
+  - internal/sdk/models/operations/simulatemapping.go
+  - internal/sdk/models/operations/simulatemappingv2.go
+  - internal/sdk/models/operations/triggererp.go
+  - internal/sdk/models/operations/updateintegration.go
+  - internal/sdk/models/operations/updateusecase.go
+  - internal/sdk/models/shared/createinboundusecaserequest.go
+  - internal/sdk/models/shared/createintegrationrequest.go
+  - internal/sdk/models/shared/createoutboundusecaserequest.go
+  - internal/sdk/models/shared/createusecaserequest.go
+  - internal/sdk/models/shared/deleteintegrationappmappingrequest.go
+  - internal/sdk/models/shared/entityupdate.go
+  - internal/sdk/models/shared/erpevent.go
+  - internal/sdk/models/shared/erpupdateseventsv2request.go
+  - internal/sdk/models/shared/errorresponsebase.go
+  - internal/sdk/models/shared/inboundintegrationeventconfiguration.go
+  - internal/sdk/models/shared/inboundusecasehistoryentry.go
+  - internal/sdk/models/shared/integration.go
+  - internal/sdk/models/shared/integrationappmapping.go
+  - internal/sdk/models/shared/integrationconfigurationv1.go
+  - internal/sdk/models/shared/integrationconfigurationv2.go
+  - internal/sdk/models/shared/integrationentity.go
+  - internal/sdk/models/shared/integrationentityfield.go
+  - internal/sdk/models/shared/integrationfieldv1.go
+  - internal/sdk/models/shared/integrationmeterreading.go
+  - internal/sdk/models/shared/integrationobjectv1.go
+  - internal/sdk/models/shared/mappingsimulationrequest.go
+  - internal/sdk/models/shared/mappingsimulationresponse.go
+  - internal/sdk/models/shared/mappingsimulationv2request.go
+  - internal/sdk/models/shared/meterreadingupdate.go
+  - internal/sdk/models/shared/meteruniqueidsconfig.go
+  - internal/sdk/models/shared/outboundusecasehistoryentry.go
+  - internal/sdk/models/shared/queryeventsrequest.go
+  - internal/sdk/models/shared/relationconfig.go
+  - internal/sdk/models/shared/relationitemconfig.go
+  - internal/sdk/models/shared/relationrefitemconfig.go
+  - internal/sdk/models/shared/relationrefsconfig.go
+  - internal/sdk/models/shared/relationrefvalueconfig.go
+  - internal/sdk/models/shared/relationuniqueidfield.go
+  - internal/sdk/models/shared/repeatablefieldtype.go
+  - internal/sdk/models/shared/replayeventsrequest.go
+  - internal/sdk/models/shared/security.go
+  - internal/sdk/models/shared/setintegrationappmappingrequest.go
+  - internal/sdk/models/shared/triggererpactionrequest.go
+  - internal/sdk/models/shared/triggerwebhookresp.go
+  - internal/sdk/models/shared/updateinboundusecaserequest.go
+  - internal/sdk/models/shared/updateintegrationrequest.go
+  - internal/sdk/models/shared/updateoutboundusecaserequest.go
+  - internal/sdk/models/shared/updateusecaserequest.go
+  - internal/sdk/models/shared/usecase.go
+  - internal/sdk/models/shared/usecasehistoryentry.go
+  - internal/sdk/retry/config.go
+  - internal/sdk/sdk.go
+  - internal/sdk/trigger.go
+  - internal/sdk/types/bigint.go
+  - internal/sdk/types/date.go
+  - internal/sdk/types/datetime.go
+  - internal/sdk/types/decimal.go
+  - internal/sdk/types/pointers.go
+  - internal/validators/DateValidator.go
+  - internal/validators/ExactlyOneChild.go
+  - internal/validators/JSONParseValidator.go
+  - internal/validators/RFC3339Validator.go
+  - internal/validators/boolvalidators/not_null.go
+  - internal/validators/float32validators/not_null.go
+  - internal/validators/float64validators/not_null.go
+  - internal/validators/int32validators/not_null.go
+  - internal/validators/int64validators/not_null.go
+  - internal/validators/listvalidators/not_null.go
+  - internal/validators/mapvalidators/not_null.go
+  - internal/validators/numbervalidators/not_null.go
+  - internal/validators/objectvalidators/not_null.go
+  - internal/validators/setvalidators/not_null.go
+  - internal/validators/stringvalidators/not_null.go
+  - main.go
+  - terraform-registry-manifest.json
+  - tools/tools.go
+examples:
+  acknowledgeTracking:
+    speakeasy-default-acknowledge-tracking:
+      responses:
+        "200":
+          application/json: {}
+  triggerErp:
+    speakeasy-default-trigger-erp:
+      requestBody:
+        application/json: {"execution_id": "<id>", "org_id": "<id>", "webhook_id": "<id>", "flow_id": "<id>", "created_at": "2024-10-12T09:37:25.413Z", "action_id": "<id>", "flow_action_id": "<id>", "flow_name": "<value>", "activity_id": "<id>", "entity_id": "<id>"}
+      responses:
+        "200":
+          application/json: {}
+  processErpUpdatesEvents:
+    speakeasy-default-process-erp-updates-events:
+      requestBody:
+        application/json: {"app_id": "0efa452e-45e5-4f35-8eb4-580527011f4b", "component_id": "773b1200-180a-4617-b335-48640fbe56e0", "meta": {}, "events": [{"event_type": "DELETE", "object_type": "<value>", "timestamp": "2026-12-26T10:17:39.721Z", "format": "json", "payload": "<value>", "deduplication_id": "evt-2025-05-01-12345-create-bp"}]}
+      responses:
+        "200":
+          application/json: {}
+        "400":
+          application/json: {}
+        "422":
+          application/json: {}
+        "500":
+          application/json: {}
+  processErpUpdatesEventsV2:
+    speakeasy-default-process-erp-updates-events-v2:
+      requestBody:
+        application/json: {"integration_id": "dce9ad2e-17e0-4b10-8ce4-47b86e595af5", "events": [{"event_type": "DELETE", "object_type": "<value>", "timestamp": "2025-06-03T15:24:36.144Z", "format": "json", "payload": {}, "deduplication_id": "evt-2025-05-01-12345-create-bp"}]}
+      responses:
+        "200":
+          application/json: {}
+        "400":
+          application/json: {}
+        "422":
+          application/json: {}
+        "500":
+          application/json: {}
+  simulateMappingV2:
+    simple:
+      requestBody:
+        application/json: {"event_configuration": {"entities": [{"entity_schema": "contact", "unique_ids": ["customer_number"], "fields": [{"attribute": "customer_number", "field": "customerId"}, {"attribute": "first_name", "field": "firstName"}, {"attribute": "last_name", "field": "lastName"}, {"attribute": "email", "field": "email"}, {"attribute": "source", "constant": "ERP"}]}]}, "format": "json", "payload": "{\"customerId\":\"12345\",\"firstName\":\"Anna\",\"lastName\":\"Schmidt\",\"email\":\"anna@example.com\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    advanced_with_relations:
+      requestBody:
+        application/json: {"event_configuration": {"entities": [{"entity_schema": "contract", "unique_ids": ["contract_number"], "fields": [{"attribute": "contract_number", "field": "number"}, {"attribute": "display_name", "field": "displayName"}, {"attribute": "billing_account", "relations": {"operation": "_set", "items": [{"entity_schema": "billing_account", "_tags": ["PRIMARY"], "unique_ids": [{"attribute": "external_id", "field": "customerAccountId"}]}]}}]}, {"entity_schema": "meter", "unique_ids": ["meter_number"], "jsonataExpression": "meters.{\"number\": number, \"type\": meterType}", "fields": [{"attribute": "meter_number", "field": "number"}, {"attribute": "meter_type", "field": "type"}]}]}, "format": "json", "payload": "{\"number\":\"CTR-001\",\"displayName\":\"Premium Contract\",\"customerAccountId\":\"ACC-999\",\"meters\":[{\"number\":\"M-001\",\"meterType\":\"electricity\"},{\"number\":\"M-002\",\"meterType\":\"gas\"}]}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    with_meter_readings:
+      requestBody:
+        application/json: {"event_configuration": {"entities": [{"entity_schema": "contract", "unique_ids": ["contract_number"], "fields": [{"attribute": "contract_number", "field": "number"}, {"attribute": "display_name", "field": "name"}]}], "meter_readings": [{"jsonataExpression": "$.readings", "meter": {"unique_ids": [{"attribute": "external_id", "field": "meter_id"}]}, "fields": [{"attribute": "external_id", "field": "reading_id"}, {"attribute": "timestamp", "field": "read_at"}, {"attribute": "source", "constant": "ERP"}, {"attribute": "value", "field": "value"}]}]}, "format": "json", "payload": "{\"number\":\"CTR-001\",\"name\":\"Main Contract\",\"readings\":[{\"meter_id\":\"M-001\",\"reading_id\":\"R-001\",\"read_at\":\"2025-01-15T10:00:00Z\",\"value\":12345.6}]}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    conditional_fields:
+      requestBody:
+        application/json: {"event_configuration": {"entities": [{"entity_schema": "contact", "unique_ids": ["customer_number"], "fields": [{"attribute": "customer_number", "field": "customerId"}, {"attribute": "email", "field": "email", "enabled": "$exists(email) and email != ''"}, {"attribute": "phone", "field": "phone", "enabled": "$exists(phone) and phone != ''"}, {"attribute": "vip_status", "constant": "VIP", "enabled": "vipFlag = true"}, {"attribute": "billing_account", "enabled": "$exists(billingAccountId)", "relations": {"operation": "_set", "items": [{"entity_schema": "billing_account", "unique_ids": [{"attribute": "external_id", "field": "billingAccountId"}]}]}}]}]}, "format": "json", "payload": "{\"customerId\":\"12345\",\"email\":\"user@example.com\",\"phone\":\"\",\"vipFlag\":true,\"billingAccountId\":\"ACC-999\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  simulateMapping:
+    v1_example:
+      requestBody:
+        application/json: {"mapping_configuration": {"version": "1.0", "mapping": {"objects": {"business_partner": {"unique_ids": {"contact": {"partner_id": "_id"}}, "fields": [{"entity": "contact", "attribute": "first_name", "field": "firstName"}, {"entity": "contact", "attribute": "last_name", "field": "lastName"}]}}}}, "object_type": "business_partner", "format": "json", "payload": "{\"partner_id\":\"BP10001\",\"firstName\":\"John\",\"lastName\":\"Doe\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    v2_simple:
+      requestBody:
+        application/json: {"mapping_configuration": {"version": "2.0", "mapping": {"events": {"CustomerChanged": {"entities": [{"entity_schema": "contact", "unique_ids": ["customer_number"], "fields": [{"attribute": "customer_number", "field": "customerId"}, {"attribute": "first_name", "field": "firstName"}, {"attribute": "last_name", "field": "lastName"}, {"attribute": "email", "field": "email"}, {"attribute": "source", "constant": "ERP"}]}]}}}}, "object_type": "CustomerChanged", "format": "json", "payload": "{\"customerId\":\"12345\",\"firstName\":\"Anna\",\"lastName\":\"Schmidt\",\"email\":\"anna@example.com\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    v2_advanced:
+      requestBody:
+        application/json: {"mapping_configuration": {"version": "2.0", "mapping": {"events": {"ContractChanged": {"entities": [{"entity_schema": "contract", "unique_ids": ["contract_number"], "fields": [{"attribute": "contract_number", "field": "number"}, {"attribute": "display_name", "field": "displayName"}, {"attribute": "billing_account", "relations": {"operation": "_set", "items": [{"entity_schema": "billing_account", "_tags": ["PRIMARY"], "unique_ids": [{"attribute": "external_id", "field": "customerAccountId"}]}]}}]}, {"entity_schema": "meter", "unique_ids": ["meter_number"], "jsonataExpression": "meters.{\"number\": number, \"type\": meterType}", "fields": [{"attribute": "meter_number", "field": "number"}, {"attribute": "meter_type", "field": "type"}]}]}}}}, "object_type": "ContractChanged", "format": "json", "payload": "{\"number\":\"CTR-001\",\"displayName\":\"Premium Contract\",\"customerAccountId\":\"ACC-999\",\"meters\":[{\"number\":\"M-001\",\"meterType\":\"electricity\"},{\"number\":\"M-002\",\"meterType\":\"gas\"}]}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    v2_append_operation:
+      requestBody:
+        application/json: {"mapping_configuration": {"version": "2.0", "mapping": {"events": {"ContactAdded": {"entities": [{"entity_schema": "contract", "unique_ids": ["contract_number"], "fields": [{"attribute": "contract_number", "field": "contractNumber"}, {"attribute": "additional_contacts", "relations": {"operation": "_append", "items": [{"entity_schema": "contact", "_tags": ["ADDITIONAL"], "unique_ids": [{"attribute": "email", "field": "contactEmail"}]}]}}]}]}}}}, "object_type": "ContactAdded", "format": "json", "payload": "{\"contractNumber\":\"CTR-001\",\"contactEmail\":\"new.contact@example.com\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    v2_field_enabled:
+      requestBody:
+        application/json: {"mapping_configuration": {"version": "2.0", "mapping": {"events": {"CustomerChanged": {"entities": [{"entity_schema": "contact", "unique_ids": ["customer_number"], "fields": [{"attribute": "customer_number", "field": "customerId"}, {"attribute": "email", "field": "email", "enabled": true}, {"attribute": "phone", "field": "phone", "enabled": "$exists(phone) and phone != ''"}, {"attribute": "mobile", "field": "mobile", "enabled": "$exists(mobile)"}, {"attribute": "vip_status", "constant": "VIP", "enabled": "vipFlag = true"}, {"attribute": "internal_notes", "field": "notes", "enabled": false}, {"attribute": "billing_account", "enabled": "$exists(billingAccountId)", "relations": {"operation": "_set", "items": [{"entity_schema": "billing_account", "unique_ids": [{"attribute": "external_id", "field": "billingAccountId"}]}]}}]}]}}}}, "object_type": "CustomerChanged", "format": "json", "payload": "{\"customerId\":\"12345\",\"email\":\"user@example.com\",\"phone\":\"\",\"mobile\":\"555-1234\",\"vipFlag\":true,\"notes\":\"Internal only\",\"billingAccountId\":\"ACC-999\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  listIntegrations:
+    speakeasy-default-list-integrations:
+      responses:
+        "200":
+          application/json: {"integrations": [{"id": "8974a6aa-7fac-44a5-bdce-dc7a4cd3dee1", "orgId": "<id>", "name": "<value>", "created_at": "2025-09-12T15:06:19.037Z", "updated_at": "2024-01-11T20:34:06.957Z"}]}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  createIntegration:
+    speakeasy-default-create-integration:
+      requestBody:
+        application/json: {"name": "<value>"}
+      responses:
+        "201":
+          application/json: {"id": "afe0ba2e-2d18-4dec-8208-81fd17110897", "orgId": "<id>", "name": "<value>", "created_at": "2026-09-09T08:29:32.100Z", "updated_at": "2025-11-21T17:19:40.868Z"}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  getIntegration:
+    speakeasy-default-get-integration:
+      parameters:
+        path:
+          integrationId: "4e60bda7-fe7e-4237-baf8-9492e99aafd5"
+      responses:
+        "200":
+          application/json: {"id": "a49fda1d-6ed9-490a-ae5d-27c70541c4b2", "orgId": "<id>", "name": "<value>", "created_at": "2025-03-08T16:18:38.587Z", "updated_at": "2025-09-22T21:19:21.684Z"}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  updateIntegration:
+    speakeasy-default-update-integration:
+      parameters:
+        path:
+          integrationId: "e421521a-be33-4714-9062-e24fe10223ad"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"id": "0dba1a54-1749-4fa3-9bb6-77fcff65874c", "orgId": "<id>", "name": "<value>", "created_at": "2025-04-16T21:10:37.705Z", "updated_at": "2025-04-25T23:45:27.400Z"}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  deleteIntegration:
+    speakeasy-default-delete-integration:
+      parameters:
+        path:
+          integrationId: "e53f5764-3d3b-4012-bad7-b848d3b55db1"
+      responses:
+        "200":
+          application/json: {}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  queryEvents:
+    speakeasy-default-query-events:
+      parameters:
+        path:
+          integrationId: "68dec27f-e38b-4265-8663-87fe0c43be11"
+      requestBody:
+        application/json: {"limit": 25, "cursor": {"event_time": "2025-10-31T12:34:56Z", "event_id": "evt_1234567890abcdef"}}
+      responses:
+        "200":
+          application/json: {"data": [{"event_type": "UPDATE", "object_type": "<value>", "timestamp": "2026-05-09T23:43:51.445Z", "format": "json", "payload": {"key": "<value>", "key1": "<value>", "key2": "<value>"}, "deduplication_id": "evt-2025-05-01-12345-create-bp"}], "next_cursor": {"event_time": "2025-10-31T12:34:56Z", "event_id": "evt_1234567890abcdef"}, "has_more": true}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  replayEvents:
+    speakeasy-default-replay-events:
+      parameters:
+        path:
+          integrationId: "e8fe9013-1366-474c-b351-f6eb996a153b"
+      requestBody:
+        application/json: {"event_ids": ["<value 1>"]}
+      responses:
+        "200":
+          application/json: {}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  listUseCases:
+    speakeasy-default-list-use-cases:
+      parameters:
+        path:
+          integrationId: "1ba310b8-8e80-4512-8e28-10fedf44cb13"
+      responses:
+        "200":
+          application/json: {"use_cases": []}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  createUseCase:
+    speakeasy-default-create-use-case:
+      parameters:
+        path:
+          integrationId: "a8388368-4790-432c-aed0-4147c9c436df"
+      requestBody:
+        application/json: {"name": "<value>", "enabled": false, "type": "outbound"}
+      responses:
+        "201":
+          application/json: {"type": "inbound", "id": "7976e62b-3be4-4ba9-831f-89cd020e68d2", "integrationId": "0f692b9f-8bb0-4791-b324-3dd8a0f2bed0", "name": "<value>", "enabled": false, "created_at": "2025-11-03T15:34:00.590Z", "updated_at": "2025-06-05T22:01:58.945Z"}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  getUseCase:
+    speakeasy-default-get-use-case:
+      parameters:
+        path:
+          integrationId: "9779029b-9d3a-43aa-a513-4fe90ef4da75"
+          useCaseId: "08570d9d-d9e6-4746-a48b-bef4d2ad4530"
+      responses:
+        "200":
+          application/json: {"type": "inbound", "id": "80e174d9-0a68-4b0d-a818-718b8121a702", "integrationId": "56a32281-9905-4671-aa59-ddedca83e80c", "name": "<value>", "enabled": true, "created_at": "2025-08-28T12:19:42.367Z", "updated_at": "2024-04-07T17:44:21.554Z"}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  updateUseCase:
+    speakeasy-default-update-use-case:
+      parameters:
+        path:
+          integrationId: "10cb2ebe-1f0b-463d-8d71-f6d144bb1096"
+          useCaseId: "c8b1daf3-cb81-4d83-a63e-5362fc9945f1"
+      requestBody:
+        application/json: {"type": "outbound"}
+      responses:
+        "200":
+          application/json: {"type": "outbound", "id": "46dc32d9-fddf-4bea-a3d8-f18dd39a519f", "integrationId": "17f0b2fb-83bc-435a-98cc-6f399a005a6f", "name": "<value>", "enabled": false, "created_at": "2026-11-28T07:56:49.479Z", "updated_at": "2024-01-12T12:14:27.035Z"}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  deleteUseCase:
+    speakeasy-default-delete-use-case:
+      parameters:
+        path:
+          integrationId: "ad646b95-fb56-4ff7-a7cd-722b471b9609"
+          useCaseId: "be6fa3c4-3a8e-41f2-9358-6f58e40a0b80"
+      responses:
+        "200":
+          application/json: {}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  listUseCaseHistory:
+    speakeasy-default-list-use-case-history:
+      parameters:
+        path:
+          integrationId: "59ff2784-ed93-4ea1-83ba-b587d860e67d"
+          useCaseId: "fbf03f9c-7c3d-4698-ad42-0163a906404c"
+        query:
+          cursor: "eyJwayI6Ik9SRyMxMjM0NSIsInNrIjoiSU5URUdSQVRJT04jLi4uIn0="
+      responses:
+        "200":
+          application/json: {"history": [{"id": "88a2503f-663f-4e01-a915-afd954334eac", "useCaseId": "872de63a-fa7e-406b-a7c3-ca7650ced74f", "integrationId": "86dfb3b1-b171-48d4-80b6-2288646d3324", "name": "<value>", "enabled": true, "created_at": "2025-02-28T01:20:10.758Z", "updated_at": "2025-02-01T22:44:50.369Z", "history_created_at": "2026-08-21T19:42:05.593Z", "type": "outbound"}]}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  setIntegrationAppMapping:
+    speakeasy-default-set-integration-app-mapping:
+      parameters:
+        path:
+          integrationId: "95adfac2-857c-47dc-b503-484e4e2bcd1c"
+      requestBody:
+        application/json: {"app_id": "5d9e240b-a51d-45b1-90c2-0bc1eda8a175", "component_id": "5d0c5fc0-d912-4e65-9abc-6c324d617ff6", "overwrite": false}
+      responses:
+        "200":
+          application/json: {"integration_id": "52b36a87-c8b0-414f-88c9-e19e003ea3f4"}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  deleteIntegrationAppMapping:
+    speakeasy-default-delete-integration-app-mapping:
+      parameters:
+        path:
+          integrationId: "1c9ed53b-022e-4252-b97b-3b5c8dde1d92"
+      requestBody:
+        application/json: {"app_id": "5a05a72e-5873-4eb9-ba35-1412fd25b205", "component_id": "2f82ced6-824b-4b08-8808-fd34da917681"}
+      responses:
+        "200":
+          application/json: {}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+examplesVersion: 1.0.2
