@@ -1,12 +1,6 @@
-# resource "epilot-erp-integration_integration" "my_integration" {
-#   description = "Terraform creation integration"
-#   name        = "Terraform creation integration"
-# }
-
-
-import {
-  to = epilot-erp-integration_integration.my_integrationsssss
-  id = "08491890-bbe1-4372-89dc-e92f15de0290"
+resource "epilot-erp-integration_integration" "my_integration" {
+  description = "Terraform creation integration"
+  name        = "Terraform creation integration"
 }
 
 terraform {
