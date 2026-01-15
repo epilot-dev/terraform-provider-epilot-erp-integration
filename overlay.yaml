@@ -16,9 +16,6 @@ actions:
           - 5XX
         retryConnectionErrors: true
 
-
-  # Uses PUT for create/update
-
   - target: $["paths"]["/v1/integrations"]["post"]
     update:
       x-speakeasy-entity-operation: Integration#create
