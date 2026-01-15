@@ -123,9 +123,6 @@ provider_installation {
   direct {}
 }
 ```
-<!-- End Testing the provider locally [usage] -->
-
-<!-- Placeholder for Future Speakeasy SDK Sections -->
 
 # Development
 
