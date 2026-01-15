@@ -123,12 +123,3 @@ provider_installation {
   direct {}
 }
 ```
-
-# Development
-
-## Contributions
-
-While we value open-source contributions to this terraform provider, this library is generated programmatically. Any manual changes added to internal files will be overwritten on the next generation.
-We look forward to hearing your feedback. Feel free to open a PR or an issue with a proof of concept and we'll do our best to include it in a future release. 
-
-### SDK Created by [Speakeasy](https://www.speakeasy.com/?utm_source=epilot-erp-integration&utm_campaign=terraform)
