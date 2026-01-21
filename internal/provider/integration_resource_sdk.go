@@ -4,14 +4,17 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/typeconvert"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/models/operations"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/models/shared"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r *IntegrationResourceModel) RefreshFromSharedIntegration(ctx context.Context, resp *shared.Integration) diag.Diagnostics {
+func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx context.Context, resp *shared.IntegrationWithUseCases) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -21,59 +24,439 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegration(ctx context.Cont
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
+		r.UseCases = []tfTypes.UseCase{}
+
+		for _, useCasesItem := range resp.UseCases {
+			var useCases tfTypes.UseCase
+
+			if useCasesItem.InboundUseCase != nil {
+				useCases.Inbound = &tfTypes.InboundUseCase{}
+				useCases.Inbound.ChangeDescription = types.StringPointerValue(useCasesItem.InboundUseCase.ChangeDescription)
+				if useCasesItem.InboundUseCase.Configuration == nil {
+					useCases.Inbound.Configuration = nil
+				} else {
+					useCases.Inbound.Configuration = &tfTypes.InboundIntegrationEventConfiguration{}
+					useCases.Inbound.Configuration.Entities = []tfTypes.IntegrationEntity{}
+
+					for _, entitiesItem := range useCasesItem.InboundUseCase.Configuration.Entities {
+						var entities tfTypes.IntegrationEntity
+
+						if entitiesItem.Enabled != nil {
+							entities.Enabled = &tfTypes.Enabled{}
+							if entitiesItem.Enabled.Boolean != nil {
+								entities.Enabled.Boolean = types.BoolPointerValue(entitiesItem.Enabled.Boolean)
+							}
+							if entitiesItem.Enabled.Str != nil {
+								entities.Enabled.Str = types.StringPointerValue(entitiesItem.Enabled.Str)
+							}
+						}
+						entities.EntitySchema = types.StringValue(entitiesItem.EntitySchema)
+						entities.Fields = []tfTypes.IntegrationEntityField{}
+
+						for _, fieldsItem := range entitiesItem.Fields {
+							var fields tfTypes.IntegrationEntityField
+
+							if fieldsItem.Type != nil {
+								fields.Type = types.StringValue(string(*fieldsItem.Type))
+							} else {
+								fields.Type = types.StringNull()
+							}
+							fields.Attribute = types.StringValue(fieldsItem.Attribute)
+							if fieldsItem.Constant == nil {
+								fields.Constant = jsontypes.NewNormalizedNull()
+							} else {
+								constantResult, _ := json.Marshal(fieldsItem.Constant)
+								fields.Constant = jsontypes.NewNormalizedValue(string(constantResult))
+							}
+							if fieldsItem.Enabled != nil {
+								fields.Enabled = &tfTypes.Enabled{}
+								if fieldsItem.Enabled.Boolean != nil {
+									fields.Enabled.Boolean = types.BoolPointerValue(fieldsItem.Enabled.Boolean)
+								}
+								if fieldsItem.Enabled.Str != nil {
+									fields.Enabled.Str = types.StringPointerValue(fieldsItem.Enabled.Str)
+								}
+							}
+							fields.Field = types.StringPointerValue(fieldsItem.Field)
+							fields.JsonataExpression = types.StringPointerValue(fieldsItem.JsonataExpression)
+							if fieldsItem.RelationRefs == nil {
+								fields.RelationRefs = nil
+							} else {
+								fields.RelationRefs = &tfTypes.RelationRefsConfig{}
+								fields.RelationRefs.Items = []tfTypes.RelationRefItemConfig{}
+
+								for _, itemsItem := range fieldsItem.RelationRefs.Items {
+									var items tfTypes.RelationRefItemConfig
+
+									items.EntitySchema = types.StringValue(itemsItem.EntitySchema)
+									items.Path = types.StringValue(itemsItem.Path)
+									items.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem := range itemsItem.UniqueIds {
+										var uniqueIds tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem.Type != nil {
+											uniqueIds.Type = types.StringValue(string(*uniqueIdsItem.Type))
+										} else {
+											uniqueIds.Type = types.StringNull()
+										}
+										uniqueIds.Attribute = types.StringValue(uniqueIdsItem.Attribute)
+										if uniqueIdsItem.Constant == nil {
+											uniqueIds.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult1, _ := json.Marshal(uniqueIdsItem.Constant)
+											uniqueIds.Constant = jsontypes.NewNormalizedValue(string(constantResult1))
+										}
+										uniqueIds.Field = types.StringPointerValue(uniqueIdsItem.Field)
+										uniqueIds.JsonataExpression = types.StringPointerValue(uniqueIdsItem.JsonataExpression)
+
+										items.UniqueIds = append(items.UniqueIds, uniqueIds)
+									}
+									items.Value.Attribute = types.StringValue(itemsItem.Value.Attribute)
+									if itemsItem.Value.Constant == nil {
+										items.Value.Constant = jsontypes.NewNormalizedNull()
+									} else {
+										constantResult2, _ := json.Marshal(itemsItem.Value.Constant)
+										items.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult2))
+									}
+									items.Value.Field = types.StringPointerValue(itemsItem.Value.Field)
+									items.Value.JsonataExpression = types.StringPointerValue(itemsItem.Value.JsonataExpression)
+									if itemsItem.Value.Operation != nil {
+										items.Value.Operation = types.StringValue(string(*itemsItem.Value.Operation))
+									} else {
+										items.Value.Operation = types.StringNull()
+									}
+
+									fields.RelationRefs.Items = append(fields.RelationRefs.Items, items)
+								}
+								fields.RelationRefs.JsonataExpression = types.StringPointerValue(fieldsItem.RelationRefs.JsonataExpression)
+								fields.RelationRefs.Operation = types.StringValue(string(fieldsItem.RelationRefs.Operation))
+							}
+							if fieldsItem.Relations == nil {
+								fields.Relations = nil
+							} else {
+								fields.Relations = &tfTypes.RelationConfig{}
+								fields.Relations.Items = []tfTypes.RelationItemConfig{}
+
+								for _, itemsItem1 := range fieldsItem.Relations.Items {
+									var items1 tfTypes.RelationItemConfig
+
+									items1.Tags = make([]types.String, 0, len(itemsItem1.Tags))
+									for _, v := range itemsItem1.Tags {
+										items1.Tags = append(items1.Tags, types.StringValue(v))
+									}
+									items1.EntitySchema = types.StringValue(itemsItem1.EntitySchema)
+									items1.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem1 := range itemsItem1.UniqueIds {
+										var uniqueIds1 tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem1.Type != nil {
+											uniqueIds1.Type = types.StringValue(string(*uniqueIdsItem1.Type))
+										} else {
+											uniqueIds1.Type = types.StringNull()
+										}
+										uniqueIds1.Attribute = types.StringValue(uniqueIdsItem1.Attribute)
+										if uniqueIdsItem1.Constant == nil {
+											uniqueIds1.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult3, _ := json.Marshal(uniqueIdsItem1.Constant)
+											uniqueIds1.Constant = jsontypes.NewNormalizedValue(string(constantResult3))
+										}
+										uniqueIds1.Field = types.StringPointerValue(uniqueIdsItem1.Field)
+										uniqueIds1.JsonataExpression = types.StringPointerValue(uniqueIdsItem1.JsonataExpression)
+
+										items1.UniqueIds = append(items1.UniqueIds, uniqueIds1)
+									}
+
+									fields.Relations.Items = append(fields.Relations.Items, items1)
+								}
+								fields.Relations.JsonataExpression = types.StringPointerValue(fieldsItem.Relations.JsonataExpression)
+								fields.Relations.Operation = types.StringValue(string(fieldsItem.Relations.Operation))
+							}
+
+							entities.Fields = append(entities.Fields, fields)
+						}
+						entities.JsonataExpression = types.StringPointerValue(entitiesItem.JsonataExpression)
+						entities.UniqueIds = make([]types.String, 0, len(entitiesItem.UniqueIds))
+						for _, v := range entitiesItem.UniqueIds {
+							entities.UniqueIds = append(entities.UniqueIds, types.StringValue(v))
+						}
+
+						useCases.Inbound.Configuration.Entities = append(useCases.Inbound.Configuration.Entities, entities)
+					}
+					useCases.Inbound.Configuration.MeterReadings = []tfTypes.IntegrationMeterReading{}
+
+					for _, meterReadingsItem := range useCasesItem.InboundUseCase.Configuration.MeterReadings {
+						var meterReadings tfTypes.IntegrationMeterReading
+
+						meterReadings.Fields = []tfTypes.IntegrationEntityField{}
+
+						for _, fieldsItem1 := range meterReadingsItem.Fields {
+							var fields1 tfTypes.IntegrationEntityField
+
+							if fieldsItem1.Type != nil {
+								fields1.Type = types.StringValue(string(*fieldsItem1.Type))
+							} else {
+								fields1.Type = types.StringNull()
+							}
+							fields1.Attribute = types.StringValue(fieldsItem1.Attribute)
+							if fieldsItem1.Constant == nil {
+								fields1.Constant = jsontypes.NewNormalizedNull()
+							} else {
+								constantResult4, _ := json.Marshal(fieldsItem1.Constant)
+								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
+							}
+							if fieldsItem1.Enabled != nil {
+								fields1.Enabled = &tfTypes.Enabled{}
+								if fieldsItem1.Enabled.Boolean != nil {
+									fields1.Enabled.Boolean = types.BoolPointerValue(fieldsItem1.Enabled.Boolean)
+								}
+								if fieldsItem1.Enabled.Str != nil {
+									fields1.Enabled.Str = types.StringPointerValue(fieldsItem1.Enabled.Str)
+								}
+							}
+							fields1.Field = types.StringPointerValue(fieldsItem1.Field)
+							fields1.JsonataExpression = types.StringPointerValue(fieldsItem1.JsonataExpression)
+							if fieldsItem1.RelationRefs == nil {
+								fields1.RelationRefs = nil
+							} else {
+								fields1.RelationRefs = &tfTypes.RelationRefsConfig{}
+								fields1.RelationRefs.Items = []tfTypes.RelationRefItemConfig{}
+
+								for _, itemsItem2 := range fieldsItem1.RelationRefs.Items {
+									var items2 tfTypes.RelationRefItemConfig
+
+									items2.EntitySchema = types.StringValue(itemsItem2.EntitySchema)
+									items2.Path = types.StringValue(itemsItem2.Path)
+									items2.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem2 := range itemsItem2.UniqueIds {
+										var uniqueIds2 tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem2.Type != nil {
+											uniqueIds2.Type = types.StringValue(string(*uniqueIdsItem2.Type))
+										} else {
+											uniqueIds2.Type = types.StringNull()
+										}
+										uniqueIds2.Attribute = types.StringValue(uniqueIdsItem2.Attribute)
+										if uniqueIdsItem2.Constant == nil {
+											uniqueIds2.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult5, _ := json.Marshal(uniqueIdsItem2.Constant)
+											uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
+										}
+										uniqueIds2.Field = types.StringPointerValue(uniqueIdsItem2.Field)
+										uniqueIds2.JsonataExpression = types.StringPointerValue(uniqueIdsItem2.JsonataExpression)
+
+										items2.UniqueIds = append(items2.UniqueIds, uniqueIds2)
+									}
+									items2.Value.Attribute = types.StringValue(itemsItem2.Value.Attribute)
+									if itemsItem2.Value.Constant == nil {
+										items2.Value.Constant = jsontypes.NewNormalizedNull()
+									} else {
+										constantResult6, _ := json.Marshal(itemsItem2.Value.Constant)
+										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
+									}
+									items2.Value.Field = types.StringPointerValue(itemsItem2.Value.Field)
+									items2.Value.JsonataExpression = types.StringPointerValue(itemsItem2.Value.JsonataExpression)
+									if itemsItem2.Value.Operation != nil {
+										items2.Value.Operation = types.StringValue(string(*itemsItem2.Value.Operation))
+									} else {
+										items2.Value.Operation = types.StringNull()
+									}
+
+									fields1.RelationRefs.Items = append(fields1.RelationRefs.Items, items2)
+								}
+								fields1.RelationRefs.JsonataExpression = types.StringPointerValue(fieldsItem1.RelationRefs.JsonataExpression)
+								fields1.RelationRefs.Operation = types.StringValue(string(fieldsItem1.RelationRefs.Operation))
+							}
+							if fieldsItem1.Relations == nil {
+								fields1.Relations = nil
+							} else {
+								fields1.Relations = &tfTypes.RelationConfig{}
+								fields1.Relations.Items = []tfTypes.RelationItemConfig{}
+
+								for _, itemsItem3 := range fieldsItem1.Relations.Items {
+									var items3 tfTypes.RelationItemConfig
+
+									items3.Tags = make([]types.String, 0, len(itemsItem3.Tags))
+									for _, v := range itemsItem3.Tags {
+										items3.Tags = append(items3.Tags, types.StringValue(v))
+									}
+									items3.EntitySchema = types.StringValue(itemsItem3.EntitySchema)
+									items3.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem3 := range itemsItem3.UniqueIds {
+										var uniqueIds3 tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem3.Type != nil {
+											uniqueIds3.Type = types.StringValue(string(*uniqueIdsItem3.Type))
+										} else {
+											uniqueIds3.Type = types.StringNull()
+										}
+										uniqueIds3.Attribute = types.StringValue(uniqueIdsItem3.Attribute)
+										if uniqueIdsItem3.Constant == nil {
+											uniqueIds3.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult7, _ := json.Marshal(uniqueIdsItem3.Constant)
+											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
+										}
+										uniqueIds3.Field = types.StringPointerValue(uniqueIdsItem3.Field)
+										uniqueIds3.JsonataExpression = types.StringPointerValue(uniqueIdsItem3.JsonataExpression)
+
+										items3.UniqueIds = append(items3.UniqueIds, uniqueIds3)
+									}
+
+									fields1.Relations.Items = append(fields1.Relations.Items, items3)
+								}
+								fields1.Relations.JsonataExpression = types.StringPointerValue(fieldsItem1.Relations.JsonataExpression)
+								fields1.Relations.Operation = types.StringValue(string(fieldsItem1.Relations.Operation))
+							}
+
+							meterReadings.Fields = append(meterReadings.Fields, fields1)
+						}
+						meterReadings.JsonataExpression = types.StringPointerValue(meterReadingsItem.JsonataExpression)
+						meterReadings.Meter.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+						for _, uniqueIdsItem4 := range meterReadingsItem.Meter.UniqueIds {
+							var uniqueIds4 tfTypes.RelationUniqueIDField
+
+							if uniqueIdsItem4.Type != nil {
+								uniqueIds4.Type = types.StringValue(string(*uniqueIdsItem4.Type))
+							} else {
+								uniqueIds4.Type = types.StringNull()
+							}
+							uniqueIds4.Attribute = types.StringValue(uniqueIdsItem4.Attribute)
+							if uniqueIdsItem4.Constant == nil {
+								uniqueIds4.Constant = jsontypes.NewNormalizedNull()
+							} else {
+								constantResult8, _ := json.Marshal(uniqueIdsItem4.Constant)
+								uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
+							}
+							uniqueIds4.Field = types.StringPointerValue(uniqueIdsItem4.Field)
+							uniqueIds4.JsonataExpression = types.StringPointerValue(uniqueIdsItem4.JsonataExpression)
+
+							meterReadings.Meter.UniqueIds = append(meterReadings.Meter.UniqueIds, uniqueIds4)
+						}
+						if meterReadingsItem.MeterCounter == nil {
+							meterReadings.MeterCounter = nil
+						} else {
+							meterReadings.MeterCounter = &tfTypes.MeterUniqueIdsConfig{}
+							meterReadings.MeterCounter.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+							for _, uniqueIdsItem5 := range meterReadingsItem.MeterCounter.UniqueIds {
+								var uniqueIds5 tfTypes.RelationUniqueIDField
+
+								if uniqueIdsItem5.Type != nil {
+									uniqueIds5.Type = types.StringValue(string(*uniqueIdsItem5.Type))
+								} else {
+									uniqueIds5.Type = types.StringNull()
+								}
+								uniqueIds5.Attribute = types.StringValue(uniqueIdsItem5.Attribute)
+								if uniqueIdsItem5.Constant == nil {
+									uniqueIds5.Constant = jsontypes.NewNormalizedNull()
+								} else {
+									constantResult9, _ := json.Marshal(uniqueIdsItem5.Constant)
+									uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
+								}
+								uniqueIds5.Field = types.StringPointerValue(uniqueIdsItem5.Field)
+								uniqueIds5.JsonataExpression = types.StringPointerValue(uniqueIdsItem5.JsonataExpression)
+
+								meterReadings.MeterCounter.UniqueIds = append(meterReadings.MeterCounter.UniqueIds, uniqueIds5)
+							}
+						}
+						if meterReadingsItem.ReadingMatching != nil {
+							meterReadings.ReadingMatching = types.StringValue(string(*meterReadingsItem.ReadingMatching))
+						} else {
+							meterReadings.ReadingMatching = types.StringNull()
+						}
+
+						useCases.Inbound.Configuration.MeterReadings = append(useCases.Inbound.Configuration.MeterReadings, meterReadings)
+					}
+				}
+				useCases.Inbound.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.InboundUseCase.CreatedAt))
+				useCases.Inbound.Enabled = types.BoolValue(useCasesItem.InboundUseCase.Enabled)
+				useCases.Inbound.ID = types.StringValue(useCasesItem.InboundUseCase.ID)
+				useCases.Inbound.IntegrationID = types.StringValue(useCasesItem.InboundUseCase.IntegrationID)
+				useCases.Inbound.Name = types.StringValue(useCasesItem.InboundUseCase.Name)
+				useCases.Inbound.Type = types.StringValue(string(useCasesItem.InboundUseCase.Type))
+				useCases.Inbound.UpdatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.InboundUseCase.UpdatedAt))
+			}
+			if useCasesItem.OutboundUseCase != nil {
+				useCases.Outbound = &tfTypes.OutboundUseCase{}
+				useCases.Outbound.ChangeDescription = types.StringPointerValue(useCasesItem.OutboundUseCase.ChangeDescription)
+				if len(useCasesItem.OutboundUseCase.Configuration) > 0 {
+					useCases.Outbound.Configuration = make(map[string]jsontypes.Normalized, len(useCasesItem.OutboundUseCase.Configuration))
+					for key, value := range useCasesItem.OutboundUseCase.Configuration {
+						result, _ := json.Marshal(value)
+						useCases.Outbound.Configuration[key] = jsontypes.NewNormalizedValue(string(result))
+					}
+				}
+				useCases.Outbound.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.OutboundUseCase.CreatedAt))
+				useCases.Outbound.Enabled = types.BoolValue(useCasesItem.OutboundUseCase.Enabled)
+				useCases.Outbound.ID = types.StringValue(useCasesItem.OutboundUseCase.ID)
+				useCases.Outbound.IntegrationID = types.StringValue(useCasesItem.OutboundUseCase.IntegrationID)
+				useCases.Outbound.Name = types.StringValue(useCasesItem.OutboundUseCase.Name)
+				useCases.Outbound.Type = types.StringValue(string(useCasesItem.OutboundUseCase.Type))
+				useCases.Outbound.UpdatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.OutboundUseCase.UpdatedAt))
+			}
+
+			r.UseCases = append(r.UseCases, useCases)
+		}
 	}
 
 	return diags
 }
 
-func (r *IntegrationResourceModel) ToOperationsDeleteIntegrationRequest(ctx context.Context) (*operations.DeleteIntegrationRequest, diag.Diagnostics) {
+func (r *IntegrationResourceModel) ToOperationsDeleteIntegrationV2Request(ctx context.Context) (*operations.DeleteIntegrationV2Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var integrationID string
 	integrationID = r.ID.ValueString()
 
-	out := operations.DeleteIntegrationRequest{
+	out := operations.DeleteIntegrationV2Request{
 		IntegrationID: integrationID,
 	}
 
 	return &out, diags
 }
 
-func (r *IntegrationResourceModel) ToOperationsGetIntegrationRequest(ctx context.Context) (*operations.GetIntegrationRequest, diag.Diagnostics) {
+func (r *IntegrationResourceModel) ToOperationsGetIntegrationV2Request(ctx context.Context) (*operations.GetIntegrationV2Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var integrationID string
 	integrationID = r.ID.ValueString()
 
-	out := operations.GetIntegrationRequest{
+	out := operations.GetIntegrationV2Request{
 		IntegrationID: integrationID,
 	}
 
 	return &out, diags
 }
 
-func (r *IntegrationResourceModel) ToOperationsUpdateIntegrationRequest(ctx context.Context) (*operations.UpdateIntegrationRequest, diag.Diagnostics) {
+func (r *IntegrationResourceModel) ToOperationsUpsertIntegrationV2Request(ctx context.Context) (*operations.UpsertIntegrationV2Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var integrationID string
 	integrationID = r.ID.ValueString()
 
-	updateIntegrationRequest, updateIntegrationRequestDiags := r.ToSharedUpdateIntegrationRequest(ctx)
-	diags.Append(updateIntegrationRequestDiags...)
+	upsertIntegrationWithUseCasesRequest, upsertIntegrationWithUseCasesRequestDiags := r.ToSharedUpsertIntegrationWithUseCasesRequest(ctx)
+	diags.Append(upsertIntegrationWithUseCasesRequestDiags...)
 
 	if diags.HasError() {
 		return nil, diags
 	}
 
-	out := operations.UpdateIntegrationRequest{
-		IntegrationID:            integrationID,
-		UpdateIntegrationRequest: *updateIntegrationRequest,
+	out := operations.UpsertIntegrationV2Request{
+		IntegrationID:                        integrationID,
+		UpsertIntegrationWithUseCasesRequest: *upsertIntegrationWithUseCasesRequest,
 	}
 
 	return &out, diags
 }
 
-func (r *IntegrationResourceModel) ToSharedCreateIntegrationRequest(ctx context.Context) (*shared.CreateIntegrationRequest, diag.Diagnostics) {
+func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(ctx context.Context) (*shared.UpsertIntegrationWithUseCasesRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -85,32 +468,689 @@ func (r *IntegrationResourceModel) ToSharedCreateIntegrationRequest(ctx context.
 	} else {
 		description = nil
 	}
-	out := shared.CreateIntegrationRequest{
+	useCases := make([]shared.EmbeddedUseCaseRequest, 0, len(r.UseCases))
+	for useCasesItem := range r.UseCases {
+		if r.UseCases[useCasesItem].Inbound != nil {
+			id := new(string)
+			if !r.UseCases[useCasesItem].Inbound.ID.IsUnknown() && !r.UseCases[useCasesItem].Inbound.ID.IsNull() {
+				*id = r.UseCases[useCasesItem].Inbound.ID.ValueString()
+			} else {
+				id = nil
+			}
+			var name1 string
+			name1 = r.UseCases[useCasesItem].Inbound.Name.ValueString()
+
+			var enabled bool
+			enabled = r.UseCases[useCasesItem].Inbound.Enabled.ValueBool()
+
+			changeDescription := new(string)
+			if !r.UseCases[useCasesItem].Inbound.ChangeDescription.IsUnknown() && !r.UseCases[useCasesItem].Inbound.ChangeDescription.IsNull() {
+				*changeDescription = r.UseCases[useCasesItem].Inbound.ChangeDescription.ValueString()
+			} else {
+				changeDescription = nil
+			}
+			typeVar := shared.EmbeddedInboundUseCaseRequestType(r.UseCases[useCasesItem].Inbound.Type.ValueString())
+			var configuration *shared.InboundIntegrationEventConfiguration
+			if r.UseCases[useCasesItem].Inbound.Configuration != nil {
+				entities := make([]shared.IntegrationEntity, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities))
+				for entitiesIndex := range r.UseCases[useCasesItem].Inbound.Configuration.Entities {
+					var entitySchema string
+					entitySchema = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].EntitySchema.ValueString()
+
+					uniqueIds := make([]string, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].UniqueIds))
+					for uniqueIdsIndex := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].UniqueIds {
+						uniqueIds = append(uniqueIds, r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].UniqueIds[uniqueIdsIndex].ValueString())
+					}
+					jsonataExpression := new(string)
+					if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].JsonataExpression.IsNull() {
+						*jsonataExpression = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].JsonataExpression.ValueString()
+					} else {
+						jsonataExpression = nil
+					}
+					var enabled1 *shared.Enabled
+					if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled != nil {
+						boolean := new(bool)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Boolean.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Boolean.IsNull() {
+							*boolean = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Boolean.ValueBool()
+						} else {
+							boolean = nil
+						}
+						if boolean != nil {
+							enabled1 = &shared.Enabled{
+								Boolean: boolean,
+							}
+						}
+						str := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Str.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Str.IsNull() {
+							*str = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Str.ValueString()
+						} else {
+							str = nil
+						}
+						if str != nil {
+							enabled1 = &shared.Enabled{
+								Str: str,
+							}
+						}
+					}
+					fields := make([]shared.IntegrationEntityField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields))
+					for fieldsIndex := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields {
+						var attribute string
+						attribute = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Attribute.ValueString()
+
+						field := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Field.IsNull() {
+							*field = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Field.ValueString()
+						} else {
+							field = nil
+						}
+						jsonataExpression1 := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].JsonataExpression.IsNull() {
+							*jsonataExpression1 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].JsonataExpression.ValueString()
+						} else {
+							jsonataExpression1 = nil
+						}
+						var constant interface{}
+						if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Constant.IsNull() {
+							_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Constant.ValueString()), &constant)
+						}
+						type1 := new(shared.RepeatableFieldType)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Type.IsNull() {
+							*type1 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Type.ValueString())
+						} else {
+							type1 = nil
+						}
+						var enabled2 *shared.IntegrationEntityFieldEnabled
+						if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled != nil {
+							boolean1 := new(bool)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Boolean.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Boolean.IsNull() {
+								*boolean1 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Boolean.ValueBool()
+							} else {
+								boolean1 = nil
+							}
+							if boolean1 != nil {
+								enabled2 = &shared.IntegrationEntityFieldEnabled{
+									Boolean: boolean1,
+								}
+							}
+							str1 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Str.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Str.IsNull() {
+								*str1 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Str.ValueString()
+							} else {
+								str1 = nil
+							}
+							if str1 != nil {
+								enabled2 = &shared.IntegrationEntityFieldEnabled{
+									Str: str1,
+								}
+							}
+						}
+						var relations *shared.RelationConfig
+						if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations != nil {
+							operation := shared.Operation(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Operation.ValueString())
+							items := make([]shared.RelationItemConfig, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items))
+							for itemsIndex := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items {
+								var entitySchema1 string
+								entitySchema1 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].EntitySchema.ValueString()
+
+								tags := make([]string, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].Tags))
+								for tagsIndex := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].Tags {
+									tags = append(tags, r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].Tags[tagsIndex].ValueString())
+								}
+								uniqueIds1 := make([]shared.RelationUniqueIDField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds))
+								for uniqueIdsIndex1 := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds {
+									var attribute1 string
+									attribute1 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Attribute.ValueString()
+
+									type2 := new(shared.RepeatableFieldType)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Type.IsNull() {
+										*type2 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Type.ValueString())
+									} else {
+										type2 = nil
+									}
+									field1 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Field.IsNull() {
+										*field1 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Field.ValueString()
+									} else {
+										field1 = nil
+									}
+									jsonataExpression2 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].JsonataExpression.IsNull() {
+										*jsonataExpression2 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].JsonataExpression.ValueString()
+									} else {
+										jsonataExpression2 = nil
+									}
+									var constant1 interface{}
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Constant.IsNull() {
+										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.Items[itemsIndex].UniqueIds[uniqueIdsIndex1].Constant.ValueString()), &constant1)
+									}
+									uniqueIds1 = append(uniqueIds1, shared.RelationUniqueIDField{
+										Attribute:         attribute1,
+										Type:              type2,
+										Field:             field1,
+										JsonataExpression: jsonataExpression2,
+										Constant:          constant1,
+									})
+								}
+								items = append(items, shared.RelationItemConfig{
+									EntitySchema: entitySchema1,
+									Tags:         tags,
+									UniqueIds:    uniqueIds1,
+								})
+							}
+							jsonataExpression3 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.JsonataExpression.IsNull() {
+								*jsonataExpression3 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Relations.JsonataExpression.ValueString()
+							} else {
+								jsonataExpression3 = nil
+							}
+							relations = &shared.RelationConfig{
+								Operation:         operation,
+								Items:             items,
+								JsonataExpression: jsonataExpression3,
+							}
+						}
+						var relationRefs *shared.RelationRefsConfig
+						if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs != nil {
+							operation1 := shared.RelationRefsConfigOperation(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Operation.ValueString())
+							items1 := make([]shared.RelationRefItemConfig, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items))
+							for itemsIndex1 := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items {
+								var entitySchema2 string
+								entitySchema2 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].EntitySchema.ValueString()
+
+								uniqueIds2 := make([]shared.RelationUniqueIDField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds))
+								for uniqueIdsIndex2 := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds {
+									var attribute2 string
+									attribute2 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Attribute.ValueString()
+
+									type3 := new(shared.RepeatableFieldType)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Type.IsNull() {
+										*type3 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Type.ValueString())
+									} else {
+										type3 = nil
+									}
+									field2 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Field.IsNull() {
+										*field2 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Field.ValueString()
+									} else {
+										field2 = nil
+									}
+									jsonataExpression4 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].JsonataExpression.IsNull() {
+										*jsonataExpression4 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].JsonataExpression.ValueString()
+									} else {
+										jsonataExpression4 = nil
+									}
+									var constant2 interface{}
+									if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Constant.IsNull() {
+										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].UniqueIds[uniqueIdsIndex2].Constant.ValueString()), &constant2)
+									}
+									uniqueIds2 = append(uniqueIds2, shared.RelationUniqueIDField{
+										Attribute:         attribute2,
+										Type:              type3,
+										Field:             field2,
+										JsonataExpression: jsonataExpression4,
+										Constant:          constant2,
+									})
+								}
+								var path string
+								path = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Path.ValueString()
+
+								var attribute3 string
+								attribute3 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Attribute.ValueString()
+
+								operation2 := new(shared.RelationRefValueConfigOperation)
+								if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Operation.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Operation.IsNull() {
+									*operation2 = shared.RelationRefValueConfigOperation(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Operation.ValueString())
+								} else {
+									operation2 = nil
+								}
+								field3 := new(string)
+								if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Field.IsNull() {
+									*field3 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Field.ValueString()
+								} else {
+									field3 = nil
+								}
+								jsonataExpression5 := new(string)
+								if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.JsonataExpression.IsNull() {
+									*jsonataExpression5 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.JsonataExpression.ValueString()
+								} else {
+									jsonataExpression5 = nil
+								}
+								var constant3 interface{}
+								if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Constant.IsNull() {
+									_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.Items[itemsIndex1].Value.Constant.ValueString()), &constant3)
+								}
+								value := shared.RelationRefValueConfig{
+									Attribute:         attribute3,
+									Operation:         operation2,
+									Field:             field3,
+									JsonataExpression: jsonataExpression5,
+									Constant:          constant3,
+								}
+								items1 = append(items1, shared.RelationRefItemConfig{
+									EntitySchema: entitySchema2,
+									UniqueIds:    uniqueIds2,
+									Path:         path,
+									Value:        value,
+								})
+							}
+							jsonataExpression6 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.JsonataExpression.IsNull() {
+								*jsonataExpression6 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].RelationRefs.JsonataExpression.ValueString()
+							} else {
+								jsonataExpression6 = nil
+							}
+							relationRefs = &shared.RelationRefsConfig{
+								Operation:         operation1,
+								Items:             items1,
+								JsonataExpression: jsonataExpression6,
+							}
+						}
+						fields = append(fields, shared.IntegrationEntityField{
+							Attribute:         attribute,
+							Field:             field,
+							JsonataExpression: jsonataExpression1,
+							Constant:          constant,
+							Type:              type1,
+							Enabled:           enabled2,
+							Relations:         relations,
+							RelationRefs:      relationRefs,
+						})
+					}
+					entities = append(entities, shared.IntegrationEntity{
+						EntitySchema:      entitySchema,
+						UniqueIds:         uniqueIds,
+						JsonataExpression: jsonataExpression,
+						Enabled:           enabled1,
+						Fields:            fields,
+					})
+				}
+				meterReadings := make([]shared.IntegrationMeterReading, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings))
+				for meterReadingsIndex := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings {
+					jsonataExpression7 := new(string)
+					if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].JsonataExpression.IsNull() {
+						*jsonataExpression7 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].JsonataExpression.ValueString()
+					} else {
+						jsonataExpression7 = nil
+					}
+					readingMatching := new(shared.ReadingMatching)
+					if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].ReadingMatching.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].ReadingMatching.IsNull() {
+						*readingMatching = shared.ReadingMatching(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].ReadingMatching.ValueString())
+					} else {
+						readingMatching = nil
+					}
+					uniqueIds3 := make([]shared.RelationUniqueIDField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds))
+					for uniqueIdsIndex3 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds {
+						var attribute4 string
+						attribute4 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Attribute.ValueString()
+
+						type4 := new(shared.RepeatableFieldType)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Type.IsNull() {
+							*type4 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Type.ValueString())
+						} else {
+							type4 = nil
+						}
+						field4 := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Field.IsNull() {
+							*field4 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Field.ValueString()
+						} else {
+							field4 = nil
+						}
+						jsonataExpression8 := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].JsonataExpression.IsNull() {
+							*jsonataExpression8 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].JsonataExpression.ValueString()
+						} else {
+							jsonataExpression8 = nil
+						}
+						var constant4 interface{}
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Constant.IsNull() {
+							_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex3].Constant.ValueString()), &constant4)
+						}
+						uniqueIds3 = append(uniqueIds3, shared.RelationUniqueIDField{
+							Attribute:         attribute4,
+							Type:              type4,
+							Field:             field4,
+							JsonataExpression: jsonataExpression8,
+							Constant:          constant4,
+						})
+					}
+					meter := shared.MeterUniqueIdsConfig{
+						UniqueIds: uniqueIds3,
+					}
+					var meterCounter *shared.MeterUniqueIdsConfig
+					if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter != nil {
+						uniqueIds4 := make([]shared.RelationUniqueIDField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds))
+						for uniqueIdsIndex4 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds {
+							var attribute5 string
+							attribute5 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Attribute.ValueString()
+
+							type5 := new(shared.RepeatableFieldType)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Type.IsNull() {
+								*type5 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Type.ValueString())
+							} else {
+								type5 = nil
+							}
+							field5 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Field.IsNull() {
+								*field5 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Field.ValueString()
+							} else {
+								field5 = nil
+							}
+							jsonataExpression9 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].JsonataExpression.IsNull() {
+								*jsonataExpression9 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].JsonataExpression.ValueString()
+							} else {
+								jsonataExpression9 = nil
+							}
+							var constant5 interface{}
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Constant.IsNull() {
+								_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex4].Constant.ValueString()), &constant5)
+							}
+							uniqueIds4 = append(uniqueIds4, shared.RelationUniqueIDField{
+								Attribute:         attribute5,
+								Type:              type5,
+								Field:             field5,
+								JsonataExpression: jsonataExpression9,
+								Constant:          constant5,
+							})
+						}
+						meterCounter = &shared.MeterUniqueIdsConfig{
+							UniqueIds: uniqueIds4,
+						}
+					}
+					fields1 := make([]shared.IntegrationEntityField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields))
+					for fieldsIndex1 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields {
+						var attribute6 string
+						attribute6 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Attribute.ValueString()
+
+						field6 := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Field.IsNull() {
+							*field6 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Field.ValueString()
+						} else {
+							field6 = nil
+						}
+						jsonataExpression10 := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].JsonataExpression.IsNull() {
+							*jsonataExpression10 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].JsonataExpression.ValueString()
+						} else {
+							jsonataExpression10 = nil
+						}
+						var constant6 interface{}
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Constant.IsNull() {
+							_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Constant.ValueString()), &constant6)
+						}
+						type6 := new(shared.RepeatableFieldType)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Type.IsNull() {
+							*type6 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Type.ValueString())
+						} else {
+							type6 = nil
+						}
+						var enabled3 *shared.IntegrationEntityFieldEnabled
+						if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled != nil {
+							boolean2 := new(bool)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Boolean.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Boolean.IsNull() {
+								*boolean2 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Boolean.ValueBool()
+							} else {
+								boolean2 = nil
+							}
+							if boolean2 != nil {
+								enabled3 = &shared.IntegrationEntityFieldEnabled{
+									Boolean: boolean2,
+								}
+							}
+							str2 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Str.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Str.IsNull() {
+								*str2 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Str.ValueString()
+							} else {
+								str2 = nil
+							}
+							if str2 != nil {
+								enabled3 = &shared.IntegrationEntityFieldEnabled{
+									Str: str2,
+								}
+							}
+						}
+						var relations1 *shared.RelationConfig
+						if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations != nil {
+							operation3 := shared.Operation(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Operation.ValueString())
+							items2 := make([]shared.RelationItemConfig, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items))
+							for itemsIndex2 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items {
+								var entitySchema3 string
+								entitySchema3 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].EntitySchema.ValueString()
+
+								tags1 := make([]string, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].Tags))
+								for tagsIndex1 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].Tags {
+									tags1 = append(tags1, r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].Tags[tagsIndex1].ValueString())
+								}
+								uniqueIds5 := make([]shared.RelationUniqueIDField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds))
+								for uniqueIdsIndex5 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds {
+									var attribute7 string
+									attribute7 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Attribute.ValueString()
+
+									type7 := new(shared.RepeatableFieldType)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Type.IsNull() {
+										*type7 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Type.ValueString())
+									} else {
+										type7 = nil
+									}
+									field7 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Field.IsNull() {
+										*field7 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Field.ValueString()
+									} else {
+										field7 = nil
+									}
+									jsonataExpression11 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].JsonataExpression.IsNull() {
+										*jsonataExpression11 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].JsonataExpression.ValueString()
+									} else {
+										jsonataExpression11 = nil
+									}
+									var constant7 interface{}
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Constant.IsNull() {
+										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex5].Constant.ValueString()), &constant7)
+									}
+									uniqueIds5 = append(uniqueIds5, shared.RelationUniqueIDField{
+										Attribute:         attribute7,
+										Type:              type7,
+										Field:             field7,
+										JsonataExpression: jsonataExpression11,
+										Constant:          constant7,
+									})
+								}
+								items2 = append(items2, shared.RelationItemConfig{
+									EntitySchema: entitySchema3,
+									Tags:         tags1,
+									UniqueIds:    uniqueIds5,
+								})
+							}
+							jsonataExpression12 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.JsonataExpression.IsNull() {
+								*jsonataExpression12 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.JsonataExpression.ValueString()
+							} else {
+								jsonataExpression12 = nil
+							}
+							relations1 = &shared.RelationConfig{
+								Operation:         operation3,
+								Items:             items2,
+								JsonataExpression: jsonataExpression12,
+							}
+						}
+						var relationRefs1 *shared.RelationRefsConfig
+						if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs != nil {
+							operation4 := shared.RelationRefsConfigOperation(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Operation.ValueString())
+							items3 := make([]shared.RelationRefItemConfig, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items))
+							for itemsIndex3 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items {
+								var entitySchema4 string
+								entitySchema4 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].EntitySchema.ValueString()
+
+								uniqueIds6 := make([]shared.RelationUniqueIDField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds))
+								for uniqueIdsIndex6 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds {
+									var attribute8 string
+									attribute8 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Attribute.ValueString()
+
+									type8 := new(shared.RepeatableFieldType)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Type.IsNull() {
+										*type8 = shared.RepeatableFieldType(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Type.ValueString())
+									} else {
+										type8 = nil
+									}
+									field8 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Field.IsNull() {
+										*field8 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Field.ValueString()
+									} else {
+										field8 = nil
+									}
+									jsonataExpression13 := new(string)
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].JsonataExpression.IsNull() {
+										*jsonataExpression13 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].JsonataExpression.ValueString()
+									} else {
+										jsonataExpression13 = nil
+									}
+									var constant8 interface{}
+									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Constant.IsNull() {
+										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex6].Constant.ValueString()), &constant8)
+									}
+									uniqueIds6 = append(uniqueIds6, shared.RelationUniqueIDField{
+										Attribute:         attribute8,
+										Type:              type8,
+										Field:             field8,
+										JsonataExpression: jsonataExpression13,
+										Constant:          constant8,
+									})
+								}
+								var path1 string
+								path1 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Path.ValueString()
+
+								var attribute9 string
+								attribute9 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Attribute.ValueString()
+
+								operation5 := new(shared.RelationRefValueConfigOperation)
+								if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Operation.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Operation.IsNull() {
+									*operation5 = shared.RelationRefValueConfigOperation(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Operation.ValueString())
+								} else {
+									operation5 = nil
+								}
+								field9 := new(string)
+								if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Field.IsNull() {
+									*field9 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Field.ValueString()
+								} else {
+									field9 = nil
+								}
+								jsonataExpression14 := new(string)
+								if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.JsonataExpression.IsNull() {
+									*jsonataExpression14 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.JsonataExpression.ValueString()
+								} else {
+									jsonataExpression14 = nil
+								}
+								var constant9 interface{}
+								if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Constant.IsNull() {
+									_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Constant.ValueString()), &constant9)
+								}
+								value1 := shared.RelationRefValueConfig{
+									Attribute:         attribute9,
+									Operation:         operation5,
+									Field:             field9,
+									JsonataExpression: jsonataExpression14,
+									Constant:          constant9,
+								}
+								items3 = append(items3, shared.RelationRefItemConfig{
+									EntitySchema: entitySchema4,
+									UniqueIds:    uniqueIds6,
+									Path:         path1,
+									Value:        value1,
+								})
+							}
+							jsonataExpression15 := new(string)
+							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.JsonataExpression.IsNull() {
+								*jsonataExpression15 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.JsonataExpression.ValueString()
+							} else {
+								jsonataExpression15 = nil
+							}
+							relationRefs1 = &shared.RelationRefsConfig{
+								Operation:         operation4,
+								Items:             items3,
+								JsonataExpression: jsonataExpression15,
+							}
+						}
+						fields1 = append(fields1, shared.IntegrationEntityField{
+							Attribute:         attribute6,
+							Field:             field6,
+							JsonataExpression: jsonataExpression10,
+							Constant:          constant6,
+							Type:              type6,
+							Enabled:           enabled3,
+							Relations:         relations1,
+							RelationRefs:      relationRefs1,
+						})
+					}
+					meterReadings = append(meterReadings, shared.IntegrationMeterReading{
+						JsonataExpression: jsonataExpression7,
+						ReadingMatching:   readingMatching,
+						Meter:             meter,
+						MeterCounter:      meterCounter,
+						Fields:            fields1,
+					})
+				}
+				configuration = &shared.InboundIntegrationEventConfiguration{
+					Entities:      entities,
+					MeterReadings: meterReadings,
+				}
+			}
+			embeddedInboundUseCaseRequest := shared.EmbeddedInboundUseCaseRequest{
+				ID:                id,
+				Name:              name1,
+				Enabled:           enabled,
+				ChangeDescription: changeDescription,
+				Type:              typeVar,
+				Configuration:     configuration,
+			}
+			useCases = append(useCases, shared.EmbeddedUseCaseRequest{
+				EmbeddedInboundUseCaseRequest: &embeddedInboundUseCaseRequest,
+			})
+		}
+		if r.UseCases[useCasesItem].Outbound != nil {
+			id1 := new(string)
+			if !r.UseCases[useCasesItem].Outbound.ID.IsUnknown() && !r.UseCases[useCasesItem].Outbound.ID.IsNull() {
+				*id1 = r.UseCases[useCasesItem].Outbound.ID.ValueString()
+			} else {
+				id1 = nil
+			}
+			var name2 string
+			name2 = r.UseCases[useCasesItem].Outbound.Name.ValueString()
+
+			var enabled4 bool
+			enabled4 = r.UseCases[useCasesItem].Outbound.Enabled.ValueBool()
+
+			changeDescription1 := new(string)
+			if !r.UseCases[useCasesItem].Outbound.ChangeDescription.IsUnknown() && !r.UseCases[useCasesItem].Outbound.ChangeDescription.IsNull() {
+				*changeDescription1 = r.UseCases[useCasesItem].Outbound.ChangeDescription.ValueString()
+			} else {
+				changeDescription1 = nil
+			}
+			typeVar1 := shared.EmbeddedOutboundUseCaseRequestType(r.UseCases[useCasesItem].Outbound.Type.ValueString())
+			configuration1 := make(map[string]interface{})
+			for configurationKey := range r.UseCases[useCasesItem].Outbound.Configuration {
+				var configurationInst interface{}
+				_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Outbound.Configuration[configurationKey].ValueString()), &configurationInst)
+				configuration1[configurationKey] = configurationInst
+			}
+			embeddedOutboundUseCaseRequest := shared.EmbeddedOutboundUseCaseRequest{
+				ID:                id1,
+				Name:              name2,
+				Enabled:           enabled4,
+				ChangeDescription: changeDescription1,
+				Type:              typeVar1,
+				Configuration:     configuration1,
+			}
+			useCases = append(useCases, shared.EmbeddedUseCaseRequest{
+				EmbeddedOutboundUseCaseRequest: &embeddedOutboundUseCaseRequest,
+			})
+		}
+	}
+	out := shared.UpsertIntegrationWithUseCasesRequest{
 		Name:        name,
 		Description: description,
-	}
-
-	return &out, diags
-}
-
-func (r *IntegrationResourceModel) ToSharedUpdateIntegrationRequest(ctx context.Context) (*shared.UpdateIntegrationRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	name := new(string)
-	if !r.Name.IsUnknown() && !r.Name.IsNull() {
-		*name = r.Name.ValueString()
-	} else {
-		name = nil
-	}
-	description := new(string)
-	if !r.Description.IsUnknown() && !r.Description.IsNull() {
-		*description = r.Description.ValueString()
-	} else {
-		description = nil
-	}
-	out := shared.UpdateIntegrationRequest{
-		Name:        name,
-		Description: description,
+		UseCases:    useCases,
 	}
 
 	return &out, diags

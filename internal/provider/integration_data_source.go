@@ -5,7 +5,9 @@ package provider
 import (
 	"context"
 	"fmt"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,12 +30,13 @@ type IntegrationDataSource struct {
 
 // IntegrationDataSourceModel describes the data model.
 type IntegrationDataSourceModel struct {
-	CreatedAt   types.String `tfsdk:"created_at"`
-	Description types.String `tfsdk:"description"`
-	ID          types.String `tfsdk:"id"`
-	Name        types.String `tfsdk:"name"`
-	OrgID       types.String `tfsdk:"org_id"`
-	UpdatedAt   types.String `tfsdk:"updated_at"`
+	CreatedAt   types.String       `tfsdk:"created_at"`
+	Description types.String       `tfsdk:"description"`
+	ID          types.String       `tfsdk:"id"`
+	Name        types.String       `tfsdk:"name"`
+	OrgID       types.String       `tfsdk:"org_id"`
+	UpdatedAt   types.String       `tfsdk:"updated_at"`
+	UseCases    []tfTypes.UseCase1 `tfsdk:"use_cases"`
 }
 
 // Metadata returns the data source type name.
@@ -70,6 +73,609 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 			"updated_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was last updated`,
+			},
+			"use_cases": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"inbound": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"change_description": schema.StringAttribute{
+									Computed: true,
+								},
+								"configuration": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"entities": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"enabled": schema.SingleNestedAttribute{
+														Computed: true,
+														Attributes: map[string]schema.Attribute{
+															"boolean": schema.BoolAttribute{
+																Computed: true,
+															},
+															"str": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														Description: `Controls whether this entity mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean.`,
+													},
+													"entity_schema": schema.StringAttribute{
+														Computed:    true,
+														Description: `Target entity schema (e.g., 'contact', 'contract')`,
+													},
+													"fields": schema.ListNestedAttribute{
+														Computed: true,
+														NestedObject: schema.NestedAttributeObject{
+															Attributes: map[string]schema.Attribute{
+																"attribute": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Target attribute name`,
+																},
+																"constant": schema.StringAttribute{
+																	CustomType:  jsontypes.NormalizedType{},
+																	Computed:    true,
+																	Description: `Constant value to assign (any type). Parsed as JSON.`,
+																},
+																"enabled": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"boolean": schema.BoolAttribute{
+																			Computed: true,
+																		},
+																		"str": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	Description: `Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted.`,
+																},
+																"field": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"jsonata_expression": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `JSONata expression for transformation`,
+																},
+																"relation_refs": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Description: `Schema of the related entity (e.g., "contact")`,
+																					},
+																					"path": schema.StringAttribute{
+																						Computed:    true,
+																						Description: `Attribute path on the related entity (e.g., "address")`,
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Target attribute name in the related entity`,
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity`,
+																					},
+																					"value": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"attribute": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `Target attribute name on the related entity`,
+																							},
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Description: `Constant value (any type). Parsed as JSON.`,
+																							},
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `Source field name from the event data`,
+																							},
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `JSONata expression to compute the value`,
+																							},
+																							"operation": schema.StringAttribute{
+																								Computed: true,
+																								MarkdownDescription: `Operation for the attribute value:` + "\n" +
+																									`- '_set': Replace the attribute value` + "\n" +
+																									`- '_append': Add new unique items (deduplicates)` + "\n" +
+																									`- '_append_all': Add all items (no deduplication)`,
+																							},
+																						},
+																						Description: `Configuration for the value to set on the related entity's attribute`,
+																					},
+																				},
+																			},
+																			Description: `Array of relation reference item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `JSONata expression that returns relation_ref items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			MarkdownDescription: `Relation reference operation:` + "\n" +
+																				`- '_set': Replace all existing relation_refs with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relation_refs (deduplicates by entity_id + _id)` + "\n" +
+																				`- '_append_all': Add all items to existing relation_refs (no deduplication, allows duplicates)`,
+																		},
+																	},
+																	MarkdownDescription: `Configuration for relation references ($relation_ref).` + "\n" +
+																		`Relation references link to a specific item within a repeatable attribute on a related entity.` + "\n" +
+																		`Common use case: referencing a specific address within a contact's address list.`,
+																},
+																"relations": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Description: `Related entity schema`,
+																					},
+																					"tags": schema.ListAttribute{
+																						Computed:    true,
+																						ElementType: types.StringType,
+																						Description: `Optional tags for this relation`,
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Target attribute name in the related entity`,
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity`,
+																					},
+																				},
+																			},
+																			Description: `Array of relation item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `JSONata expression that returns relation items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			MarkdownDescription: `Relation operation:` + "\n" +
+																				`- '_set': Replace all existing relations with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relations (deduplicates by entity_id)` + "\n" +
+																				`- '_append_all': Add all items to existing relations (no deduplication, allows duplicates)`,
+																		},
+																	},
+																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																		`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																},
+															},
+														},
+														Description: `Field mapping definitions`,
+													},
+													"jsonata_expression": schema.StringAttribute{
+														Computed:    true,
+														Description: `Optional JSONata expression to pre-process the event data before field mapping`,
+													},
+													"unique_ids": schema.ListAttribute{
+														Computed:    true,
+														ElementType: types.StringType,
+														MarkdownDescription: `Array of attribute names that uniquely identify this entity.` + "\n" +
+															`The _type hint for repeatable fields (e.g., email, phone) should be specified` + "\n" +
+															`on the corresponding field definition in the fields array.`,
+													},
+												},
+											},
+											Description: `Array of entity configurations for this event`,
+										},
+										"meter_readings": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"fields": schema.ListNestedAttribute{
+														Computed: true,
+														NestedObject: schema.NestedAttributeObject{
+															Attributes: map[string]schema.Attribute{
+																"attribute": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Target attribute name`,
+																},
+																"constant": schema.StringAttribute{
+																	CustomType:  jsontypes.NormalizedType{},
+																	Computed:    true,
+																	Description: `Constant value to assign (any type). Parsed as JSON.`,
+																},
+																"enabled": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"boolean": schema.BoolAttribute{
+																			Computed: true,
+																		},
+																		"str": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	Description: `Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted.`,
+																},
+																"field": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"jsonata_expression": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `JSONata expression for transformation`,
+																},
+																"relation_refs": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Description: `Schema of the related entity (e.g., "contact")`,
+																					},
+																					"path": schema.StringAttribute{
+																						Computed:    true,
+																						Description: `Attribute path on the related entity (e.g., "address")`,
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Target attribute name in the related entity`,
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity`,
+																					},
+																					"value": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"attribute": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `Target attribute name on the related entity`,
+																							},
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Description: `Constant value (any type). Parsed as JSON.`,
+																							},
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `Source field name from the event data`,
+																							},
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `JSONata expression to compute the value`,
+																							},
+																							"operation": schema.StringAttribute{
+																								Computed: true,
+																								MarkdownDescription: `Operation for the attribute value:` + "\n" +
+																									`- '_set': Replace the attribute value` + "\n" +
+																									`- '_append': Add new unique items (deduplicates)` + "\n" +
+																									`- '_append_all': Add all items (no deduplication)`,
+																							},
+																						},
+																						Description: `Configuration for the value to set on the related entity's attribute`,
+																					},
+																				},
+																			},
+																			Description: `Array of relation reference item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `JSONata expression that returns relation_ref items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			MarkdownDescription: `Relation reference operation:` + "\n" +
+																				`- '_set': Replace all existing relation_refs with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relation_refs (deduplicates by entity_id + _id)` + "\n" +
+																				`- '_append_all': Add all items to existing relation_refs (no deduplication, allows duplicates)`,
+																		},
+																	},
+																	MarkdownDescription: `Configuration for relation references ($relation_ref).` + "\n" +
+																		`Relation references link to a specific item within a repeatable attribute on a related entity.` + "\n" +
+																		`Common use case: referencing a specific address within a contact's address list.`,
+																},
+																"relations": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Description: `Related entity schema`,
+																					},
+																					"tags": schema.ListAttribute{
+																						Computed:    true,
+																						ElementType: types.StringType,
+																						Description: `Optional tags for this relation`,
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Target attribute name in the related entity`,
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity`,
+																					},
+																				},
+																			},
+																			Description: `Array of relation item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `JSONata expression that returns relation items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			MarkdownDescription: `Relation operation:` + "\n" +
+																				`- '_set': Replace all existing relations with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relations (deduplicates by entity_id)` + "\n" +
+																				`- '_append_all': Add all items to existing relations (no deduplication, allows duplicates)`,
+																		},
+																	},
+																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																		`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																},
+															},
+														},
+														Description: `Field mapping definitions for meter reading attributes`,
+													},
+													"jsonata_expression": schema.StringAttribute{
+														Computed: true,
+														MarkdownDescription: `Optional JSONata expression to extract meter reading items from the event data.` + "\n" +
+															`If not provided, the entire payload is used as the reading data.` + "\n" +
+															`Useful when you need to extract an array of readings from a nested structure (e.g., "$.readings").`,
+													},
+													"meter": schema.SingleNestedAttribute{
+														Computed: true,
+														Attributes: map[string]schema.Attribute{
+															"unique_ids": schema.ListNestedAttribute{
+																Computed: true,
+																NestedObject: schema.NestedAttributeObject{
+																	Attributes: map[string]schema.Attribute{
+																		"attribute": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `Target attribute name in the related entity`,
+																		},
+																		"constant": schema.StringAttribute{
+																			CustomType:  jsontypes.NormalizedType{},
+																			Computed:    true,
+																			Description: `Constant value (any type). Parsed as JSON.`,
+																		},
+																		"field": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `Source field name from the event data`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `JSONata expression to compute the value`,
+																		},
+																		"type": schema.StringAttribute{
+																			Computed: true,
+																			MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																				`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																		},
+																	},
+																},
+																Description: `Array of unique identifier field mappings`,
+															},
+														},
+													},
+													"meter_counter": schema.SingleNestedAttribute{
+														Computed: true,
+														Attributes: map[string]schema.Attribute{
+															"unique_ids": schema.ListNestedAttribute{
+																Computed: true,
+																NestedObject: schema.NestedAttributeObject{
+																	Attributes: map[string]schema.Attribute{
+																		"attribute": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `Target attribute name in the related entity`,
+																		},
+																		"constant": schema.StringAttribute{
+																			CustomType:  jsontypes.NormalizedType{},
+																			Computed:    true,
+																			Description: `Constant value (any type). Parsed as JSON.`,
+																		},
+																		"field": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `Source field name from the event data`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `JSONata expression to compute the value`,
+																		},
+																		"type": schema.StringAttribute{
+																			Computed: true,
+																			MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																				`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).`,
+																		},
+																	},
+																},
+																Description: `Array of unique identifier field mappings`,
+															},
+														},
+													},
+													"reading_matching": schema.StringAttribute{
+														Computed: true,
+														MarkdownDescription: `Strategy for matching incoming readings against existing readings.` + "\n" +
+															`- 'external_id': Match readings by external_id attribute (default behavior)` + "\n" +
+															`- 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).` + "\n" +
+															`  Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.`,
+													},
+												},
+											},
+											Description: `Array of meter reading configurations for this event`,
+										},
+									},
+									Description: `Configuration for inbound use cases (ERP to epilot)`,
+								},
+								"created_at": schema.StringAttribute{
+									Computed: true,
+								},
+								"enabled": schema.BoolAttribute{
+									Computed: true,
+								},
+								"id": schema.StringAttribute{
+									Computed: true,
+								},
+								"integration_id": schema.StringAttribute{
+									Computed: true,
+								},
+								"name": schema.StringAttribute{
+									Computed: true,
+								},
+								"type": schema.StringAttribute{
+									Computed: true,
+								},
+								"updated_at": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
+						"outbound": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"change_description": schema.StringAttribute{
+									Computed: true,
+								},
+								"configuration": schema.MapAttribute{
+									Computed:    true,
+									ElementType: jsontypes.NormalizedType{},
+									Description: `Configuration for outbound use cases (epilot to ERP). Structure TBD.`,
+								},
+								"created_at": schema.StringAttribute{
+									Computed: true,
+								},
+								"enabled": schema.BoolAttribute{
+									Computed: true,
+								},
+								"id": schema.StringAttribute{
+									Computed: true,
+								},
+								"integration_id": schema.StringAttribute{
+									Computed: true,
+								},
+								"name": schema.StringAttribute{
+									Computed: true,
+								},
+								"type": schema.StringAttribute{
+									Computed: true,
+								},
+								"updated_at": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
+					},
+				},
+				Description: `All use cases belonging to this integration`,
 			},
 		},
 	}
@@ -113,13 +719,13 @@ func (r *IntegrationDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsGetIntegrationRequest(ctx)
+	request, requestDiags := data.ToOperationsGetIntegrationV2Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.GetIntegration(ctx, *request)
+	res, err := r.client.Integrations.GetIntegrationV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -135,11 +741,11 @@ func (r *IntegrationDataSource) Read(ctx context.Context, req datasource.ReadReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.Integration != nil) {
+	if !(res.IntegrationWithUseCases != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedIntegration(ctx, res.Integration)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedIntegrationWithUseCases(ctx, res.IntegrationWithUseCases)...)
 
 	if resp.Diagnostics.HasError() {
 		return

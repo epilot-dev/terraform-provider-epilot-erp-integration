@@ -7,252 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
-	"time"
 )
-
-// SchemasType - Use case type
-type SchemasType string
-
-const (
-	SchemasTypeInbound  SchemasType = "inbound"
-	SchemasTypeOutbound SchemasType = "outbound"
-)
-
-func (e SchemasType) ToPointer() *SchemasType {
-	return &e
-}
-func (e *SchemasType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "inbound":
-		fallthrough
-	case "outbound":
-		*e = SchemasType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for SchemasType: %v", v)
-	}
-}
-
-type OutboundUseCaseSchemas struct {
-	// Use case type
-	Type SchemasType `json:"type"`
-	// Configuration for outbound use cases (epilot to ERP). Structure TBD.
-	Configuration map[string]any `json:"configuration,omitempty"`
-	// Unique identifier for the use case
-	ID string `json:"id"`
-	// Parent integration ID
-	IntegrationID string `json:"integrationId"`
-	// Use case name
-	Name string `json:"name"`
-	// Whether the use case is enabled
-	Enabled bool `json:"enabled"`
-	// Description of the last change made to this use case
-	ChangeDescription *string `json:"change_description,omitempty"`
-	// ISO-8601 timestamp when the use case was created
-	CreatedAt time.Time `json:"created_at"`
-	// ISO-8601 timestamp when the use case was last updated
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func (o OutboundUseCaseSchemas) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(o, "", false)
-}
-
-func (o *OutboundUseCaseSchemas) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (o *OutboundUseCaseSchemas) GetType() SchemasType {
-	if o == nil {
-		return SchemasType("")
-	}
-	return o.Type
-}
-
-func (o *OutboundUseCaseSchemas) GetConfiguration() map[string]any {
-	if o == nil {
-		return nil
-	}
-	return o.Configuration
-}
-
-func (o *OutboundUseCaseSchemas) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *OutboundUseCaseSchemas) GetIntegrationID() string {
-	if o == nil {
-		return ""
-	}
-	return o.IntegrationID
-}
-
-func (o *OutboundUseCaseSchemas) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-func (o *OutboundUseCaseSchemas) GetEnabled() bool {
-	if o == nil {
-		return false
-	}
-	return o.Enabled
-}
-
-func (o *OutboundUseCaseSchemas) GetChangeDescription() *string {
-	if o == nil {
-		return nil
-	}
-	return o.ChangeDescription
-}
-
-func (o *OutboundUseCaseSchemas) GetCreatedAt() time.Time {
-	if o == nil {
-		return time.Time{}
-	}
-	return o.CreatedAt
-}
-
-func (o *OutboundUseCaseSchemas) GetUpdatedAt() time.Time {
-	if o == nil {
-		return time.Time{}
-	}
-	return o.UpdatedAt
-}
-
-// Type - Use case type
-type Type string
-
-const (
-	TypeInbound  Type = "inbound"
-	TypeOutbound Type = "outbound"
-)
-
-func (e Type) ToPointer() *Type {
-	return &e
-}
-func (e *Type) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "inbound":
-		fallthrough
-	case "outbound":
-		*e = Type(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Type: %v", v)
-	}
-}
-
-type Schemas struct {
-	// Use case type
-	Type Type `json:"type"`
-	// Configuration for inbound use cases (ERP to epilot)
-	Configuration *InboundIntegrationEventConfiguration `json:"configuration,omitempty"`
-	// Unique identifier for the use case
-	ID string `json:"id"`
-	// Parent integration ID
-	IntegrationID string `json:"integrationId"`
-	// Use case name
-	Name string `json:"name"`
-	// Whether the use case is enabled
-	Enabled bool `json:"enabled"`
-	// Description of the last change made to this use case
-	ChangeDescription *string `json:"change_description,omitempty"`
-	// ISO-8601 timestamp when the use case was created
-	CreatedAt time.Time `json:"created_at"`
-	// ISO-8601 timestamp when the use case was last updated
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func (s Schemas) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(s, "", false)
-}
-
-func (s *Schemas) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *Schemas) GetType() Type {
-	if s == nil {
-		return Type("")
-	}
-	return s.Type
-}
-
-func (s *Schemas) GetConfiguration() *InboundIntegrationEventConfiguration {
-	if s == nil {
-		return nil
-	}
-	return s.Configuration
-}
-
-func (s *Schemas) GetID() string {
-	if s == nil {
-		return ""
-	}
-	return s.ID
-}
-
-func (s *Schemas) GetIntegrationID() string {
-	if s == nil {
-		return ""
-	}
-	return s.IntegrationID
-}
-
-func (s *Schemas) GetName() string {
-	if s == nil {
-		return ""
-	}
-	return s.Name
-}
-
-func (s *Schemas) GetEnabled() bool {
-	if s == nil {
-		return false
-	}
-	return s.Enabled
-}
-
-func (s *Schemas) GetChangeDescription() *string {
-	if s == nil {
-		return nil
-	}
-	return s.ChangeDescription
-}
-
-func (s *Schemas) GetCreatedAt() time.Time {
-	if s == nil {
-		return time.Time{}
-	}
-	return s.CreatedAt
-}
-
-func (s *Schemas) GetUpdatedAt() time.Time {
-	if s == nil {
-		return time.Time{}
-	}
-	return s.UpdatedAt
-}
 
 type UseCaseType string
 
@@ -262,33 +17,33 @@ const (
 )
 
 type UseCase struct {
-	Schemas                *Schemas                `queryParam:"inline" union:"member"`
-	OutboundUseCaseSchemas *OutboundUseCaseSchemas `queryParam:"inline" union:"member"`
+	InboundUseCase  *InboundUseCase  `queryParam:"inline" union:"member"`
+	OutboundUseCase *OutboundUseCase `queryParam:"inline" union:"member"`
 
 	Type UseCaseType
 }
 
-func CreateUseCaseInbound(inbound Schemas) UseCase {
+func CreateUseCaseInbound(inbound InboundUseCase) UseCase {
 	typ := UseCaseTypeInbound
 
 	typStr := Type(typ)
 	inbound.Type = typStr
 
 	return UseCase{
-		Schemas: &inbound,
-		Type:    typ,
+		InboundUseCase: &inbound,
+		Type:           typ,
 	}
 }
 
-func CreateUseCaseOutbound(outbound OutboundUseCaseSchemas) UseCase {
+func CreateUseCaseOutbound(outbound OutboundUseCase) UseCase {
 	typ := UseCaseTypeOutbound
 
-	typStr := SchemasType(typ)
+	typStr := OutboundUseCaseType(typ)
 	outbound.Type = typStr
 
 	return UseCase{
-		OutboundUseCaseSchemas: &outbound,
-		Type:                   typ,
+		OutboundUseCase: &outbound,
+		Type:            typ,
 	}
 }
 
@@ -305,21 +60,21 @@ func (u *UseCase) UnmarshalJSON(data []byte) error {
 
 	switch dis.Type {
 	case "inbound":
-		schemas := new(Schemas)
-		if err := utils.UnmarshalJSON(data, &schemas, "", true, nil); err != nil {
-			return fmt.Errorf("could not unmarshal `%s` into expected (Type == inbound) type Schemas within UseCase: %w", string(data), err)
+		inboundUseCase := new(InboundUseCase)
+		if err := utils.UnmarshalJSON(data, &inboundUseCase, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == inbound) type InboundUseCase within UseCase: %w", string(data), err)
 		}
 
-		u.Schemas = schemas
+		u.InboundUseCase = inboundUseCase
 		u.Type = UseCaseTypeInbound
 		return nil
 	case "outbound":
-		outboundUseCaseSchemas := new(OutboundUseCaseSchemas)
-		if err := utils.UnmarshalJSON(data, &outboundUseCaseSchemas, "", true, nil); err != nil {
-			return fmt.Errorf("could not unmarshal `%s` into expected (Type == outbound) type OutboundUseCaseSchemas within UseCase: %w", string(data), err)
+		outboundUseCase := new(OutboundUseCase)
+		if err := utils.UnmarshalJSON(data, &outboundUseCase, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == outbound) type OutboundUseCase within UseCase: %w", string(data), err)
 		}
 
-		u.OutboundUseCaseSchemas = outboundUseCaseSchemas
+		u.OutboundUseCase = outboundUseCase
 		u.Type = UseCaseTypeOutbound
 		return nil
 	}
@@ -328,12 +83,12 @@ func (u *UseCase) UnmarshalJSON(data []byte) error {
 }
 
 func (u UseCase) MarshalJSON() ([]byte, error) {
-	if u.Schemas != nil {
-		return utils.MarshalJSON(u.Schemas, "", true)
+	if u.InboundUseCase != nil {
+		return utils.MarshalJSON(u.InboundUseCase, "", true)
 	}
 
-	if u.OutboundUseCaseSchemas != nil {
-		return utils.MarshalJSON(u.OutboundUseCaseSchemas, "", true)
+	if u.OutboundUseCase != nil {
+		return utils.MarshalJSON(u.OutboundUseCase, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type UseCase: all fields are null")

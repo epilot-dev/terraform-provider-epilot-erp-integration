@@ -5,11 +5,27 @@ package provider
 import (
 	"context"
 	"fmt"
+	speakeasy_boolplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/boolplanmodifier"
+	speakeasy_objectplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/objectplanmodifier"
+	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/stringplanmodifier"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk"
+	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators"
+	speakeasy_boolvalidators "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators/boolvalidators"
+	speakeasy_listvalidators "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators/listvalidators"
+	speakeasy_objectvalidators "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators/objectvalidators"
+	speakeasy_stringvalidators "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators/stringvalidators"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -31,12 +47,13 @@ type IntegrationResource struct {
 
 // IntegrationResourceModel describes the resource data model.
 type IntegrationResourceModel struct {
-	CreatedAt   types.String `tfsdk:"created_at"`
-	Description types.String `tfsdk:"description"`
-	ID          types.String `tfsdk:"id"`
-	Name        types.String `tfsdk:"name"`
-	OrgID       types.String `tfsdk:"org_id"`
-	UpdatedAt   types.String `tfsdk:"updated_at"`
+	CreatedAt   types.String      `tfsdk:"created_at"`
+	Description types.String      `tfsdk:"description"`
+	ID          types.String      `tfsdk:"id"`
+	Name        types.String      `tfsdk:"name"`
+	OrgID       types.String      `tfsdk:"org_id"`
+	UpdatedAt   types.String      `tfsdk:"updated_at"`
+	UseCases    []tfTypes.UseCase `tfsdk:"use_cases"`
 }
 
 func (r *IntegrationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -77,6 +94,1084 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 			"updated_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was last updated`,
+			},
+			"use_cases": schema.ListNestedAttribute{
+				Computed: true,
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
+					Attributes: map[string]schema.Attribute{
+						"inbound": schema.SingleNestedAttribute{
+							Optional: true,
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.UseConfigValue(),
+							},
+							Attributes: map[string]schema.Attribute{
+								"change_description": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Optional description of this change (like a commit message)`,
+									Validators: []validator.String{
+										stringvalidator.UTF8LengthAtMost(2000),
+									},
+								},
+								"configuration": schema.SingleNestedAttribute{
+									Computed: true,
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"entities": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"enabled": schema.SingleNestedAttribute{
+														Computed: true,
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"boolean": schema.BoolAttribute{
+																Optional: true,
+																PlanModifiers: []planmodifier.Bool{
+																	speakeasy_boolplanmodifier.UseConfigValue(),
+																},
+																Validators: []validator.Bool{
+																	boolvalidator.ConflictsWith(path.Expressions{
+																		path.MatchRelative().AtParent().AtName("str"),
+																	}...),
+																},
+															},
+															"str": schema.StringAttribute{
+																Optional: true,
+																PlanModifiers: []planmodifier.String{
+																	speakeasy_stringplanmodifier.UseConfigValue(),
+																},
+																Validators: []validator.String{
+																	stringvalidator.ConflictsWith(path.Expressions{
+																		path.MatchRelative().AtParent().AtName("boolean"),
+																	}...),
+																},
+															},
+														},
+														Description: `Controls whether this entity mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean.`,
+													},
+													"entity_schema": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Target entity schema (e.g., 'contact', 'contract'). Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"fields": schema.ListNestedAttribute{
+														Computed: true,
+														Optional: true,
+														NestedObject: schema.NestedAttributeObject{
+															Validators: []validator.Object{
+																speakeasy_objectvalidators.NotNull(),
+															},
+															Attributes: map[string]schema.Attribute{
+																"attribute": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Target attribute name. Not Null`,
+																	Validators: []validator.String{
+																		speakeasy_stringvalidators.NotNull(),
+																	},
+																},
+																"constant": schema.StringAttribute{
+																	CustomType:  jsontypes.NormalizedType{},
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Constant value to assign (any type). Parsed as JSON.`,
+																},
+																"enabled": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"boolean": schema.BoolAttribute{
+																			Optional: true,
+																			PlanModifiers: []planmodifier.Bool{
+																				speakeasy_boolplanmodifier.UseConfigValue(),
+																			},
+																			Validators: []validator.Bool{
+																				boolvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("str"),
+																				}...),
+																			},
+																		},
+																		"str": schema.StringAttribute{
+																			Optional: true,
+																			PlanModifiers: []planmodifier.String{
+																				speakeasy_stringplanmodifier.UseConfigValue(),
+																			},
+																			Validators: []validator.String{
+																				stringvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("boolean"),
+																				}...),
+																			},
+																		},
+																	},
+																	Description: `Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted.`,
+																},
+																"field": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"jsonata_expression": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `JSONata expression for transformation`,
+																},
+																"relation_refs": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			Optional: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
+																				},
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						Description: `Schema of the related entity (e.g., "contact"). Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
+																					},
+																					"path": schema.StringAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						Description: `Attribute path on the related entity (e.g., "address"). Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						Optional: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
+																							},
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Target attribute name in the related entity. Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									Optional: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																										`must be one of ["email", "phone"]`,
+																									Validators: []validator.String{
+																										stringvalidator.OneOf(
+																											"email",
+																											"phone",
+																										),
+																									},
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity. Not Null`,
+																						Validators: []validator.List{
+																							speakeasy_listvalidators.NotNull(),
+																						},
+																					},
+																					"value": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"attribute": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Target attribute name on the related entity. Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Constant value (any type). Parsed as JSON.`,
+																							},
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Source field name from the event data`,
+																							},
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `JSONata expression to compute the value`,
+																							},
+																							"operation": schema.StringAttribute{
+																								Computed: true,
+																								Optional: true,
+																								MarkdownDescription: `Operation for the attribute value:` + "\n" +
+																									`- '_set': Replace the attribute value` + "\n" +
+																									`- '_append': Add new unique items (deduplicates)` + "\n" +
+																									`- '_append_all': Add all items (no deduplication)` + "\n" +
+																									`must be one of ["_set", "_append", "_append_all"]`,
+																								Validators: []validator.String{
+																									stringvalidator.OneOf(
+																										"_set",
+																										"_append",
+																										"_append_all",
+																									),
+																								},
+																							},
+																						},
+																						Description: `Configuration for the value to set on the related entity's attribute. Not Null`,
+																						Validators: []validator.Object{
+																							speakeasy_objectvalidators.NotNull(),
+																						},
+																					},
+																				},
+																			},
+																			Description: `Array of relation reference item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression that returns relation_ref items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Relation reference operation:` + "\n" +
+																				`- '_set': Replace all existing relation_refs with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relation_refs (deduplicates by entity_id + _id)` + "\n" +
+																				`- '_append_all': Add all items to existing relation_refs (no deduplication, allows duplicates)` + "\n" +
+																				`Not Null; must be one of ["_set", "_append", "_append_all"]`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.OneOf(
+																					"_set",
+																					"_append",
+																					"_append_all",
+																				),
+																			},
+																		},
+																	},
+																	MarkdownDescription: `Configuration for relation references ($relation_ref).` + "\n" +
+																		`Relation references link to a specific item within a repeatable attribute on a related entity.` + "\n" +
+																		`Common use case: referencing a specific address within a contact's address list.`,
+																},
+																"relations": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			Optional: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
+																				},
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						Description: `Related entity schema. Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
+																					},
+																					"tags": schema.ListAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						ElementType: types.StringType,
+																						Description: `Optional tags for this relation`,
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						Optional: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
+																							},
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Target attribute name in the related entity. Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									Optional: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																										`must be one of ["email", "phone"]`,
+																									Validators: []validator.String{
+																										stringvalidator.OneOf(
+																											"email",
+																											"phone",
+																										),
+																									},
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity. Not Null`,
+																						Validators: []validator.List{
+																							speakeasy_listvalidators.NotNull(),
+																						},
+																					},
+																				},
+																			},
+																			Description: `Array of relation item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression that returns relation items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Relation operation:` + "\n" +
+																				`- '_set': Replace all existing relations with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relations (deduplicates by entity_id)` + "\n" +
+																				`- '_append_all': Add all items to existing relations (no deduplication, allows duplicates)` + "\n" +
+																				`Not Null; must be one of ["_set", "_append", "_append_all"]`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.OneOf(
+																					"_set",
+																					"_append",
+																					"_append_all",
+																				),
+																			},
+																		},
+																	},
+																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																	MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																		`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																		`must be one of ["email", "phone"]`,
+																	Validators: []validator.String{
+																		stringvalidator.OneOf(
+																			"email",
+																			"phone",
+																		),
+																	},
+																},
+															},
+														},
+														Description: `Field mapping definitions. Not Null`,
+														Validators: []validator.List{
+															speakeasy_listvalidators.NotNull(),
+														},
+													},
+													"jsonata_expression": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Optional JSONata expression to pre-process the event data before field mapping`,
+													},
+													"unique_ids": schema.ListAttribute{
+														Computed:    true,
+														Optional:    true,
+														ElementType: types.StringType,
+														MarkdownDescription: `Array of attribute names that uniquely identify this entity.` + "\n" +
+															`The _type hint for repeatable fields (e.g., email, phone) should be specified` + "\n" +
+															`on the corresponding field definition in the fields array.` + "\n" +
+															`Not Null`,
+														Validators: []validator.List{
+															speakeasy_listvalidators.NotNull(),
+														},
+													},
+												},
+											},
+											Description: `Array of entity configurations for this event`,
+										},
+										"meter_readings": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"fields": schema.ListNestedAttribute{
+														Computed: true,
+														Optional: true,
+														NestedObject: schema.NestedAttributeObject{
+															Validators: []validator.Object{
+																speakeasy_objectvalidators.NotNull(),
+															},
+															Attributes: map[string]schema.Attribute{
+																"attribute": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Target attribute name. Not Null`,
+																	Validators: []validator.String{
+																		speakeasy_stringvalidators.NotNull(),
+																	},
+																},
+																"constant": schema.StringAttribute{
+																	CustomType:  jsontypes.NormalizedType{},
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Constant value to assign (any type). Parsed as JSON.`,
+																},
+																"enabled": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"boolean": schema.BoolAttribute{
+																			Optional: true,
+																			PlanModifiers: []planmodifier.Bool{
+																				speakeasy_boolplanmodifier.UseConfigValue(),
+																			},
+																			Validators: []validator.Bool{
+																				boolvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("str"),
+																				}...),
+																			},
+																		},
+																		"str": schema.StringAttribute{
+																			Optional: true,
+																			PlanModifiers: []planmodifier.String{
+																				speakeasy_stringplanmodifier.UseConfigValue(),
+																			},
+																			Validators: []validator.String{
+																				stringvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("boolean"),
+																				}...),
+																			},
+																		},
+																	},
+																	Description: `Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted.`,
+																},
+																"field": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"jsonata_expression": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `JSONata expression for transformation`,
+																},
+																"relation_refs": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			Optional: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
+																				},
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						Description: `Schema of the related entity (e.g., "contact"). Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
+																					},
+																					"path": schema.StringAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						Description: `Attribute path on the related entity (e.g., "address"). Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						Optional: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
+																							},
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Target attribute name in the related entity. Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									Optional: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																										`must be one of ["email", "phone"]`,
+																									Validators: []validator.String{
+																										stringvalidator.OneOf(
+																											"email",
+																											"phone",
+																										),
+																									},
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity. Not Null`,
+																						Validators: []validator.List{
+																							speakeasy_listvalidators.NotNull(),
+																						},
+																					},
+																					"value": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"attribute": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Target attribute name on the related entity. Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Constant value (any type). Parsed as JSON.`,
+																							},
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Source field name from the event data`,
+																							},
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `JSONata expression to compute the value`,
+																							},
+																							"operation": schema.StringAttribute{
+																								Computed: true,
+																								Optional: true,
+																								MarkdownDescription: `Operation for the attribute value:` + "\n" +
+																									`- '_set': Replace the attribute value` + "\n" +
+																									`- '_append': Add new unique items (deduplicates)` + "\n" +
+																									`- '_append_all': Add all items (no deduplication)` + "\n" +
+																									`must be one of ["_set", "_append", "_append_all"]`,
+																								Validators: []validator.String{
+																									stringvalidator.OneOf(
+																										"_set",
+																										"_append",
+																										"_append_all",
+																									),
+																								},
+																							},
+																						},
+																						Description: `Configuration for the value to set on the related entity's attribute. Not Null`,
+																						Validators: []validator.Object{
+																							speakeasy_objectvalidators.NotNull(),
+																						},
+																					},
+																				},
+																			},
+																			Description: `Array of relation reference item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression that returns relation_ref items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Relation reference operation:` + "\n" +
+																				`- '_set': Replace all existing relation_refs with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relation_refs (deduplicates by entity_id + _id)` + "\n" +
+																				`- '_append_all': Add all items to existing relation_refs (no deduplication, allows duplicates)` + "\n" +
+																				`Not Null; must be one of ["_set", "_append", "_append_all"]`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.OneOf(
+																					"_set",
+																					"_append",
+																					"_append_all",
+																				),
+																			},
+																		},
+																	},
+																	MarkdownDescription: `Configuration for relation references ($relation_ref).` + "\n" +
+																		`Relation references link to a specific item within a repeatable attribute on a related entity.` + "\n" +
+																		`Common use case: referencing a specific address within a contact's address list.`,
+																},
+																"relations": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"items": schema.ListNestedAttribute{
+																			Computed: true,
+																			Optional: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
+																				},
+																				Attributes: map[string]schema.Attribute{
+																					"entity_schema": schema.StringAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						Description: `Related entity schema. Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
+																					},
+																					"tags": schema.ListAttribute{
+																						Computed:    true,
+																						Optional:    true,
+																						ElementType: types.StringType,
+																						Description: `Optional tags for this relation`,
+																					},
+																					"unique_ids": schema.ListNestedAttribute{
+																						Computed: true,
+																						Optional: true,
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
+																							},
+																							Attributes: map[string]schema.Attribute{
+																								"attribute": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Target attribute name in the related entity. Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
+																								},
+																								"constant": schema.StringAttribute{
+																									CustomType:  jsontypes.NormalizedType{},
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Constant value (any type). Parsed as JSON.`,
+																								},
+																								"field": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `Source field name from the event data`,
+																								},
+																								"jsonata_expression": schema.StringAttribute{
+																									Computed:    true,
+																									Optional:    true,
+																									Description: `JSONata expression to compute the value`,
+																								},
+																								"type": schema.StringAttribute{
+																									Computed: true,
+																									Optional: true,
+																									MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																										`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																										`must be one of ["email", "phone"]`,
+																									Validators: []validator.String{
+																										stringvalidator.OneOf(
+																											"email",
+																											"phone",
+																										),
+																									},
+																								},
+																							},
+																						},
+																						Description: `Unique identifier mappings for the related entity. Not Null`,
+																						Validators: []validator.List{
+																							speakeasy_listvalidators.NotNull(),
+																						},
+																					},
+																				},
+																			},
+																			Description: `Array of relation item configurations`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression that returns relation items array (alternative to 'items')`,
+																		},
+																		"operation": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Relation operation:` + "\n" +
+																				`- '_set': Replace all existing relations with the specified items` + "\n" +
+																				`- '_append': Add new unique items to existing relations (deduplicates by entity_id)` + "\n" +
+																				`- '_append_all': Add all items to existing relations (no deduplication, allows duplicates)` + "\n" +
+																				`Not Null; must be one of ["_set", "_append", "_append_all"]`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.OneOf(
+																					"_set",
+																					"_append",
+																					"_append_all",
+																				),
+																			},
+																		},
+																	},
+																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																	MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																		`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																		`must be one of ["email", "phone"]`,
+																	Validators: []validator.String{
+																		stringvalidator.OneOf(
+																			"email",
+																			"phone",
+																		),
+																	},
+																},
+															},
+														},
+														Description: `Field mapping definitions for meter reading attributes. Not Null`,
+														Validators: []validator.List{
+															speakeasy_listvalidators.NotNull(),
+														},
+													},
+													"jsonata_expression": schema.StringAttribute{
+														Computed: true,
+														Optional: true,
+														MarkdownDescription: `Optional JSONata expression to extract meter reading items from the event data.` + "\n" +
+															`If not provided, the entire payload is used as the reading data.` + "\n" +
+															`Useful when you need to extract an array of readings from a nested structure (e.g., "$.readings").`,
+													},
+													"meter": schema.SingleNestedAttribute{
+														Computed: true,
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"unique_ids": schema.ListNestedAttribute{
+																Computed: true,
+																Optional: true,
+																NestedObject: schema.NestedAttributeObject{
+																	Validators: []validator.Object{
+																		speakeasy_objectvalidators.NotNull(),
+																	},
+																	Attributes: map[string]schema.Attribute{
+																		"attribute": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Target attribute name in the related entity. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
+																		"constant": schema.StringAttribute{
+																			CustomType:  jsontypes.NormalizedType{},
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Constant value (any type). Parsed as JSON.`,
+																		},
+																		"field": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Source field name from the event data`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression to compute the value`,
+																		},
+																		"type": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																				`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																				`must be one of ["email", "phone"]`,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"email",
+																					"phone",
+																				),
+																			},
+																		},
+																	},
+																},
+																Description: `Array of unique identifier field mappings. Not Null`,
+																Validators: []validator.List{
+																	speakeasy_listvalidators.NotNull(),
+																	listvalidator.SizeAtLeast(1),
+																},
+															},
+														},
+														Description: `Not Null`,
+														Validators: []validator.Object{
+															speakeasy_objectvalidators.NotNull(),
+														},
+													},
+													"meter_counter": schema.SingleNestedAttribute{
+														Computed: true,
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"unique_ids": schema.ListNestedAttribute{
+																Computed: true,
+																Optional: true,
+																NestedObject: schema.NestedAttributeObject{
+																	Validators: []validator.Object{
+																		speakeasy_objectvalidators.NotNull(),
+																	},
+																	Attributes: map[string]schema.Attribute{
+																		"attribute": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Target attribute name in the related entity. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
+																		"constant": schema.StringAttribute{
+																			CustomType:  jsontypes.NormalizedType{},
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Constant value (any type). Parsed as JSON.`,
+																		},
+																		"field": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Source field name from the event data`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression to compute the value`,
+																		},
+																		"type": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																				`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																				`must be one of ["email", "phone"]`,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"email",
+																					"phone",
+																				),
+																			},
+																		},
+																	},
+																},
+																Description: `Array of unique identifier field mappings. Not Null`,
+																Validators: []validator.List{
+																	speakeasy_listvalidators.NotNull(),
+																	listvalidator.SizeAtLeast(1),
+																},
+															},
+														},
+													},
+													"reading_matching": schema.StringAttribute{
+														Computed: true,
+														Optional: true,
+														Default:  stringdefault.StaticString(`external_id`),
+														MarkdownDescription: `Strategy for matching incoming readings against existing readings.` + "\n" +
+															`- 'external_id': Match readings by external_id attribute (default behavior)` + "\n" +
+															`- 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).` + "\n" +
+															`  Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.` + "\n" +
+															`Default: "external_id"; must be one of ["external_id", "strict-date"]`,
+														Validators: []validator.String{
+															stringvalidator.OneOf(
+																"external_id",
+																"strict-date",
+															),
+														},
+													},
+												},
+											},
+											Description: `Array of meter reading configurations for this event`,
+										},
+									},
+									Description: `Configuration for inbound use cases (ERP to epilot)`,
+								},
+								"created_at": schema.StringAttribute{
+									Computed: true,
+								},
+								"enabled": schema.BoolAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Whether the use case is enabled. Not Null`,
+									Validators: []validator.Bool{
+										speakeasy_boolvalidators.NotNull(),
+									},
+								},
+								"id": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+									MarkdownDescription: `Optional use case ID for update matching.` + "\n" +
+										`- If provided and matches an existing use case, that use case is updated` + "\n" +
+										`- If provided but no match, a new use case with this ID is created` + "\n" +
+										`- If omitted, a new use case with auto-generated ID is created`,
+								},
+								"integration_id": schema.StringAttribute{
+									Computed: true,
+								},
+								"name": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Use case name. Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										stringvalidator.UTF8LengthBetween(1, 255),
+									},
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Use case type. Not Null; must be "inbound"`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										stringvalidator.OneOf("inbound"),
+									},
+								},
+								"updated_at": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+							Validators: []validator.Object{
+								objectvalidator.ConflictsWith(path.Expressions{
+									path.MatchRelative().AtParent().AtName("outbound"),
+								}...),
+							},
+						},
+						"outbound": schema.SingleNestedAttribute{
+							Optional: true,
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.UseConfigValue(),
+							},
+							Attributes: map[string]schema.Attribute{
+								"change_description": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Optional description of this change (like a commit message)`,
+									Validators: []validator.String{
+										stringvalidator.UTF8LengthAtMost(2000),
+									},
+								},
+								"configuration": schema.MapAttribute{
+									Computed:    true,
+									Optional:    true,
+									ElementType: jsontypes.NormalizedType{},
+									Description: `Configuration for outbound use cases (epilot to ERP). Structure TBD.`,
+									Validators: []validator.Map{
+										mapvalidator.ValueStringsAre(validators.IsValidJSON()),
+									},
+								},
+								"created_at": schema.StringAttribute{
+									Computed: true,
+								},
+								"enabled": schema.BoolAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Whether the use case is enabled. Not Null`,
+									Validators: []validator.Bool{
+										speakeasy_boolvalidators.NotNull(),
+									},
+								},
+								"id": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+									MarkdownDescription: `Optional use case ID for update matching.` + "\n" +
+										`- If provided and matches an existing use case, that use case is updated` + "\n" +
+										`- If provided but no match, a new use case with this ID is created` + "\n" +
+										`- If omitted, a new use case with auto-generated ID is created`,
+								},
+								"integration_id": schema.StringAttribute{
+									Computed: true,
+								},
+								"name": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Use case name. Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										stringvalidator.UTF8LengthBetween(1, 255),
+									},
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Use case type. Not Null; must be "outbound"`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										stringvalidator.OneOf("outbound"),
+									},
+								},
+								"updated_at": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+							Validators: []validator.Object{
+								objectvalidator.ConflictsWith(path.Expressions{
+									path.MatchRelative().AtParent().AtName("inbound"),
+								}...),
+							},
+						},
+					},
+				},
+				MarkdownDescription: `Full list of use cases (declarative). This replaces ALL existing use cases.` + "\n" +
+					`- Use cases with an ` + "`" + `id` + "`" + ` field matching an existing use case will be updated` + "\n" +
+					`- Use cases without an ` + "`" + `id` + "`" + ` or with a non-matching ` + "`" + `id` + "`" + ` will be created` + "\n" +
+					`- Existing use cases not in this list will be deleted`,
 			},
 		},
 	}
@@ -120,13 +1215,13 @@ func (r *IntegrationResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	request, requestDiags := data.ToSharedCreateIntegrationRequest(ctx)
+	request, requestDiags := data.ToOperationsUpsertIntegrationV2Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.CreateIntegration(ctx, *request)
+	res, err := r.client.Integrations.UpsertIntegrationV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -138,15 +1233,15 @@ func (r *IntegrationResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.Integration != nil) {
+	if !(res.IntegrationWithUseCases != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedIntegration(ctx, res.Integration)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedIntegrationWithUseCases(ctx, res.IntegrationWithUseCases)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -180,13 +1275,13 @@ func (r *IntegrationResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	request, requestDiags := data.ToOperationsGetIntegrationRequest(ctx)
+	request, requestDiags := data.ToOperationsGetIntegrationV2Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.GetIntegration(ctx, *request)
+	res, err := r.client.Integrations.GetIntegrationV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -206,11 +1301,11 @@ func (r *IntegrationResource) Read(ctx context.Context, req resource.ReadRequest
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.Integration != nil) {
+	if !(res.IntegrationWithUseCases != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedIntegration(ctx, res.Integration)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedIntegrationWithUseCases(ctx, res.IntegrationWithUseCases)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -234,13 +1329,13 @@ func (r *IntegrationResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateIntegrationRequest(ctx)
+	request, requestDiags := data.ToOperationsUpsertIntegrationV2Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.UpdateIntegration(ctx, *request)
+	res, err := r.client.Integrations.UpsertIntegrationV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -256,11 +1351,11 @@ func (r *IntegrationResource) Update(ctx context.Context, req resource.UpdateReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.Integration != nil) {
+	if !(res.IntegrationWithUseCases != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedIntegration(ctx, res.Integration)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedIntegrationWithUseCases(ctx, res.IntegrationWithUseCases)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -294,13 +1389,13 @@ func (r *IntegrationResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsDeleteIntegrationRequest(ctx)
+	request, requestDiags := data.ToOperationsDeleteIntegrationV2Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.DeleteIntegration(ctx, *request)
+	res, err := r.client.Integrations.DeleteIntegrationV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

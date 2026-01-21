@@ -69,16 +69,16 @@ func (g *GetUseCaseResponse) GetUseCase() *shared.UseCase {
 	return g.UseCase
 }
 
-func (g *GetUseCaseResponse) GetUseCaseInbound() *shared.Schemas {
+func (g *GetUseCaseResponse) GetUseCaseInbound() *shared.InboundUseCase {
 	if v := g.GetUseCase(); v != nil {
-		return v.Schemas
+		return v.InboundUseCase
 	}
 	return nil
 }
 
-func (g *GetUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCaseSchemas {
+func (g *GetUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCase {
 	if v := g.GetUseCase(); v != nil {
-		return v.OutboundUseCaseSchemas
+		return v.OutboundUseCase
 	}
 	return nil
 }

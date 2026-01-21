@@ -160,7 +160,7 @@ func (u Payload) MarshalJSON() ([]byte, error) {
 type ErpEvent struct {
 	// Type of event (create, update, delete)
 	EventType EventType `json:"event_type"`
-	// Type of the object being updated (business_partner, contract_account, etc.)
+	// Type of the object being updated (business_partner, contract_account, etc.). Corresponds to "Event Name" from the integration UI.
 	ObjectType string `json:"object_type"`
 	// Timestamp when the event occurred
 	Timestamp time.Time `json:"timestamp"`

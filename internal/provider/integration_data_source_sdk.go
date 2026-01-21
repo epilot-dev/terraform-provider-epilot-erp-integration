@@ -4,14 +4,17 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/typeconvert"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/models/operations"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/models/shared"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func (r *IntegrationDataSourceModel) RefreshFromSharedIntegration(ctx context.Context, resp *shared.Integration) diag.Diagnostics {
+func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ctx context.Context, resp *shared.IntegrationWithUseCases) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -21,18 +24,398 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegration(ctx context.Co
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
+		r.UseCases = []tfTypes.UseCase1{}
+
+		for _, useCasesItem := range resp.UseCases {
+			var useCases tfTypes.UseCase1
+
+			if useCasesItem.InboundUseCase != nil {
+				useCases.Inbound = &tfTypes.InboundUseCase1{}
+				useCases.Inbound.ChangeDescription = types.StringPointerValue(useCasesItem.InboundUseCase.ChangeDescription)
+				if useCasesItem.InboundUseCase.Configuration == nil {
+					useCases.Inbound.Configuration = nil
+				} else {
+					useCases.Inbound.Configuration = &tfTypes.InboundIntegrationEventConfiguration{}
+					useCases.Inbound.Configuration.Entities = []tfTypes.IntegrationEntity{}
+
+					for _, entitiesItem := range useCasesItem.InboundUseCase.Configuration.Entities {
+						var entities tfTypes.IntegrationEntity
+
+						if entitiesItem.Enabled != nil {
+							entities.Enabled = &tfTypes.Enabled{}
+							if entitiesItem.Enabled.Boolean != nil {
+								entities.Enabled.Boolean = types.BoolPointerValue(entitiesItem.Enabled.Boolean)
+							}
+							if entitiesItem.Enabled.Str != nil {
+								entities.Enabled.Str = types.StringPointerValue(entitiesItem.Enabled.Str)
+							}
+						}
+						entities.EntitySchema = types.StringValue(entitiesItem.EntitySchema)
+						entities.Fields = []tfTypes.IntegrationEntityField{}
+
+						for _, fieldsItem := range entitiesItem.Fields {
+							var fields tfTypes.IntegrationEntityField
+
+							if fieldsItem.Type != nil {
+								fields.Type = types.StringValue(string(*fieldsItem.Type))
+							} else {
+								fields.Type = types.StringNull()
+							}
+							fields.Attribute = types.StringValue(fieldsItem.Attribute)
+							if fieldsItem.Constant == nil {
+								fields.Constant = jsontypes.NewNormalizedNull()
+							} else {
+								constantResult, _ := json.Marshal(fieldsItem.Constant)
+								fields.Constant = jsontypes.NewNormalizedValue(string(constantResult))
+							}
+							if fieldsItem.Enabled != nil {
+								fields.Enabled = &tfTypes.Enabled{}
+								if fieldsItem.Enabled.Boolean != nil {
+									fields.Enabled.Boolean = types.BoolPointerValue(fieldsItem.Enabled.Boolean)
+								}
+								if fieldsItem.Enabled.Str != nil {
+									fields.Enabled.Str = types.StringPointerValue(fieldsItem.Enabled.Str)
+								}
+							}
+							fields.Field = types.StringPointerValue(fieldsItem.Field)
+							fields.JsonataExpression = types.StringPointerValue(fieldsItem.JsonataExpression)
+							if fieldsItem.RelationRefs == nil {
+								fields.RelationRefs = nil
+							} else {
+								fields.RelationRefs = &tfTypes.RelationRefsConfig{}
+								fields.RelationRefs.Items = []tfTypes.RelationRefItemConfig{}
+
+								for _, itemsItem := range fieldsItem.RelationRefs.Items {
+									var items tfTypes.RelationRefItemConfig
+
+									items.EntitySchema = types.StringValue(itemsItem.EntitySchema)
+									items.Path = types.StringValue(itemsItem.Path)
+									items.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem := range itemsItem.UniqueIds {
+										var uniqueIds tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem.Type != nil {
+											uniqueIds.Type = types.StringValue(string(*uniqueIdsItem.Type))
+										} else {
+											uniqueIds.Type = types.StringNull()
+										}
+										uniqueIds.Attribute = types.StringValue(uniqueIdsItem.Attribute)
+										if uniqueIdsItem.Constant == nil {
+											uniqueIds.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult1, _ := json.Marshal(uniqueIdsItem.Constant)
+											uniqueIds.Constant = jsontypes.NewNormalizedValue(string(constantResult1))
+										}
+										uniqueIds.Field = types.StringPointerValue(uniqueIdsItem.Field)
+										uniqueIds.JsonataExpression = types.StringPointerValue(uniqueIdsItem.JsonataExpression)
+
+										items.UniqueIds = append(items.UniqueIds, uniqueIds)
+									}
+									items.Value.Attribute = types.StringValue(itemsItem.Value.Attribute)
+									if itemsItem.Value.Constant == nil {
+										items.Value.Constant = jsontypes.NewNormalizedNull()
+									} else {
+										constantResult2, _ := json.Marshal(itemsItem.Value.Constant)
+										items.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult2))
+									}
+									items.Value.Field = types.StringPointerValue(itemsItem.Value.Field)
+									items.Value.JsonataExpression = types.StringPointerValue(itemsItem.Value.JsonataExpression)
+									if itemsItem.Value.Operation != nil {
+										items.Value.Operation = types.StringValue(string(*itemsItem.Value.Operation))
+									} else {
+										items.Value.Operation = types.StringNull()
+									}
+
+									fields.RelationRefs.Items = append(fields.RelationRefs.Items, items)
+								}
+								fields.RelationRefs.JsonataExpression = types.StringPointerValue(fieldsItem.RelationRefs.JsonataExpression)
+								fields.RelationRefs.Operation = types.StringValue(string(fieldsItem.RelationRefs.Operation))
+							}
+							if fieldsItem.Relations == nil {
+								fields.Relations = nil
+							} else {
+								fields.Relations = &tfTypes.RelationConfig{}
+								fields.Relations.Items = []tfTypes.RelationItemConfig{}
+
+								for _, itemsItem1 := range fieldsItem.Relations.Items {
+									var items1 tfTypes.RelationItemConfig
+
+									items1.Tags = make([]types.String, 0, len(itemsItem1.Tags))
+									for _, v := range itemsItem1.Tags {
+										items1.Tags = append(items1.Tags, types.StringValue(v))
+									}
+									items1.EntitySchema = types.StringValue(itemsItem1.EntitySchema)
+									items1.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem1 := range itemsItem1.UniqueIds {
+										var uniqueIds1 tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem1.Type != nil {
+											uniqueIds1.Type = types.StringValue(string(*uniqueIdsItem1.Type))
+										} else {
+											uniqueIds1.Type = types.StringNull()
+										}
+										uniqueIds1.Attribute = types.StringValue(uniqueIdsItem1.Attribute)
+										if uniqueIdsItem1.Constant == nil {
+											uniqueIds1.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult3, _ := json.Marshal(uniqueIdsItem1.Constant)
+											uniqueIds1.Constant = jsontypes.NewNormalizedValue(string(constantResult3))
+										}
+										uniqueIds1.Field = types.StringPointerValue(uniqueIdsItem1.Field)
+										uniqueIds1.JsonataExpression = types.StringPointerValue(uniqueIdsItem1.JsonataExpression)
+
+										items1.UniqueIds = append(items1.UniqueIds, uniqueIds1)
+									}
+
+									fields.Relations.Items = append(fields.Relations.Items, items1)
+								}
+								fields.Relations.JsonataExpression = types.StringPointerValue(fieldsItem.Relations.JsonataExpression)
+								fields.Relations.Operation = types.StringValue(string(fieldsItem.Relations.Operation))
+							}
+
+							entities.Fields = append(entities.Fields, fields)
+						}
+						entities.JsonataExpression = types.StringPointerValue(entitiesItem.JsonataExpression)
+						entities.UniqueIds = make([]types.String, 0, len(entitiesItem.UniqueIds))
+						for _, v := range entitiesItem.UniqueIds {
+							entities.UniqueIds = append(entities.UniqueIds, types.StringValue(v))
+						}
+
+						useCases.Inbound.Configuration.Entities = append(useCases.Inbound.Configuration.Entities, entities)
+					}
+					useCases.Inbound.Configuration.MeterReadings = []tfTypes.IntegrationMeterReading{}
+
+					for _, meterReadingsItem := range useCasesItem.InboundUseCase.Configuration.MeterReadings {
+						var meterReadings tfTypes.IntegrationMeterReading
+
+						meterReadings.Fields = []tfTypes.IntegrationEntityField{}
+
+						for _, fieldsItem1 := range meterReadingsItem.Fields {
+							var fields1 tfTypes.IntegrationEntityField
+
+							if fieldsItem1.Type != nil {
+								fields1.Type = types.StringValue(string(*fieldsItem1.Type))
+							} else {
+								fields1.Type = types.StringNull()
+							}
+							fields1.Attribute = types.StringValue(fieldsItem1.Attribute)
+							if fieldsItem1.Constant == nil {
+								fields1.Constant = jsontypes.NewNormalizedNull()
+							} else {
+								constantResult4, _ := json.Marshal(fieldsItem1.Constant)
+								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
+							}
+							if fieldsItem1.Enabled != nil {
+								fields1.Enabled = &tfTypes.Enabled{}
+								if fieldsItem1.Enabled.Boolean != nil {
+									fields1.Enabled.Boolean = types.BoolPointerValue(fieldsItem1.Enabled.Boolean)
+								}
+								if fieldsItem1.Enabled.Str != nil {
+									fields1.Enabled.Str = types.StringPointerValue(fieldsItem1.Enabled.Str)
+								}
+							}
+							fields1.Field = types.StringPointerValue(fieldsItem1.Field)
+							fields1.JsonataExpression = types.StringPointerValue(fieldsItem1.JsonataExpression)
+							if fieldsItem1.RelationRefs == nil {
+								fields1.RelationRefs = nil
+							} else {
+								fields1.RelationRefs = &tfTypes.RelationRefsConfig{}
+								fields1.RelationRefs.Items = []tfTypes.RelationRefItemConfig{}
+
+								for _, itemsItem2 := range fieldsItem1.RelationRefs.Items {
+									var items2 tfTypes.RelationRefItemConfig
+
+									items2.EntitySchema = types.StringValue(itemsItem2.EntitySchema)
+									items2.Path = types.StringValue(itemsItem2.Path)
+									items2.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem2 := range itemsItem2.UniqueIds {
+										var uniqueIds2 tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem2.Type != nil {
+											uniqueIds2.Type = types.StringValue(string(*uniqueIdsItem2.Type))
+										} else {
+											uniqueIds2.Type = types.StringNull()
+										}
+										uniqueIds2.Attribute = types.StringValue(uniqueIdsItem2.Attribute)
+										if uniqueIdsItem2.Constant == nil {
+											uniqueIds2.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult5, _ := json.Marshal(uniqueIdsItem2.Constant)
+											uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
+										}
+										uniqueIds2.Field = types.StringPointerValue(uniqueIdsItem2.Field)
+										uniqueIds2.JsonataExpression = types.StringPointerValue(uniqueIdsItem2.JsonataExpression)
+
+										items2.UniqueIds = append(items2.UniqueIds, uniqueIds2)
+									}
+									items2.Value.Attribute = types.StringValue(itemsItem2.Value.Attribute)
+									if itemsItem2.Value.Constant == nil {
+										items2.Value.Constant = jsontypes.NewNormalizedNull()
+									} else {
+										constantResult6, _ := json.Marshal(itemsItem2.Value.Constant)
+										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
+									}
+									items2.Value.Field = types.StringPointerValue(itemsItem2.Value.Field)
+									items2.Value.JsonataExpression = types.StringPointerValue(itemsItem2.Value.JsonataExpression)
+									if itemsItem2.Value.Operation != nil {
+										items2.Value.Operation = types.StringValue(string(*itemsItem2.Value.Operation))
+									} else {
+										items2.Value.Operation = types.StringNull()
+									}
+
+									fields1.RelationRefs.Items = append(fields1.RelationRefs.Items, items2)
+								}
+								fields1.RelationRefs.JsonataExpression = types.StringPointerValue(fieldsItem1.RelationRefs.JsonataExpression)
+								fields1.RelationRefs.Operation = types.StringValue(string(fieldsItem1.RelationRefs.Operation))
+							}
+							if fieldsItem1.Relations == nil {
+								fields1.Relations = nil
+							} else {
+								fields1.Relations = &tfTypes.RelationConfig{}
+								fields1.Relations.Items = []tfTypes.RelationItemConfig{}
+
+								for _, itemsItem3 := range fieldsItem1.Relations.Items {
+									var items3 tfTypes.RelationItemConfig
+
+									items3.Tags = make([]types.String, 0, len(itemsItem3.Tags))
+									for _, v := range itemsItem3.Tags {
+										items3.Tags = append(items3.Tags, types.StringValue(v))
+									}
+									items3.EntitySchema = types.StringValue(itemsItem3.EntitySchema)
+									items3.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+									for _, uniqueIdsItem3 := range itemsItem3.UniqueIds {
+										var uniqueIds3 tfTypes.RelationUniqueIDField
+
+										if uniqueIdsItem3.Type != nil {
+											uniqueIds3.Type = types.StringValue(string(*uniqueIdsItem3.Type))
+										} else {
+											uniqueIds3.Type = types.StringNull()
+										}
+										uniqueIds3.Attribute = types.StringValue(uniqueIdsItem3.Attribute)
+										if uniqueIdsItem3.Constant == nil {
+											uniqueIds3.Constant = jsontypes.NewNormalizedNull()
+										} else {
+											constantResult7, _ := json.Marshal(uniqueIdsItem3.Constant)
+											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
+										}
+										uniqueIds3.Field = types.StringPointerValue(uniqueIdsItem3.Field)
+										uniqueIds3.JsonataExpression = types.StringPointerValue(uniqueIdsItem3.JsonataExpression)
+
+										items3.UniqueIds = append(items3.UniqueIds, uniqueIds3)
+									}
+
+									fields1.Relations.Items = append(fields1.Relations.Items, items3)
+								}
+								fields1.Relations.JsonataExpression = types.StringPointerValue(fieldsItem1.Relations.JsonataExpression)
+								fields1.Relations.Operation = types.StringValue(string(fieldsItem1.Relations.Operation))
+							}
+
+							meterReadings.Fields = append(meterReadings.Fields, fields1)
+						}
+						meterReadings.JsonataExpression = types.StringPointerValue(meterReadingsItem.JsonataExpression)
+						meterReadings.Meter.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+						for _, uniqueIdsItem4 := range meterReadingsItem.Meter.UniqueIds {
+							var uniqueIds4 tfTypes.RelationUniqueIDField
+
+							if uniqueIdsItem4.Type != nil {
+								uniqueIds4.Type = types.StringValue(string(*uniqueIdsItem4.Type))
+							} else {
+								uniqueIds4.Type = types.StringNull()
+							}
+							uniqueIds4.Attribute = types.StringValue(uniqueIdsItem4.Attribute)
+							if uniqueIdsItem4.Constant == nil {
+								uniqueIds4.Constant = jsontypes.NewNormalizedNull()
+							} else {
+								constantResult8, _ := json.Marshal(uniqueIdsItem4.Constant)
+								uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
+							}
+							uniqueIds4.Field = types.StringPointerValue(uniqueIdsItem4.Field)
+							uniqueIds4.JsonataExpression = types.StringPointerValue(uniqueIdsItem4.JsonataExpression)
+
+							meterReadings.Meter.UniqueIds = append(meterReadings.Meter.UniqueIds, uniqueIds4)
+						}
+						if meterReadingsItem.MeterCounter == nil {
+							meterReadings.MeterCounter = nil
+						} else {
+							meterReadings.MeterCounter = &tfTypes.MeterUniqueIdsConfig{}
+							meterReadings.MeterCounter.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+							for _, uniqueIdsItem5 := range meterReadingsItem.MeterCounter.UniqueIds {
+								var uniqueIds5 tfTypes.RelationUniqueIDField
+
+								if uniqueIdsItem5.Type != nil {
+									uniqueIds5.Type = types.StringValue(string(*uniqueIdsItem5.Type))
+								} else {
+									uniqueIds5.Type = types.StringNull()
+								}
+								uniqueIds5.Attribute = types.StringValue(uniqueIdsItem5.Attribute)
+								if uniqueIdsItem5.Constant == nil {
+									uniqueIds5.Constant = jsontypes.NewNormalizedNull()
+								} else {
+									constantResult9, _ := json.Marshal(uniqueIdsItem5.Constant)
+									uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
+								}
+								uniqueIds5.Field = types.StringPointerValue(uniqueIdsItem5.Field)
+								uniqueIds5.JsonataExpression = types.StringPointerValue(uniqueIdsItem5.JsonataExpression)
+
+								meterReadings.MeterCounter.UniqueIds = append(meterReadings.MeterCounter.UniqueIds, uniqueIds5)
+							}
+						}
+						if meterReadingsItem.ReadingMatching != nil {
+							meterReadings.ReadingMatching = types.StringValue(string(*meterReadingsItem.ReadingMatching))
+						} else {
+							meterReadings.ReadingMatching = types.StringNull()
+						}
+
+						useCases.Inbound.Configuration.MeterReadings = append(useCases.Inbound.Configuration.MeterReadings, meterReadings)
+					}
+				}
+				useCases.Inbound.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.InboundUseCase.CreatedAt))
+				useCases.Inbound.Enabled = types.BoolValue(useCasesItem.InboundUseCase.Enabled)
+				useCases.Inbound.ID = types.StringValue(useCasesItem.InboundUseCase.ID)
+				useCases.Inbound.IntegrationID = types.StringValue(useCasesItem.InboundUseCase.IntegrationID)
+				useCases.Inbound.Name = types.StringValue(useCasesItem.InboundUseCase.Name)
+				useCases.Inbound.Type = types.StringValue(string(useCasesItem.InboundUseCase.Type))
+				useCases.Inbound.UpdatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.InboundUseCase.UpdatedAt))
+			}
+			if useCasesItem.OutboundUseCase != nil {
+				useCases.Outbound = &tfTypes.OutboundUseCase1{}
+				useCases.Outbound.ChangeDescription = types.StringPointerValue(useCasesItem.OutboundUseCase.ChangeDescription)
+				if len(useCasesItem.OutboundUseCase.Configuration) > 0 {
+					useCases.Outbound.Configuration = make(map[string]jsontypes.Normalized, len(useCasesItem.OutboundUseCase.Configuration))
+					for key, value := range useCasesItem.OutboundUseCase.Configuration {
+						result, _ := json.Marshal(value)
+						useCases.Outbound.Configuration[key] = jsontypes.NewNormalizedValue(string(result))
+					}
+				}
+				useCases.Outbound.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.OutboundUseCase.CreatedAt))
+				useCases.Outbound.Enabled = types.BoolValue(useCasesItem.OutboundUseCase.Enabled)
+				useCases.Outbound.ID = types.StringValue(useCasesItem.OutboundUseCase.ID)
+				useCases.Outbound.IntegrationID = types.StringValue(useCasesItem.OutboundUseCase.IntegrationID)
+				useCases.Outbound.Name = types.StringValue(useCasesItem.OutboundUseCase.Name)
+				useCases.Outbound.Type = types.StringValue(string(useCasesItem.OutboundUseCase.Type))
+				useCases.Outbound.UpdatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.OutboundUseCase.UpdatedAt))
+			}
+
+			r.UseCases = append(r.UseCases, useCases)
+		}
 	}
 
 	return diags
 }
 
-func (r *IntegrationDataSourceModel) ToOperationsGetIntegrationRequest(ctx context.Context) (*operations.GetIntegrationRequest, diag.Diagnostics) {
+func (r *IntegrationDataSourceModel) ToOperationsGetIntegrationV2Request(ctx context.Context) (*operations.GetIntegrationV2Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var integrationID string
 	integrationID = r.ID.ValueString()
 
-	out := operations.GetIntegrationRequest{
+	out := operations.GetIntegrationV2Request{
 		IntegrationID: integrationID,
 	}
 

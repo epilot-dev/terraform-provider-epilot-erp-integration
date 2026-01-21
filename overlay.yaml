@@ -16,31 +16,29 @@ actions:
           - 5XX
         retryConnectionErrors: true
 
-  - target: $["paths"]["/v1/integrations"]["post"]
+  # v2 PUT is an upsert - use it for both create and update to have consistent schemas
+  - target: $["paths"]["/v2/integrations/{integrationId}"]["put"]
     update:
-      x-speakeasy-entity-operation: Integration#create
-  - target: $["paths"]["/v1/integrations/{integrationId}"]["put"]
-    update:
-      x-speakeasy-entity-operation: Integration#update
-  - target: $["paths"]["/v1/integrations/{integrationId}"]["get"]
+      x-speakeasy-entity-operation: Integration#create,update
+  - target: $["paths"]["/v2/integrations/{integrationId}"]["get"]
     update:
       x-speakeasy-entity-operation: Integration#read
-  - target: $["paths"]["/v1/integrations/{integrationId}"]["delete"]
+  - target: $["paths"]["/v2/integrations/{integrationId}"]["delete"]
     update:
       x-speakeasy-entity-operation: Integration#delete
 
-  # Integration parameter matchers for v1 endpoints
-  - target: $["paths"]["/v1/integrations/{integrationId}"]["get"]["parameters"][0]
+  # Integration parameter matchers for v2 endpoints
+  - target: $["paths"]["/v2/integrations/{integrationId}"]["get"]["parameters"][0]
     update:
       x-speakeasy-match: id
-  - target: $["paths"]["/v1/integrations/{integrationId}"]["put"]["parameters"][0]
+  - target: $["paths"]["/v2/integrations/{integrationId}"]["put"]["parameters"][0]
     update:
       x-speakeasy-match: id
-  - target: $["paths"]["/v1/integrations/{integrationId}"]["delete"]["parameters"][0]
+  - target: $["paths"]["/v2/integrations/{integrationId}"]["delete"]["parameters"][0]
     update:
       x-speakeasy-match: id
 
-  # Integration entity schema
-  - target: $["components"]["schemas"]["Integration"]
+  # Integration entity schema - use IntegrationWithUseCases for v2 endpoints
+  - target: $["components"]["schemas"]["IntegrationWithUseCases"]
     update:
       x-speakeasy-entity: Integration

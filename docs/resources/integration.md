@@ -16,6 +16,20 @@ Integration Resource
 resource "epilot-erp-integration_integration" "my_integration" {
   description = "...my_description..."
   name        = "...my_name..."
+  use_cases = [
+    {
+      outbound = {
+        change_description = "...my_change_description..."
+        configuration = {
+          key = jsonencode("value")
+        }
+        enabled = true
+        id      = "eb4ac4d2-540e-4705-aba9-48085a4461e0"
+        name    = "...my_name..."
+        type    = "outbound"
+      }
+    }
+  ]
 }
 ```
 
@@ -29,6 +43,10 @@ resource "epilot-erp-integration_integration" "my_integration" {
 ### Optional
 
 - `description` (String) Optional description of the integration
+- `use_cases` (Attributes List) Full list of use cases (declarative). This replaces ALL existing use cases.
+- Use cases with an `id` field matching an existing use case will be updated
+- Use cases without an `id` or with a non-matching `id` will be created
+- Existing use cases not in this list will be deleted (see [below for nested schema](#nestedatt--use_cases))
 
 ### Read-Only
 
@@ -36,6 +54,394 @@ resource "epilot-erp-integration_integration" "my_integration" {
 - `id` (String) Unique identifier for the integration
 - `org_id` (String) Organization ID
 - `updated_at` (String) ISO-8601 timestamp when the integration was last updated
+
+<a id="nestedatt--use_cases"></a>
+### Nested Schema for `use_cases`
+
+Optional:
+
+- `inbound` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound))
+- `outbound` (Attributes) (see [below for nested schema](#nestedatt--use_cases--outbound))
+
+<a id="nestedatt--use_cases--inbound"></a>
+### Nested Schema for `use_cases.inbound`
+
+Optional:
+
+- `change_description` (String) Optional description of this change (like a commit message)
+- `configuration` (Attributes) Configuration for inbound use cases (ERP to epilot) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration))
+- `enabled` (Boolean) Whether the use case is enabled. Not Null
+- `id` (String) Optional use case ID for update matching.
+- If provided and matches an existing use case, that use case is updated
+- If provided but no match, a new use case with this ID is created
+- If omitted, a new use case with auto-generated ID is created
+- `name` (String) Use case name. Not Null
+- `type` (String) Use case type. Not Null; must be "inbound"
+
+Read-Only:
+
+- `created_at` (String)
+- `integration_id` (String)
+- `updated_at` (String)
+
+<a id="nestedatt--use_cases--inbound--configuration"></a>
+### Nested Schema for `use_cases.inbound.configuration`
+
+Optional:
+
+- `entities` (Attributes List) Array of entity configurations for this event (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities))
+- `meter_readings` (Attributes List) Array of meter reading configurations for this event (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings))
+
+<a id="nestedatt--use_cases--inbound--configuration--entities"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities`
+
+Optional:
+
+- `enabled` (Attributes) Controls whether this entity mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--enabled))
+- `entity_schema` (String) Target entity schema (e.g., 'contact', 'contract'). Not Null
+- `fields` (Attributes List) Field mapping definitions. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields))
+- `jsonata_expression` (String) Optional JSONata expression to pre-process the event data before field mapping
+- `unique_ids` (List of String) Array of attribute names that uniquely identify this entity.
+The _type hint for repeatable fields (e.g., email, phone) should be specified
+on the corresponding field definition in the fields array.
+Not Null
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--enabled"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.enabled`
+
+Optional:
+
+- `boolean` (Boolean)
+- `str` (String)
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields`
+
+Optional:
+
+- `attribute` (String) Target attribute name. Not Null
+- `constant` (String) Constant value to assign (any type). Parsed as JSON.
+- `enabled` (Attributes) Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--enabled))
+- `field` (String) Source field name or JSONPath expression (if starts with $)
+- `jsonata_expression` (String) JSONata expression for transformation
+- `relation_refs` (Attributes) Configuration for relation references ($relation_ref).
+Relation references link to a specific item within a repeatable attribute on a related entity.
+Common use case: referencing a specific address within a contact's address list. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs))
+- `relations` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--relations))
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--enabled"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.enabled`
+
+Optional:
+
+- `boolean` (Boolean)
+- `str` (String)
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.relation_refs`
+
+Optional:
+
+- `items` (Attributes List) Array of relation reference item configurations (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs--items))
+- `jsonata_expression` (String) JSONata expression that returns relation_ref items array (alternative to 'items')
+- `operation` (String) Relation reference operation:
+- '_set': Replace all existing relation_refs with the specified items
+- '_append': Add new unique items to existing relation_refs (deduplicates by entity_id + _id)
+- '_append_all': Add all items to existing relation_refs (no deduplication, allows duplicates)
+Not Null; must be one of ["_set", "_append", "_append_all"]
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs--items"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.relation_refs.items`
+
+Optional:
+
+- `entity_schema` (String) Schema of the related entity (e.g., "contact"). Not Null
+- `path` (String) Attribute path on the related entity (e.g., "address"). Not Null
+- `unique_ids` (Attributes List) Unique identifier mappings for the related entity. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs--items--unique_ids))
+- `value` (Attributes) Configuration for the value to set on the related entity's attribute. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs--items--value))
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs--items--unique_ids"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.relation_refs.items.unique_ids`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs--items--value"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.relation_refs.items.value`
+
+Optional:
+
+- `attribute` (String) Target attribute name on the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `operation` (String) Operation for the attribute value:
+- '_set': Replace the attribute value
+- '_append': Add new unique items (deduplicates)
+- '_append_all': Add all items (no deduplication)
+must be one of ["_set", "_append", "_append_all"]
+
+
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--relations"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.relations`
+
+Optional:
+
+- `items` (Attributes List) Array of relation item configurations (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--relations--items))
+- `jsonata_expression` (String) JSONata expression that returns relation items array (alternative to 'items')
+- `operation` (String) Relation operation:
+- '_set': Replace all existing relations with the specified items
+- '_append': Add new unique items to existing relations (deduplicates by entity_id)
+- '_append_all': Add all items to existing relations (no deduplication, allows duplicates)
+Not Null; must be one of ["_set", "_append", "_append_all"]
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--relations--items"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.relations.items`
+
+Optional:
+
+- `entity_schema` (String) Related entity schema. Not Null
+- `tags` (List of String) Optional tags for this relation
+- `unique_ids` (Attributes List) Unique identifier mappings for the related entity. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--relations--items--unique_ids))
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--relations--items--unique_ids"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.relations.items.unique_ids`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+
+
+
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings`
+
+Optional:
+
+- `fields` (Attributes List) Field mapping definitions for meter reading attributes. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields))
+- `jsonata_expression` (String) Optional JSONata expression to extract meter reading items from the event data.
+If not provided, the entire payload is used as the reading data.
+Useful when you need to extract an array of readings from a nested structure (e.g., "$.readings").
+- `meter` (Attributes) Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--meter))
+- `meter_counter` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--meter_counter))
+- `reading_matching` (String) Strategy for matching incoming readings against existing readings.
+- 'external_id': Match readings by external_id attribute (default behavior)
+- 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).
+  Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.
+Default: "external_id"; must be one of ["external_id", "strict-date"]
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields`
+
+Optional:
+
+- `attribute` (String) Target attribute name. Not Null
+- `constant` (String) Constant value to assign (any type). Parsed as JSON.
+- `enabled` (Attributes) Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--enabled))
+- `field` (String) Source field name or JSONPath expression (if starts with $)
+- `jsonata_expression` (String) JSONata expression for transformation
+- `relation_refs` (Attributes) Configuration for relation references ($relation_ref).
+Relation references link to a specific item within a repeatable attribute on a related entity.
+Common use case: referencing a specific address within a contact's address list. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs))
+- `relations` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--relations))
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--enabled"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.enabled`
+
+Optional:
+
+- `boolean` (Boolean)
+- `str` (String)
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.relation_refs`
+
+Optional:
+
+- `items` (Attributes List) Array of relation reference item configurations (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs--items))
+- `jsonata_expression` (String) JSONata expression that returns relation_ref items array (alternative to 'items')
+- `operation` (String) Relation reference operation:
+- '_set': Replace all existing relation_refs with the specified items
+- '_append': Add new unique items to existing relation_refs (deduplicates by entity_id + _id)
+- '_append_all': Add all items to existing relation_refs (no deduplication, allows duplicates)
+Not Null; must be one of ["_set", "_append", "_append_all"]
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs--items"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.relation_refs.items`
+
+Optional:
+
+- `entity_schema` (String) Schema of the related entity (e.g., "contact"). Not Null
+- `path` (String) Attribute path on the related entity (e.g., "address"). Not Null
+- `unique_ids` (Attributes List) Unique identifier mappings for the related entity. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs--items--unique_ids))
+- `value` (Attributes) Configuration for the value to set on the related entity's attribute. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs--items--value))
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs--items--unique_ids"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.relation_refs.items.unique_ids`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs--items--value"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.relation_refs.items.value`
+
+Optional:
+
+- `attribute` (String) Target attribute name on the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `operation` (String) Operation for the attribute value:
+- '_set': Replace the attribute value
+- '_append': Add new unique items (deduplicates)
+- '_append_all': Add all items (no deduplication)
+must be one of ["_set", "_append", "_append_all"]
+
+
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relations"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.relations`
+
+Optional:
+
+- `items` (Attributes List) Array of relation item configurations (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--relations--items))
+- `jsonata_expression` (String) JSONata expression that returns relation items array (alternative to 'items')
+- `operation` (String) Relation operation:
+- '_set': Replace all existing relations with the specified items
+- '_append': Add new unique items to existing relations (deduplicates by entity_id)
+- '_append_all': Add all items to existing relations (no deduplication, allows duplicates)
+Not Null; must be one of ["_set", "_append", "_append_all"]
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relations--items"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.relations.items`
+
+Optional:
+
+- `entity_schema` (String) Related entity schema. Not Null
+- `tags` (List of String) Optional tags for this relation
+- `unique_ids` (Attributes List) Unique identifier mappings for the related entity. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--relations--items--unique_ids))
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relations--items--unique_ids"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.relations.items.unique_ids`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+
+
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--meter"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.meter`
+
+Optional:
+
+- `unique_ids` (Attributes List) Array of unique identifier field mappings. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--meter--unique_ids))
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--meter--unique_ids"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.meter.unique_ids`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--meter_counter"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.meter_counter`
+
+Optional:
+
+- `unique_ids` (Attributes List) Array of unique identifier field mappings. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--meter_counter--unique_ids))
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--meter_counter--unique_ids"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.meter_counter.unique_ids`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+
+
+
+
+
+<a id="nestedatt--use_cases--outbound"></a>
+### Nested Schema for `use_cases.outbound`
+
+Optional:
+
+- `change_description` (String) Optional description of this change (like a commit message)
+- `configuration` (Map of String) Configuration for outbound use cases (epilot to ERP). Structure TBD.
+- `enabled` (Boolean) Whether the use case is enabled. Not Null
+- `id` (String) Optional use case ID for update matching.
+- If provided and matches an existing use case, that use case is updated
+- If provided but no match, a new use case with this ID is created
+- If omitted, a new use case with auto-generated ID is created
+- `name` (String) Use case name. Not Null
+- `type` (String) Use case type. Not Null; must be "outbound"
+
+Read-Only:
+
+- `created_at` (String)
+- `integration_id` (String)
+- `updated_at` (String)
 
 ## Import
 
