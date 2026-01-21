@@ -3,14 +3,55 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
 )
 
+// ReadingMatching - Strategy for matching incoming readings against existing readings.
+//   - 'external_id': Match readings by external_id attribute (default behavior)
+//   - 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).
+//     Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.
+type ReadingMatching string
+
+const (
+	ReadingMatchingExternalID ReadingMatching = "external_id"
+	ReadingMatchingStrictDate ReadingMatching = "strict-date"
+)
+
+func (e ReadingMatching) ToPointer() *ReadingMatching {
+	return &e
+}
+func (e *ReadingMatching) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "external_id":
+		fallthrough
+	case "strict-date":
+		*e = ReadingMatching(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ReadingMatching: %v", v)
+	}
+}
+
 type IntegrationMeterReading struct {
-	// JSONata expression to extract meter reading items from the event data
-	JsonataExpression string                `json:"jsonataExpression"`
-	Meter             MeterUniqueIdsConfig  `json:"meter"`
-	MeterCounter      *MeterUniqueIdsConfig `json:"meter_counter,omitempty"`
+	// Optional JSONata expression to extract meter reading items from the event data.
+	// If not provided, the entire payload is used as the reading data.
+	// Useful when you need to extract an array of readings from a nested structure (e.g., "$.readings").
+	//
+	JsonataExpression *string `json:"jsonataExpression,omitempty"`
+	// Strategy for matching incoming readings against existing readings.
+	// - 'external_id': Match readings by external_id attribute (default behavior)
+	// - 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).
+	//   Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.
+	//
+	ReadingMatching *ReadingMatching      `default:"external_id" json:"reading_matching"`
+	Meter           MeterUniqueIdsConfig  `json:"meter"`
+	MeterCounter    *MeterUniqueIdsConfig `json:"meter_counter,omitempty"`
 	// Field mapping definitions for meter reading attributes
 	Fields []IntegrationEntityField `json:"fields"`
 }
@@ -26,11 +67,18 @@ func (i *IntegrationMeterReading) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (i *IntegrationMeterReading) GetJsonataExpression() string {
+func (i *IntegrationMeterReading) GetJsonataExpression() *string {
 	if i == nil {
-		return ""
+		return nil
 	}
 	return i.JsonataExpression
+}
+
+func (i *IntegrationMeterReading) GetReadingMatching() *ReadingMatching {
+	if i == nil {
+		return nil
+	}
+	return i.ReadingMatching
 }
 
 func (i *IntegrationMeterReading) GetMeter() MeterUniqueIdsConfig {

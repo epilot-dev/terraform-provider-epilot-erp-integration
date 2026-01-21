@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.17.1 and generator version 2.795.8
+// Generated from OpenAPI doc version 0.18.0 and generator version 2.797.1
 
 import (
 	"context"
@@ -132,9 +132,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		SDKVersion: "0.11.0",
+		SDKVersion: "0.12.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.11.0 2.795.8 0.17.1 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.12.0 2.797.1 0.18.0 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),

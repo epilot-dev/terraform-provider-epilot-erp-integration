@@ -1,16 +1,17 @@
 lockVersion: 2.0.0
 id: 15fc1ae3-2912-47ad-8b62-703c6db72e27
 management:
-  docChecksum: 8be2ffed12bda25471204c09f271638b
-  docVersion: 0.17.1
-  speakeasyVersion: 1.685.3
-  generationVersion: 2.795.8
-  releaseVersion: 0.11.0
-  configChecksum: 857447bffbf64f826a70d4dcc223d542
+  docChecksum: 7f82462c503ca8e5618a910225196b89
+  docVersion: 0.18.0
+  speakeasyVersion: 1.691.0
+  generationVersion: 2.797.1
+  releaseVersion: 0.12.0
+  configChecksum: d90f4f6377d5775f6b5c0f8f5f31e9e8
+  repoURL: https://github.com/epilot-dev/terraform-provider-epilot-erp-integration.git
 persistentEdits:
-  generation_id: b194d22d-4305-4e36-a319-68724cac1332
-  pristine_commit_hash: 85fc79f42bf3cef0240ac5e779ed1d8ee6e89592
-  pristine_tree_hash: edaa8e52e4b6a85279f4a28c99bcf0b2c8fffb87
+  generation_id: d39c1368-2232-4bcb-8a1b-746d7308d547
+  pristine_commit_hash: d2d4d05fec46a4a072c523405d6b3b6c3153c375
+  pristine_tree_hash: 881288dad25549f9a6c12f1f98452b82a8e890fe
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -21,7 +22,7 @@ features:
     globalServerURLs: 2.83.0
     nullables: 0.0.0
     retries: 2.81.4
-    unions: 2.82.6
+    unions: 2.82.7
 trackedFiles:
   .gitattributes:
     id: 24139dae6567
@@ -37,8 +38,8 @@ trackedFiles:
     pristine_git_object: d3df7a792fb1b94e05b81e1621644512d3317534
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:86cc88002cd0f21fb7c7c865c5d46dc085fd5be2
-    pristine_git_object: 98c73eb4c0eb92255c1f9790ce4a10df2826c976
+    last_write_checksum: sha1:ac53969b9ebb356101225955250021fecee0cb2f
+    pristine_git_object: 43de5c7326d60b7a7f25b23909f448689daddd86
   examples/resources/epilot-erp-integration_integration/import-by-string-id.tf:
     id: 4183e30b18a7
     last_write_checksum: sha1:7b6c3500f63071e0e923f524c8e7d71fb8bf087c
@@ -53,8 +54,8 @@ trackedFiles:
     pristine_git_object: c0cb6c90c58db064020aaf58ddca1a98e43bcfeb
   go.mod:
     id: c47645c391ad
-    last_write_checksum: sha1:53c6dba7f502467b7ddacb8294edfa184c0039d2
-    pristine_git_object: 2b687da6459a27d6a0d48dc806831582261c0d62
+    last_write_checksum: sha1:9650fea34f89eceda44c0c5f9c1a2883dc83f8e2
+    pristine_git_object: 6e9c3474199955981d80c4a2de35721124a5aec3
   internal/planmodifiers/boolplanmodifier/suppress_diff.go:
     id: 3cf85b98963e
     last_write_checksum: sha1:56a62808eef897f96e6bb10c4a31dcf1c5e43d3e
@@ -253,8 +254,8 @@ trackedFiles:
     pristine_git_object: dfbe6407380a9a6aa260755afc0a6c92ac48dec4
   internal/sdk/integrations.go:
     id: d17298644af8
-    last_write_checksum: sha1:07f7d25e1d32c1a165f63c32e53e0b40ab578087
-    pristine_git_object: c38cfa84c20a0d7ff75b6a72a5de72f2baf7efd0
+    last_write_checksum: sha1:b40f6ef7b9ffdfa5f4bfc47ec1b156347f3e8461
+    pristine_git_object: 8e0b7e39859790eeb7dc41df9129f31477865fa7
   internal/sdk/internal/config/sdkconfiguration.go:
     id: 6af0bc8635d9
     last_write_checksum: sha1:135c367329099bd7954f803b510752cb8e16d992
@@ -339,6 +340,10 @@ trackedFiles:
     id: f29b59ab4942
     last_write_checksum: sha1:2aa4aa5f8c70336a745de9a4e26fc59700516c4d
     pristine_git_object: dbeb87d65a9b297fa0e66cc828e0ef4da48a2e8d
+  internal/sdk/models/operations/deleteintegrationv2.go:
+    id: 3e8998277aa9
+    last_write_checksum: sha1:dd65bdad3728755870ebfb7a2bb3239e9aadb9e2
+    pristine_git_object: 192e9ff96dcf0076c822cd6fc73a4cfd90323248
   internal/sdk/models/operations/deleteusecase.go:
     id: 646451b89252
     last_write_checksum: sha1:39bf10abcd75be732cc64746427db9a083abbf0d
@@ -347,6 +352,10 @@ trackedFiles:
     id: 9979cf6e2292
     last_write_checksum: sha1:35a9597cce2c45981be9ce19dfeb21c53a6476f8
     pristine_git_object: d9dca008fae21454bdbfab5a2709c015655ae7cf
+  internal/sdk/models/operations/getintegrationv2.go:
+    id: 1538a36aa6c9
+    last_write_checksum: sha1:0518f10da1a9ce00bf666e1b4f9e0f70c3086624
+    pristine_git_object: a9085aae026c9a47ece791bc7c7a10410b6102bb
   internal/sdk/models/operations/getusecase.go:
     id: 516e1ef407ef
     last_write_checksum: sha1:1c8a3251e00a387b0e25e0b0ad46fab52e8bf2f0
@@ -355,6 +364,10 @@ trackedFiles:
     id: 719c2f097956
     last_write_checksum: sha1:02b7820a7297cad94fb7a5e527eb77e096620a13
     pristine_git_object: ed16bd97c45b1502be1626409fcabea7c8bedab8
+  internal/sdk/models/operations/listintegrationsv2.go:
+    id: 84911cdca34f
+    last_write_checksum: sha1:a57a8f75aa1002a42a85a08052b0cb5f1a631293
+    pristine_git_object: 286156f088a54c8e739bf1d78b5b7fa0a3cb97bb
   internal/sdk/models/operations/listusecasehistory.go:
     id: 92bd19a768d3
     last_write_checksum: sha1:e6cf4efeeafe724a39936d80f98e5b06a0677013
@@ -407,6 +420,10 @@ trackedFiles:
     id: dd983fa9f02f
     last_write_checksum: sha1:a3d18a9c2c8789d13353713e7e7a16bab31dbb83
     pristine_git_object: 3deb33102d232323036449ac59964e2548456546
+  internal/sdk/models/operations/upsertintegrationv2.go:
+    id: 8305750e27f5
+    last_write_checksum: sha1:0c9a5644a2607a8d1e989d591161fa40199e42bb
+    pristine_git_object: b033829643e330e7cdf5959a2183241fd70b6770
   internal/sdk/models/shared/createinboundusecaserequest.go:
     id: c307416fe53c
     last_write_checksum: sha1:7c5e616c1418b37980c9f6e56893270e8f96d08c
@@ -427,14 +444,26 @@ trackedFiles:
     id: 7260d52e67bd
     last_write_checksum: sha1:b33bd9fd7b8047c7c726278ad07d0a7b07207d1a
     pristine_git_object: 14053ff6f1a6ca224dcf57b8b98ef91786821da4
+  internal/sdk/models/shared/embeddedinboundusecaserequest.go:
+    id: 2952c09986fe
+    last_write_checksum: sha1:cba5dbeefb7e5d02e977c917f7a74e59d832606c
+    pristine_git_object: 5e159aeea5c1f1842ba893cc578c9207fc52d54b
+  internal/sdk/models/shared/embeddedoutboundusecaserequest.go:
+    id: 6118fd9a1703
+    last_write_checksum: sha1:aec12468772cd435d8eaaec2b2cbce5bb8f6a6df
+    pristine_git_object: ff0a6f7db955151976dabcb42f91c8778657039f
+  internal/sdk/models/shared/embeddedusecaserequest.go:
+    id: db9762ae80e8
+    last_write_checksum: sha1:7b11caf6427b82ebf846b7c8c6258bc2e00d5c50
+    pristine_git_object: eb4ab04f89e7d7fae714057705c78035e0556021
   internal/sdk/models/shared/entityupdate.go:
     id: 734ff2e169c0
     last_write_checksum: sha1:65b052d903dd4926a9f2cefe3df1ab09da074e06
     pristine_git_object: 370a3906a6800604f97748aa50d72bd8bf358b68
   internal/sdk/models/shared/erpevent.go:
     id: 5b07da54a43b
-    last_write_checksum: sha1:6818242a6a92eb227b09295474c0947c07d9cc71
-    pristine_git_object: b7e8e65a0622176cd41c132dc6ac03a101620ce3
+    last_write_checksum: sha1:a265259aa40616e498e67dd953942bab75583b26
+    pristine_git_object: 1cb847fb3a93045f23d60de1c001ad60d71f7748
   internal/sdk/models/shared/erpupdateseventsv2request.go:
     id: 3029a483d6f9
     last_write_checksum: sha1:f7cc8429b46e7f397b70f1b2b899a2cb2efb98e6
@@ -481,12 +510,16 @@ trackedFiles:
     pristine_git_object: b0a36a187964c302c4aeceb43846894f695c13dd
   internal/sdk/models/shared/integrationmeterreading.go:
     id: 16b56102c114
-    last_write_checksum: sha1:a486d6f6e8fdf87e51a40bd9870b483c5acb333b
-    pristine_git_object: 1ad3584736792c2453c86d3d03a9225ea4c57496
+    last_write_checksum: sha1:6823923c293b1c6377a063e6a46065a030def6fb
+    pristine_git_object: 78cb50c9311cd20712f526fe5a1c3671c3e04210
   internal/sdk/models/shared/integrationobjectv1.go:
     id: bd08fe4cc579
     last_write_checksum: sha1:305c765e7d3ba0fa3d50f26696d6c2aff54f2572
     pristine_git_object: fe1ae94c3f2fc1baccb03f0b487f73191d487b00
+  internal/sdk/models/shared/integrationwithusecases.go:
+    id: 1cba30de49c8
+    last_write_checksum: sha1:2dbe44c885b7ac9792ffa9d38c007b92e5c15d81
+    pristine_git_object: 41367dff469b28c43d78d26ce14a573524f15e38
   internal/sdk/models/shared/mappingsimulationrequest.go:
     id: 5cc93b5eb989
     last_write_checksum: sha1:75b62422f0f929a3812b7309109a1d67d60dc2d1
@@ -579,6 +612,10 @@ trackedFiles:
     id: a79c5fff1756
     last_write_checksum: sha1:db4dbf0e9dbac08ed533abf9ec0effefbf484df7
     pristine_git_object: 2ed11edd9b1bb2d77116c1e9089fa1fdd0d86d17
+  internal/sdk/models/shared/upsertintegrationwithusecasesrequest.go:
+    id: 6165b71d1b5d
+    last_write_checksum: sha1:916441420c43af8ad99db2db3d467d6779773fb7
+    pristine_git_object: 998f01782b369cf3c81d5b5884276cc2a2017010
   internal/sdk/models/shared/usecase.go:
     id: caafcfcb29c6
     last_write_checksum: sha1:19cdd8173f51bb63ba43fee4f4e1ad0fa120be99
@@ -601,8 +638,8 @@ trackedFiles:
     pristine_git_object: aa809fccb3445b1e2530a979dad620512f50e70f
   internal/sdk/sdk.go:
     id: 02d7190ee502
-    last_write_checksum: sha1:be1b03d7da851c38b78b2a6b9c89f6ac408ac4c9
-    pristine_git_object: fc46e764aee78ee46029bce5d6fd2d8126435c3a
+    last_write_checksum: sha1:eba82b780faefdea6b44f3429f982107697b625a
+    pristine_git_object: c524e8f24f42a8fb309a84709816d99962ed4d98
   internal/sdk/trigger.go:
     id: 8bbb8a8ac0b5
     last_write_checksum: sha1:be342c10fed9c2e2b6d479f8d0b666fb641bceb6
@@ -757,7 +794,7 @@ examples:
           application/json: {}
     with_meter_readings:
       requestBody:
-        application/json: {"event_configuration": {"entities": [{"entity_schema": "contract", "unique_ids": ["contract_number"], "fields": [{"attribute": "contract_number", "field": "number"}, {"attribute": "display_name", "field": "name"}]}], "meter_readings": [{"jsonataExpression": "$.readings", "meter": {"unique_ids": [{"attribute": "external_id", "field": "meter_id"}]}, "fields": [{"attribute": "external_id", "field": "reading_id"}, {"attribute": "timestamp", "field": "read_at"}, {"attribute": "source", "constant": "ERP"}, {"attribute": "value", "field": "value"}]}]}, "format": "json", "payload": "{\"number\":\"CTR-001\",\"name\":\"Main Contract\",\"readings\":[{\"meter_id\":\"M-001\",\"reading_id\":\"R-001\",\"read_at\":\"2025-01-15T10:00:00Z\",\"value\":12345.6}]}"}
+        application/json: {"event_configuration": {"entities": [{"entity_schema": "contract", "unique_ids": ["contract_number"], "fields": [{"attribute": "contract_number", "field": "number"}, {"attribute": "display_name", "field": "name"}]}], "meter_readings": [{"jsonataExpression": "$.readings", "reading_matching": "external_id", "meter": {"unique_ids": [{"attribute": "external_id", "field": "meter_id"}]}, "fields": [{"attribute": "external_id", "field": "reading_id"}, {"attribute": "timestamp", "field": "read_at"}, {"attribute": "source", "constant": "ERP"}, {"attribute": "value", "field": "value"}]}]}, "format": "json", "payload": "{\"number\":\"CTR-001\",\"name\":\"Main Contract\",\"readings\":[{\"meter_id\":\"M-001\",\"reading_id\":\"R-001\",\"read_at\":\"2025-01-15T10:00:00Z\",\"value\":12345.6}]}"}
       responses:
         "200":
           application/json: {"entity_updates": []}
@@ -768,6 +805,16 @@ examples:
     conditional_fields:
       requestBody:
         application/json: {"event_configuration": {"entities": [{"entity_schema": "contact", "unique_ids": ["customer_number"], "fields": [{"attribute": "customer_number", "field": "customerId"}, {"attribute": "email", "field": "email", "enabled": "$exists(email) and email != ''"}, {"attribute": "phone", "field": "phone", "enabled": "$exists(phone) and phone != ''"}, {"attribute": "vip_status", "constant": "VIP", "enabled": "vipFlag = true"}, {"attribute": "billing_account", "enabled": "$exists(billingAccountId)", "relations": {"operation": "_set", "items": [{"entity_schema": "billing_account", "unique_ids": [{"attribute": "external_id", "field": "billingAccountId"}]}]}}]}]}, "format": "json", "payload": "{\"customerId\":\"12345\",\"email\":\"user@example.com\",\"phone\":\"\",\"vipFlag\":true,\"billingAccountId\":\"ACC-999\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    speakeasy-default-simulate-mapping-v2:
+      requestBody:
+        application/json: {"event_configuration": {}, "format": "json", "payload": "<value>"}
       responses:
         "200":
           application/json: {"entity_updates": []}
@@ -819,6 +866,16 @@ examples:
     v2_field_enabled:
       requestBody:
         application/json: {"mapping_configuration": {"version": "2.0", "mapping": {"events": {"CustomerChanged": {"entities": [{"entity_schema": "contact", "unique_ids": ["customer_number"], "fields": [{"attribute": "customer_number", "field": "customerId"}, {"attribute": "email", "field": "email", "enabled": true}, {"attribute": "phone", "field": "phone", "enabled": "$exists(phone) and phone != ''"}, {"attribute": "mobile", "field": "mobile", "enabled": "$exists(mobile)"}, {"attribute": "vip_status", "constant": "VIP", "enabled": "vipFlag = true"}, {"attribute": "internal_notes", "field": "notes", "enabled": false}, {"attribute": "billing_account", "enabled": "$exists(billingAccountId)", "relations": {"operation": "_set", "items": [{"entity_schema": "billing_account", "unique_ids": [{"attribute": "external_id", "field": "billingAccountId"}]}]}}]}]}}}}, "object_type": "CustomerChanged", "format": "json", "payload": "{\"customerId\":\"12345\",\"email\":\"user@example.com\",\"phone\":\"\",\"mobile\":\"555-1234\",\"vipFlag\":true,\"notes\":\"Internal only\",\"billingAccountId\":\"ACC-999\"}"}
+      responses:
+        "200":
+          application/json: {"entity_updates": []}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+    speakeasy-default-simulate-mapping:
+      requestBody:
+        application/json: {"mapping_configuration": {"version": "1.0", "mapping": {"objects": {"key": {"unique_ids": {"key": {"key": "<value>", "key1": "<value>", "key2": "<value>"}}, "fields": [{"entity": "<value>", "attribute": "<value>"}]}}}}, "object_type": "<value>", "format": "json", "payload": "<value>"}
       responses:
         "200":
           application/json: {"entity_updates": []}
@@ -1019,6 +1076,53 @@ examples:
         "200":
           application/json: {}
         "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  listIntegrationsV2:
+    speakeasy-default-list-integrations-v2:
+      responses:
+        "200":
+          application/json: {"integrations": [{"id": "bbb993b6-068e-4181-9c80-f2efe7acedf9", "orgId": "<id>", "name": "<value>", "use_cases": [], "created_at": "2026-09-18T10:11:20.040Z", "updated_at": "2026-12-23T21:35:33.303Z"}]}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  getIntegrationV2:
+    speakeasy-default-get-integration-v2:
+      parameters:
+        path:
+          integrationId: "625bbc05-72a3-41f2-a565-244b59199a4b"
+      responses:
+        "200":
+          application/json: {"id": "702016d5-7359-4976-9eb0-5efd7ccc158e", "orgId": "<id>", "name": "<value>", "use_cases": [], "created_at": "2026-09-21T19:46:59.347Z", "updated_at": "2024-06-27T06:19:38.108Z"}
+        "401":
+          application/json: {}
+        "500":
+          application/json: {}
+  upsertIntegrationV2:
+    speakeasy-default-upsert-integration-v2:
+      parameters:
+        path:
+          integrationId: "e356bcd2-bee5-4a22-8d99-6f42bcfeeded"
+      requestBody:
+        application/json: {"name": "<value>"}
+      responses:
+        "200":
+          application/json: {"id": "11791837-88c5-4cef-bc52-75dea9a5e4b7", "orgId": "<id>", "name": "<value>", "use_cases": [], "created_at": "2026-12-16T20:31:37.461Z", "updated_at": "2024-09-06T07:30:01.672Z"}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  deleteIntegrationV2:
+    speakeasy-default-delete-integration-v2:
+      parameters:
+        path:
+          integrationId: "092b92ac-db8b-47bd-81e0-84d7b810f9ac"
+      responses:
+        "200":
+          application/json: {}
+        "401":
           application/json: {}
         "500":
           application/json: {}
