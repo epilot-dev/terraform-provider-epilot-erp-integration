@@ -1044,7 +1044,8 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 									Description: `Configuration for inbound use cases (ERP to epilot)`,
 								},
 								"created_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was created`,
 								},
 								"enabled": schema.BoolAttribute{
 									Computed:    true,
@@ -1063,7 +1064,8 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 										`- If omitted, a new use case with auto-generated ID is created`,
 								},
 								"integration_id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Parent integration ID`,
 								},
 								"name": schema.StringAttribute{
 									Computed:    true,
@@ -1084,7 +1086,8 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 									},
 								},
 								"updated_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was last updated`,
 								},
 							},
 							Validators: []validator.Object{
@@ -1117,7 +1120,8 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 									},
 								},
 								"created_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was created`,
 								},
 								"enabled": schema.BoolAttribute{
 									Computed:    true,
@@ -1136,7 +1140,8 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 										`- If omitted, a new use case with auto-generated ID is created`,
 								},
 								"integration_id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Parent integration ID`,
 								},
 								"name": schema.StringAttribute{
 									Computed:    true,
@@ -1157,7 +1162,8 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 									},
 								},
 								"updated_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was last updated`,
 								},
 							},
 							Validators: []validator.Object{
@@ -1215,13 +1221,13 @@ func (r *IntegrationResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpsertIntegrationV2Request(ctx)
+	request, requestDiags := data.ToSharedUpsertIntegrationWithUseCasesRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.UpsertIntegrationV2(ctx, *request)
+	res, err := r.client.Integrations.CreateIntegrationV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1233,7 +1239,7 @@ func (r *IntegrationResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -1329,13 +1335,13 @@ func (r *IntegrationResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpsertIntegrationV2Request(ctx)
+	request, requestDiags := data.ToOperationsUpdateIntegrationV2Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.UpsertIntegrationV2(ctx, *request)
+	res, err := r.client.Integrations.UpdateIntegrationV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

@@ -7,68 +7,68 @@ import (
 	"net/http"
 )
 
-type UpsertIntegrationV2Request struct {
+type UpdateIntegrationV2Request struct {
 	// The integration ID (client-provided)
 	IntegrationID                        string                                      `pathParam:"style=simple,explode=false,name=integrationId"`
 	UpsertIntegrationWithUseCasesRequest shared.UpsertIntegrationWithUseCasesRequest `request:"mediaType=application/json"`
 }
 
-func (u *UpsertIntegrationV2Request) GetIntegrationID() string {
+func (u *UpdateIntegrationV2Request) GetIntegrationID() string {
 	if u == nil {
 		return ""
 	}
 	return u.IntegrationID
 }
 
-func (u *UpsertIntegrationV2Request) GetUpsertIntegrationWithUseCasesRequest() shared.UpsertIntegrationWithUseCasesRequest {
+func (u *UpdateIntegrationV2Request) GetUpsertIntegrationWithUseCasesRequest() shared.UpsertIntegrationWithUseCasesRequest {
 	if u == nil {
 		return shared.UpsertIntegrationWithUseCasesRequest{}
 	}
 	return u.UpsertIntegrationWithUseCasesRequest
 }
 
-type UpsertIntegrationV2Response struct {
+type UpdateIntegrationV2Response struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Integration created or updated successfully with use cases
+	// Integration updated successfully with use cases
 	IntegrationWithUseCases *shared.IntegrationWithUseCases
 	// Bad request
 	ErrorResponseBase *shared.ErrorResponseBase
 }
 
-func (u *UpsertIntegrationV2Response) GetContentType() string {
+func (u *UpdateIntegrationV2Response) GetContentType() string {
 	if u == nil {
 		return ""
 	}
 	return u.ContentType
 }
 
-func (u *UpsertIntegrationV2Response) GetStatusCode() int {
+func (u *UpdateIntegrationV2Response) GetStatusCode() int {
 	if u == nil {
 		return 0
 	}
 	return u.StatusCode
 }
 
-func (u *UpsertIntegrationV2Response) GetRawResponse() *http.Response {
+func (u *UpdateIntegrationV2Response) GetRawResponse() *http.Response {
 	if u == nil {
 		return nil
 	}
 	return u.RawResponse
 }
 
-func (u *UpsertIntegrationV2Response) GetIntegrationWithUseCases() *shared.IntegrationWithUseCases {
+func (u *UpdateIntegrationV2Response) GetIntegrationWithUseCases() *shared.IntegrationWithUseCases {
 	if u == nil {
 		return nil
 	}
 	return u.IntegrationWithUseCases
 }
 
-func (u *UpsertIntegrationV2Response) GetErrorResponseBase() *shared.ErrorResponseBase {
+func (u *UpdateIntegrationV2Response) GetErrorResponseBase() *shared.ErrorResponseBase {
 	if u == nil {
 		return nil
 	}

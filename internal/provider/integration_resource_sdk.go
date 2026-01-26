@@ -435,7 +435,7 @@ func (r *IntegrationResourceModel) ToOperationsGetIntegrationV2Request(ctx conte
 	return &out, diags
 }
 
-func (r *IntegrationResourceModel) ToOperationsUpsertIntegrationV2Request(ctx context.Context) (*operations.UpsertIntegrationV2Request, diag.Diagnostics) {
+func (r *IntegrationResourceModel) ToOperationsUpdateIntegrationV2Request(ctx context.Context) (*operations.UpdateIntegrationV2Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var integrationID string
@@ -448,7 +448,7 @@ func (r *IntegrationResourceModel) ToOperationsUpsertIntegrationV2Request(ctx co
 		return nil, diags
 	}
 
-	out := operations.UpsertIntegrationV2Request{
+	out := operations.UpdateIntegrationV2Request{
 		IntegrationID:                        integrationID,
 		UpsertIntegrationWithUseCasesRequest: *upsertIntegrationWithUseCasesRequest,
 	}

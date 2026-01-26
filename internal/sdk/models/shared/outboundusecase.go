@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// OutboundUseCaseType - Use case type
 type OutboundUseCaseType string
 
 const (
@@ -33,14 +34,21 @@ func (e *OutboundUseCaseType) UnmarshalJSON(data []byte) error {
 }
 
 type OutboundUseCase struct {
-	ID                string              `json:"id"`
-	IntegrationID     string              `json:"integrationId"`
-	Name              string              `json:"name"`
-	Type              OutboundUseCaseType `json:"type"`
-	Enabled           bool                `json:"enabled"`
-	ChangeDescription *string             `json:"change_description,omitempty"`
-	CreatedAt         time.Time           `json:"created_at"`
-	UpdatedAt         time.Time           `json:"updated_at"`
+	// Unique identifier for the use case
+	ID string `json:"id"`
+	// Parent integration ID
+	IntegrationID string `json:"integrationId"`
+	// Use case name
+	Name string `json:"name"`
+	// Use case type
+	Type    OutboundUseCaseType `json:"type"`
+	Enabled bool                `json:"enabled"`
+	// Description of the last change made to this use case
+	ChangeDescription *string `json:"change_description,omitempty"`
+	// ISO-8601 timestamp when the use case was created
+	CreatedAt time.Time `json:"created_at"`
+	// ISO-8601 timestamp when the use case was last updated
+	UpdatedAt time.Time `json:"updated_at"`
 	// Configuration for outbound use cases (epilot to ERP). Structure TBD.
 	Configuration map[string]any `json:"configuration,omitempty"`
 }

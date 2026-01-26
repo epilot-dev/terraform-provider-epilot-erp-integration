@@ -43,15 +43,15 @@ Read-Only:
 
 Read-Only:
 
-- `change_description` (String)
+- `change_description` (String) Description of the last change made to this use case
 - `configuration` (Attributes) Configuration for inbound use cases (ERP to epilot) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration))
-- `created_at` (String)
+- `created_at` (String) ISO-8601 timestamp when the use case was created
 - `enabled` (Boolean)
-- `id` (String)
-- `integration_id` (String)
-- `name` (String)
-- `type` (String)
-- `updated_at` (String)
+- `id` (String) Unique identifier for the use case
+- `integration_id` (String) Parent integration ID
+- `name` (String) Use case name
+- `type` (String) Use case type
+- `updated_at` (String) ISO-8601 timestamp when the use case was last updated
 
 <a id="nestedatt--use_cases--inbound--configuration"></a>
 ### Nested Schema for `use_cases.inbound.configuration`
@@ -380,12 +380,12 @@ These fields are stored as arrays of objects (e.g., email: [{ email: "value" }])
 
 Read-Only:
 
-- `change_description` (String)
+- `change_description` (String) Description of the last change made to this use case
 - `configuration` (Map of String) Configuration for outbound use cases (epilot to ERP). Structure TBD.
-- `created_at` (String)
+- `created_at` (String) ISO-8601 timestamp when the use case was created
 - `enabled` (Boolean)
-- `id` (String)
-- `integration_id` (String)
-- `name` (String)
-- `type` (String)
-- `updated_at` (String)
+- `id` (String) Unique identifier for the use case
+- `integration_id` (String) Parent integration ID
+- `name` (String) Use case name
+- `type` (String) Use case type
+- `updated_at` (String) ISO-8601 timestamp when the use case was last updated

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: ERP Integration API
-  version: 0.18.0
+  version: 0.22.0
   description: API for integrating with ERP systems, handling tracking acknowledgments, triggering ERP processes, and processing ERP updates.
 tags:
 - name: erp
@@ -10,6 +10,8 @@ tags:
   description: Endpoints to trigger ERP related actions
 - name: integrations
   description: Integration and Use Case management endpoints
+- name: monitoring
+  description: Monitoring and analytics endpoints
 servers:
 - url: https://erp-integration-api.sls.epilot.io
 - url: https://erp-integration-api.sls.epilot.io
@@ -1008,6 +1010,32 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
+    post:
+      operationId: createIntegrationV2
+      summary: createIntegrationV2
+      description: |
+        Create a new integration with embedded use cases.
+      tags:
+      - integrations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertIntegrationWithUseCasesRequest'
+      responses:
+        '201':
+          description: Integration created successfully with use cases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationWithUseCases'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /v2/integrations/{integrationId}:
     get:
       operationId: getIntegrationV2
@@ -1037,16 +1065,15 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     put:
-      operationId: upsertIntegrationV2
-      summary: upsertIntegrationV2
+      operationId: updateIntegrationV2
+      summary: updateIntegrationV2
       description: |
-        Create or update an integration with embedded use cases (upsert).
-        If the integration does not exist, it will be created with the specified ID.
-        If it exists, it will be updated declaratively:
+        Update an existing integration with embedded use cases.
+        The integration must already exist.
+        Use cases are updated declaratively:
         - Use cases in the request with matching IDs are updated
         - Use cases in the request without matching IDs are created
         - Existing use cases not in the request are deleted
-        This is ideal for Infrastructure-as-Code tools like Terraform.
       tags:
       - integrations
       parameters:
@@ -1065,7 +1092,7 @@ paths:
               $ref: '#/components/schemas/UpsertIntegrationWithUseCasesRequest'
       responses:
         '200':
-          description: Integration created or updated successfully with use cases
+          description: Integration updated successfully with use cases
           content:
             application/json:
               schema:
@@ -1074,6 +1101,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Integration not found
         '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
@@ -1188,6 +1217,78 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           description: App mapping not found
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /v1/integrations/{integrationId}/monitoring/events:
+    post:
+      operationId: queryMonitoringEvents
+      summary: queryMonitoringEvents
+      description: |
+        Query ERP sync monitoring events for a specific integration.
+        Returns detailed information about inbound/outbound sync events,
+        including success rates, error breakdowns, and processing metrics.
+      tags:
+      - monitoring
+      - integrations
+      parameters:
+      - name: integrationId
+        in: path
+        required: true
+        description: The integration ID
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryMonitoringEventsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/QueryMonitoringEventsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /v1/integrations/{integrationId}/monitoring/stats:
+    post:
+      operationId: getMonitoringStats
+      summary: getMonitoringStats
+      description: |
+        Get aggregated statistics for ERP sync monitoring events for a specific integration.
+        Returns summary metrics like total events, success/error counts,
+        and breakdowns by use case, direction, and sync type.
+      tags:
+      - monitoring
+      - integrations
+      parameters:
+      - name: integrationId
+        in: path
+        required: true
+        description: The integration ID
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetMonitoringStatsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetMonitoringStatsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 components:
@@ -1435,74 +1536,85 @@ components:
           type: string
           format: uuid
           description: The integration ID this app/component is mapped to
-
-    
     UseCaseBase:
       type: object
       required:
-        - id
-        - integrationId
-        - name
-        - type
-        - enabled
-        - created_at
-        - updated_at
+      - id
+      - integrationId
+      - name
+      - type
+      - enabled
+      - created_at
+      - updated_at
       properties:
         id:
           type: string
           format: uuid
+          description: Unique identifier for the use case
         integrationId:
           type: string
           format: uuid
+          description: Parent integration ID
         name:
           type: string
+          description: Use case name
         type:
           type: string
-          enum: [inbound, outbound]
+          enum:
+          - inbound
+          - outbound
+          description: Use case type
         enabled:
           type: boolean
         change_description:
           type: string
           maxLength: 2000
+          description: Description of the last change made to this use case
         created_at:
           type: string
           format: date-time
+          description: ISO-8601 timestamp when the use case was created
         updated_at:
           type: string
           format: date-time
-
+          description: ISO-8601 timestamp when the use case was last updated
     InboundUseCase:
       allOf:
-        - $ref: '#/components/schemas/UseCaseBase'
-        - type: object
-          properties:
-            type:
-              type: string
-              enum: [inbound]
-            configuration:
-              $ref: '#/components/schemas/InboundIntegrationEventConfiguration'
-
+      - $ref: '#/components/schemas/UseCaseBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - inbound
+            description: Use case type
+          configuration:
+            $ref: '#/components/schemas/InboundIntegrationEventConfiguration'
     OutboundUseCase:
       allOf:
-        - $ref: '#/components/schemas/UseCaseBase'
-        - type: object
-          properties:
-            type:
-              type: string
-              enum: [outbound]
-            configuration:
-              $ref: '#/components/schemas/OutboundIntegrationEventConfiguration'
-
+      - $ref: '#/components/schemas/UseCaseBase'
+      - type: object
+        required:
+        - type
+        properties:
+          type:
+            type: string
+            enum:
+            - outbound
+            description: Use case type
+          configuration:
+            $ref: '#/components/schemas/OutboundIntegrationEventConfiguration'
     UseCase:
       oneOf:
-        - $ref: '#/components/schemas/InboundUseCase'
-        - $ref: '#/components/schemas/OutboundUseCase'
+      - $ref: '#/components/schemas/InboundUseCase'
+      - $ref: '#/components/schemas/OutboundUseCase'
       discriminator:
         propertyName: type
         mapping:
           inbound: '#/components/schemas/InboundUseCase'
-          outbound: '#/components/schemas/OutboundUseCase' 
-
+          outbound: '#/components/schemas/OutboundUseCase'
     CreateUseCaseRequest:
       oneOf:
       - $ref: '#/components/schemas/CreateInboundUseCaseRequest'
@@ -2331,6 +2443,263 @@ components:
               type: string
               description: Event ID from the last event in the previous page
               example: evt_1234567890abcdef
+    QueryMonitoringEventsRequest:
+      type: object
+      properties:
+        use_case_id:
+          type: string
+          format: uuid
+          description: Filter by use case ID
+        direction:
+          type: string
+          enum:
+          - inbound
+          - outbound
+          description: Filter by sync direction
+        event_type:
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+          - TRIGGER
+          description: Filter by event type
+        sync_type:
+          type: string
+          enum:
+          - entity
+          - meter_reading
+          - webhook
+          description: Filter by sync type
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          - skipped
+          description: Filter by processing status
+        error_category:
+          type: string
+          enum:
+          - validation
+          - configuration
+          - downstream_api
+          - timeout
+          - system
+          - webhook_delivery
+          description: Filter by error category (only applicable when status=error)
+        correlation_id:
+          type: string
+          description: Filter by correlation ID
+        object_type:
+          type: string
+          description: Filter by object type (e.g., 'contract', 'meter')
+        event_id:
+          type: string
+          description: Filter by event ID to find a specific event
+        from_date:
+          type: string
+          format: date-time
+          description: Filter events from this date (inclusive)
+          example: '2025-01-01T00:00:00Z'
+        to_date:
+          type: string
+          format: date-time
+          description: Filter events until this date (inclusive)
+          example: '2025-01-31T23:59:59Z'
+        limit:
+          type: integer
+          description: Maximum number of results to return
+          example: 50
+          default: 50
+          minimum: 1
+          maximum: 100
+        cursor:
+          type: object
+          description: Cursor for pagination
+          properties:
+            completed_at:
+              type: string
+              format: date-time
+              description: Timestamp from the last event in the previous page
+            event_id:
+              type: string
+              description: Event ID from the last event in the previous page
+    GetMonitoringStatsRequest:
+      type: object
+      properties:
+        use_case_id:
+          type: string
+          format: uuid
+          description: Filter by use case ID
+        direction:
+          type: string
+          enum:
+          - inbound
+          - outbound
+          description: Filter by sync direction
+        from_date:
+          type: string
+          format: date-time
+          description: Start date for statistics period (inclusive)
+          example: '2025-01-01T00:00:00Z'
+        to_date:
+          type: string
+          format: date-time
+          description: End date for statistics period (inclusive)
+          example: '2025-01-31T23:59:59Z'
+        group_by:
+          type: array
+          items:
+            type: string
+            enum:
+            - direction
+            - use_case_id
+            - sync_type
+            - status
+            - error_category
+            - object_type
+            - date
+          description: Fields to group statistics by
+          example:
+          - direction
+          - status
+    MonitoringEvent:
+      type: object
+      required:
+      - org_id
+      - event_id
+      - direction
+      - event_type
+      - object_type
+      - sync_type
+      - status
+      - received_at
+      - completed_at
+      properties:
+        org_id:
+          type: string
+          description: Organization ID
+        event_id:
+          type: string
+          description: Unique event identifier
+        correlation_id:
+          type: string
+          nullable: true
+          description: Correlation ID for tracing related events
+        integration_id:
+          type: string
+          nullable: true
+          description: Integration ID
+        use_case_id:
+          type: string
+          nullable: true
+          description: Use case ID
+        direction:
+          type: string
+          enum:
+          - inbound
+          - outbound
+          description: Sync direction
+        event_type:
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+          - TRIGGER
+          description: Type of event
+        object_type:
+          type: string
+          description: Type of object being synced (e.g., 'contract', 'meter')
+        sync_type:
+          type: string
+          enum:
+          - entity
+          - meter_reading
+          - webhook
+          description: Type of sync operation
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          - skipped
+          description: Processing status
+        error_code:
+          type: string
+          nullable: true
+          description: Error code (when status=error)
+        error_message:
+          type: string
+          nullable: true
+          description: Error message (when status=error)
+        error_category:
+          type: string
+          nullable: true
+          enum:
+          - validation
+          - configuration
+          - downstream_api
+          - timeout
+          - system
+          - webhook_delivery
+          description: Error category (when status=error)
+        processing_duration_ms:
+          type: integer
+          nullable: true
+          description: Processing duration in milliseconds
+        target_url:
+          type: string
+          nullable: true
+          description: Target URL for outbound requests
+        http_status_code:
+          type: integer
+          nullable: true
+          description: HTTP status code from target (outbound only)
+        received_at:
+          type: string
+          format: date-time
+          description: When the event was received
+        completed_at:
+          type: string
+          format: date-time
+          description: When processing completed
+    MonitoringStats:
+      type: object
+      required:
+      - total_events
+      - success_count
+      - error_count
+      - skipped_count
+      properties:
+        total_events:
+          type: integer
+          description: Total number of events in the period
+        success_count:
+          type: integer
+          description: Number of successful events
+        error_count:
+          type: integer
+          description: Number of failed events
+        skipped_count:
+          type: integer
+          description: Number of skipped events
+        success_rate:
+          type: number
+          format: float
+          description: Success rate as percentage (0-100)
+        last_error_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp of the most recent error
+        breakdown:
+          type: array
+          description: Statistics breakdown by requested group_by fields
+          items:
+            type: object
+            additionalProperties: true
   responses:
     BadRequest:
       description: Bad request
@@ -2356,6 +2725,37 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponseBase'
+    QueryMonitoringEventsResponse:
+      description: Monitoring events queried successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MonitoringEvent'
+                description: List of monitoring events
+              next_cursor:
+                type: object
+                nullable: true
+                description: Cursor to fetch the next page. Null if no more results.
+                properties:
+                  completed_at:
+                    type: string
+                    format: date-time
+                  event_id:
+                    type: string
+              has_more:
+                type: boolean
+                description: Indicates if more results are available
+    GetMonitoringStatsResponse:
+      description: Monitoring statistics retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MonitoringStats'
     ReplayEventsResponse:
       description: Events replay initiated
       content:

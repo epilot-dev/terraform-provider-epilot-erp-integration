@@ -16,10 +16,12 @@ actions:
           - 5XX
         retryConnectionErrors: true
 
-  # v2 PUT is an upsert - use it for both create and update to have consistent schemas
+  - target: $["paths"]["/v2/integrations"]["post"]
+    update:
+      x-speakeasy-entity-operation: Integration#create
   - target: $["paths"]["/v2/integrations/{integrationId}"]["put"]
     update:
-      x-speakeasy-entity-operation: Integration#create,update
+      x-speakeasy-entity-operation: Integration#update
   - target: $["paths"]["/v2/integrations/{integrationId}"]["get"]
     update:
       x-speakeasy-entity-operation: Integration#read

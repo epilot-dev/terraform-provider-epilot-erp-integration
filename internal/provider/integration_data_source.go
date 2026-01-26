@@ -82,7 +82,8 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 							Computed: true,
 							Attributes: map[string]schema.Attribute{
 								"change_description": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Description of the last change made to this use case`,
 								},
 								"configuration": schema.SingleNestedAttribute{
 									Computed: true,
@@ -617,25 +618,31 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 									Description: `Configuration for inbound use cases (ERP to epilot)`,
 								},
 								"created_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was created`,
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,
 								},
 								"id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Unique identifier for the use case`,
 								},
 								"integration_id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Parent integration ID`,
 								},
 								"name": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Use case name`,
 								},
 								"type": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Use case type`,
 								},
 								"updated_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was last updated`,
 								},
 							},
 						},
@@ -643,7 +650,8 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 							Computed: true,
 							Attributes: map[string]schema.Attribute{
 								"change_description": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Description of the last change made to this use case`,
 								},
 								"configuration": schema.MapAttribute{
 									Computed:    true,
@@ -651,25 +659,31 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 									Description: `Configuration for outbound use cases (epilot to ERP). Structure TBD.`,
 								},
 								"created_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was created`,
 								},
 								"enabled": schema.BoolAttribute{
 									Computed: true,
 								},
 								"id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Unique identifier for the use case`,
 								},
 								"integration_id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Parent integration ID`,
 								},
 								"name": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Use case name`,
 								},
 								"type": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `Use case type`,
 								},
 								"updated_at": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was last updated`,
 								},
 							},
 						},

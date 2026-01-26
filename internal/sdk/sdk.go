@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.18.0 and generator version 2.795.8
+// Generated from OpenAPI doc version 0.22.0 and generator version 2.795.8
 
 import (
 	"context"
@@ -57,6 +57,8 @@ type SDK struct {
 	Trigger *Trigger
 	// Integration and Use Case management endpoints
 	Integrations *Integrations
+	// Monitoring and analytics endpoints
+	Monitoring *Monitoring
 
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -132,9 +134,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		SDKVersion: "0.12.0",
+		SDKVersion: "0.13.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.12.0 2.795.8 0.18.0 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.13.0 2.795.8 0.22.0 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -158,6 +160,7 @@ func New(opts ...SDKOption) *SDK {
 	sdk.Erp = newErp(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Trigger = newTrigger(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Integrations = newIntegrations(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Monitoring = newMonitoring(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
 }

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Type - Use case type
 type Type string
 
 const (
@@ -33,14 +34,21 @@ func (e *Type) UnmarshalJSON(data []byte) error {
 }
 
 type InboundUseCase struct {
-	ID                string    `json:"id"`
-	IntegrationID     string    `json:"integrationId"`
-	Name              string    `json:"name"`
-	Type              Type      `json:"type"`
-	Enabled           bool      `json:"enabled"`
-	ChangeDescription *string   `json:"change_description,omitempty"`
-	CreatedAt         time.Time `json:"created_at"`
-	UpdatedAt         time.Time `json:"updated_at"`
+	// Unique identifier for the use case
+	ID string `json:"id"`
+	// Parent integration ID
+	IntegrationID string `json:"integrationId"`
+	// Use case name
+	Name string `json:"name"`
+	// Use case type
+	Type    Type `json:"type"`
+	Enabled bool `json:"enabled"`
+	// Description of the last change made to this use case
+	ChangeDescription *string `json:"change_description,omitempty"`
+	// ISO-8601 timestamp when the use case was created
+	CreatedAt time.Time `json:"created_at"`
+	// ISO-8601 timestamp when the use case was last updated
+	UpdatedAt time.Time `json:"updated_at"`
 	// Configuration for inbound use cases (ERP to epilot)
 	Configuration *InboundIntegrationEventConfiguration `json:"configuration,omitempty"`
 }
