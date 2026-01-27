@@ -1,16 +1,16 @@
 lockVersion: 2.0.0
 id: 15fc1ae3-2912-47ad-8b62-703c6db72e27
 management:
-  docChecksum: 081386a07a1d60d629ed65a99c08034e
-  docVersion: 0.22.0
+  docChecksum: cefb78b3f2ccc767fe0f35a5b3f90f96
+  docVersion: 0.24.0
   speakeasyVersion: 1.685.3
   generationVersion: 2.795.8
-  releaseVersion: 0.13.0
-  configChecksum: 93658bcbd48bab58c83873a93d87086f
+  releaseVersion: 0.15.0
+  configChecksum: da99270355fdc6412385a80972476694
 persistentEdits:
-  generation_id: b818459a-a08a-45a2-b658-d8cd4568a69a
-  pristine_commit_hash: 6b15414faf80b6763287416da244afc4e164d1ff
-  pristine_tree_hash: 765a0dfb50275b4fc4c99d3cef26ff1dc9ec795d
+  generation_id: 2135fe98-8ad3-4af0-9066-4ef7c70b0800
+  pristine_commit_hash: 4b2d08e119d8ce717a8bcfaca303d3da3552078a
+  pristine_tree_hash: e18b9ae601ffd68350de1692d80b0fdabe2e1455
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -37,8 +37,8 @@ trackedFiles:
     pristine_git_object: d3df7a792fb1b94e05b81e1621644512d3317534
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:c9b0b918d669a76b475c91180b92e38dd144f455
-    pristine_git_object: 0d7839c6430e2c8e7b1639a40e34ac5dc125d05f
+    last_write_checksum: sha1:91129dbb078bbbd9ca3bf37822d3450fa29631f2
+    pristine_git_object: 48c0941269b8a420d552b0becf87a117dbdafba9
   examples/resources/epilot-erp-integration_integration/import-by-string-id.tf:
     id: 4183e30b18a7
     last_write_checksum: sha1:7b6c3500f63071e0e923f524c8e7d71fb8bf087c
@@ -325,8 +325,8 @@ trackedFiles:
     pristine_git_object: dfbe6407380a9a6aa260755afc0a6c92ac48dec4
   internal/sdk/integrations.go:
     id: d17298644af8
-    last_write_checksum: sha1:ea5cc066ce6fd682060e69725674b22b5b90e1f0
-    pristine_git_object: e5ea6feec39c534961aee0f9ccdcb149fc873b74
+    last_write_checksum: sha1:c6a3b52cb4888aba1a52129362371271b7197775
+    pristine_git_object: 3b1b82206be3389548d6fa8d7ffb1c1cd1749a26
   internal/sdk/internal/config/sdkconfiguration.go:
     id: 6af0bc8635d9
     last_write_checksum: sha1:135c367329099bd7954f803b510752cb8e16d992
@@ -467,6 +467,10 @@ trackedFiles:
     id: 8e91a3038a16
     last_write_checksum: sha1:7205d36842af26244b883befc96aa34fe1593036
     pristine_git_object: 4dda514bea5365f484902e6ffb61cea8f1a33cba
+  internal/sdk/models/operations/queryaccesslogs.go:
+    id: ab518e30f9b3
+    last_write_checksum: sha1:9c3e0ed51f74b228eedb813cbabc10bc1ee39386
+    pristine_git_object: 14d161b9eed3b2ff4b952051489cb0e405415f46
   internal/sdk/models/operations/queryevents.go:
     id: 61b2e1fbea55
     last_write_checksum: sha1:1443a6c1c1e1abe67f29b99daf253881a484b14e
@@ -507,6 +511,10 @@ trackedFiles:
     id: dd983fa9f02f
     last_write_checksum: sha1:80b34d2d4f9b398e20230d4856bd2463c97c864e
     pristine_git_object: f2586595f922286a8ab5ca62cdfed637ad88926d
+  internal/sdk/models/shared/accesslogentry.go:
+    id: 2a7bb3ad37c0
+    last_write_checksum: sha1:1304478fda5a50c74c2561d30e9ad64790274136
+    pristine_git_object: eb4a8e1e6a15045b4d2fc5b15c22f5d6b2fed368
   internal/sdk/models/shared/createinboundusecaserequest.go:
     id: c307416fe53c
     last_write_checksum: sha1:7c5e616c1418b37980c9f6e56893270e8f96d08c
@@ -637,8 +645,8 @@ trackedFiles:
     pristine_git_object: 339d5e38f786e7965b97a11a1c53cf4d1a301df3
   internal/sdk/models/shared/monitoringstats.go:
     id: 6d315ca12849
-    last_write_checksum: sha1:798ad15960c8601e1cb67bf5abcb80c2ff9d2bca
-    pristine_git_object: 21c2853847363d841585c4087e30e1cc44678a83
+    last_write_checksum: sha1:4af43c9d61d040abae5c440463d2a3599343b1af
+    pristine_git_object: 2749250861aad6e253bd4dd0bc6a7471735606d2
   internal/sdk/models/shared/outboundusecase.go:
     id: bd341aa2fa75
     last_write_checksum: sha1:06739709894e299e604a3a8f3053fef72be22ec5
@@ -647,6 +655,10 @@ trackedFiles:
     id: 4467cfe484de
     last_write_checksum: sha1:05f1c1cfb532a0b021f345b6bd40d7e8e55569eb
     pristine_git_object: 206d476933304c1daf9f2281a802fa44eff4ef73
+  internal/sdk/models/shared/queryaccesslogsrequest.go:
+    id: 8918b208cec0
+    last_write_checksum: sha1:b3695f6f5015cae5b57a5f9437e7b34863a6807f
+    pristine_git_object: 7d44fc5dc775cace48f0161de7ad37ed9cf213e2
   internal/sdk/models/shared/queryeventsrequest.go:
     id: a0ad391d5134
     last_write_checksum: sha1:573fa35037e314ca7dc4947fdd327ccf3dc48d7c
@@ -733,8 +745,8 @@ trackedFiles:
     pristine_git_object: 1b587bda0d935449018da633f5dc6fba9ae8adc3
   internal/sdk/monitoring.go:
     id: 5d87cf9fd522
-    last_write_checksum: sha1:a0a1956f02364a049a4016ae324f099766af1ece
-    pristine_git_object: 1428eba0f2ce2a56dc933141e0a4d8455f2aabdd
+    last_write_checksum: sha1:57f05936cb316c1aff3ff8359be01448c3bde171
+    pristine_git_object: 67493f696d9138039f31eda8888e7c222a8da449
   internal/sdk/optionalnullable/optionalnullable.go:
     id: 4b83aa3f3df3
     last_write_checksum: sha1:d6aff1a420c31e025ea21d46cf056e305ae76fe8
@@ -749,8 +761,8 @@ trackedFiles:
     pristine_git_object: aa809fccb3445b1e2530a979dad620512f50e70f
   internal/sdk/sdk.go:
     id: 02d7190ee502
-    last_write_checksum: sha1:c26993f19bdee398350b3623eff9a773695f3e9f
-    pristine_git_object: 27a629c9ff84c89f6353f185bc35c921754245c0
+    last_write_checksum: sha1:9dd089d47389424566b03d8a49bcd2146c31b453
+    pristine_git_object: 5a9fd101cc4ddb48538a1ade0a3f9c7154922aa3
   internal/sdk/trigger.go:
     id: 8bbb8a8ac0b5
     last_write_checksum: sha1:be342c10fed9c2e2b6d479f8d0b666fb641bceb6
@@ -1265,7 +1277,252 @@ examples:
         application/json: {"from_date": "2025-01-01T00:00:00Z", "to_date": "2025-01-31T23:59:59Z", "group_by": ["direction", "status"]}
       responses:
         "200":
-          application/json: {"total_events": 393299, "success_count": 456698, "error_count": 929286, "skipped_count": 921605}
+          application/json: {"total_events": 393299, "total_correlations": 216007, "success_count": 456698, "error_count": 929286, "skipped_count": 921605}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  getMaxAllowedLimit:
+    speakeasy-default-get-max-allowed-limit:
+      responses:
+        "200":
+          application/json: {}
+        "500":
+          application/json: {}
+  getDefinitions:
+    speakeasy-default-get-definitions:
+      responses:
+        "200":
+          application/json: [{"name": "<value>", "creationTime": "2021-04-27T12:01:13.000Z", "enabled": true, "lastUpdateTime": "2021-04-27T12:01:13.000Z", "dueDate": "2021-04-27T12:00:00.000Z", "flow": [{"name": "<value>", "order": 5464.53, "dueDate": "2021-04-27T12:00:00.000Z", "type": "STEP"}], "closingReasons": [{"id": "x739cew"}], "updateEntityAttributes": [{"source": "current_step", "target": {"entitySchema": "opportunity", "entityAttribute": "my_status"}}]}]
+        "500":
+          application/json: {}
+  createDefinition:
+    speakeasy-default-create-definition:
+      requestBody:
+        application/json: {"name": "<value>", "creationTime": "2021-04-27T12:01:13.000Z", "enabled": true, "lastUpdateTime": "2021-04-27T12:01:13.000Z", "dueDate": "2021-04-27T12:00:00.000Z", "flow": [{"name": "<value>", "order": 8572.72, "type": "STEP", "dueDate": "2021-04-27T12:00:00.000Z", "steps": []}], "closingReasons": [{"id": "x739cew"}], "updateEntityAttributes": [{"source": "workflow_status", "target": {"entitySchema": "opportunity", "entityAttribute": "my_status"}}]}
+      responses:
+        "201":
+          application/json: {"name": "<value>", "creationTime": "2021-04-27T12:01:13.000Z", "enabled": true, "lastUpdateTime": "2021-04-27T12:01:13.000Z", "dueDate": "2021-04-27T12:00:00.000Z", "flow": [{"name": "<value>", "order": 1357.28, "dueDate": "2021-04-27T12:00:00.000Z", "type": "STEP"}], "closingReasons": [{"id": "x739cew"}], "updateEntityAttributes": [{"source": "workflow_status", "target": {"entitySchema": "opportunity", "entityAttribute": "my_status"}}]}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  getDefinition:
+    speakeasy-default-get-definition:
+      parameters:
+        path:
+          definitionId: "7hj28a"
+      responses:
+        "200":
+          application/json: {"name": "<value>", "creationTime": "2021-04-27T12:01:13.000Z", "enabled": true, "lastUpdateTime": "2021-04-27T12:01:13.000Z", "dueDate": "2021-04-27T12:00:00.000Z", "flow": [{"name": "<value>", "order": 9658.5, "dueDate": "2021-04-27T12:00:00.000Z", "type": "SECTION"}], "closingReasons": [{"id": "x739cew"}], "updateEntityAttributes": [{"source": "current_step", "target": {"entitySchema": "opportunity", "entityAttribute": "my_status"}}]}
+        "400":
+          application/json: {}
+        "404":
+          application/json: {}
+        "500":
+          application/json: {}
+  updateDefinition:
+    speakeasy-default-update-definition:
+      parameters:
+        path:
+          definitionId: "7hj28a"
+      requestBody:
+        application/json: {"name": "<value>", "creationTime": "2021-04-27T12:01:13.000Z", "enabled": true, "lastUpdateTime": "2021-04-27T12:01:13.000Z", "dueDate": "2021-04-27T12:00:00.000Z", "flow": [{"name": "<value>", "order": 1405.75, "type": "SECTION", "dueDate": "2021-04-27T12:00:00.000Z", "steps": []}], "closingReasons": [{"id": "x739cew"}], "updateEntityAttributes": [{"source": "current_section", "target": {"entitySchema": "opportunity", "entityAttribute": "my_status"}}]}
+      responses:
+        "200":
+          application/json: {"name": "<value>", "creationTime": "2021-04-27T12:01:13.000Z", "enabled": true, "lastUpdateTime": "2021-04-27T12:01:13.000Z", "dueDate": "2021-04-27T12:00:00.000Z", "flow": [], "closingReasons": [{"id": "x739cew"}], "updateEntityAttributes": [{"source": "current_section", "target": {"entitySchema": "opportunity", "entityAttribute": "my_status"}}]}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  deleteDefinition:
+    speakeasy-default-delete-definition:
+      parameters:
+        path:
+          definitionId: "CustomerRequest"
+      responses:
+        "401":
+          application/json: {}
+  getWorkflowClosingReasons:
+    speakeasy-default-get-workflow-closing-reasons:
+      parameters:
+        path:
+          definitionId: "fxcwfw"
+      responses:
+        "200":
+          application/json: {"reasons": []}
+  setWorkflowClosingReasons:
+    speakeasy-default-set-workflow-closing-reasons:
+      parameters:
+        path:
+          definitionId: "7889"
+      requestBody:
+        application/json: {"reasons": []}
+  listFlowTemplates:
+    speakeasy-default-list-flow-templates:
+      parameters:
+        query:
+          trigger_type: "journey_submission"
+          trigger_source_id: "j208g0aj-08g9agajggak-g9aug9-892kgl1m"
+          trigger_schema: "opportunity"
+      responses:
+        "200":
+          application/json: {"results": []}
+        "500":
+          application/json: {}
+  createFlowTemplate:
+    speakeasy-default-create-flow-template:
+      requestBody:
+        application/json: {"name": "<value>", "trigger": {"type": "automation", "automation_id": "g92j2-sg9ug92hjt1gh-9s9gajgs-a979gg"}, "enabled": true, "version": "v2", "created_at": "2021-04-27T12:01:13.000Z", "updated_at": "2021-04-27T12:01:13.000Z", "due_date": "2021-04-27T12:00:00.000Z", "phases": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z"}], "tasks": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z", "task_type": "MANUAL"}], "edges": [], "entity_sync": [{"trigger": {"event": "FlowStarted"}, "value": {"source": "workflow_name"}, "target": {"entitySchema": "opportunity", "entityAttribute": "title"}}]}
+      responses:
+        "201":
+          application/json: {"name": "<value>", "trigger": {"type": "automation", "automation_id": "g92j2-sg9ug92hjt1gh-9s9gajgs-a979gg"}, "enabled": true, "version": "v1", "created_at": "2021-04-27T12:01:13.000Z", "updated_at": "2021-04-27T12:01:13.000Z", "due_date": "2021-04-27T12:00:00.000Z", "phases": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z"}], "tasks": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z", "task_type": "AUTOMATION", "trigger_mode": "manual", "conditions": [{"id": "<id>", "branch_name": "Branch 1", "logical_operator": "OR", "statements": [{"id": "<id>", "source": {}, "operator": "none_of", "values": ["<value 1>"]}]}]}], "edges": [], "entity_sync": [{"trigger": {"event": "FlowStarted"}, "value": {"source": "workflow_name"}, "target": {"entitySchema": "opportunity", "entityAttribute": "title"}}]}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  searchFlowTemplates:
+    speakeasy-default-search-flow-templates:
+      requestBody:
+        application/json: {"sort_by": "updated_at", "sort_order": "desc"}
+      responses:
+        "200":
+          application/json: {"results": [{"name": "<value>", "trigger": {"type": "automation", "automation_id": "g92j2-sg9ug92hjt1gh-9s9gajgs-a979gg"}, "enabled": true, "version": "v2", "created_at": "2021-04-27T12:01:13.000Z", "updated_at": "2021-04-27T12:01:13.000Z", "due_date": "2021-04-27T12:00:00.000Z", "phases": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z"}], "tasks": [], "edges": [], "entity_sync": [{"trigger": {"event": "FlowStarted"}, "value": {"source": "workflow_name"}, "target": {"entitySchema": "opportunity", "entityAttribute": "title"}}]}]}
+        "500":
+          application/json: {}
+  getFlowTemplate:
+    speakeasy-default-get-flow-template:
+      parameters:
+        path:
+          flowId: "7hj28akg"
+      responses:
+        "200":
+          application/json: {"name": "<value>", "trigger": {"type": "automation", "automation_id": "g92j2-sg9ug92hjt1gh-9s9gajgs-a979gg"}, "enabled": true, "version": "v1", "created_at": "2021-04-27T12:01:13.000Z", "updated_at": "2021-04-27T12:01:13.000Z", "due_date": "2021-04-27T12:00:00.000Z", "phases": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z"}], "tasks": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z", "task_type": "MANUAL", "automation_config": {"flow_id": "<id>"}, "created_automatically": false}], "edges": [{"id": "<id>", "from_id": "<id>", "to_id": "<id>"}], "entity_sync": [{"trigger": {"event": "FlowStarted"}, "value": {"source": "workflow_name"}, "target": {"entitySchema": "opportunity", "entityAttribute": "title"}}]}
+        "400":
+          application/json: {}
+        "404":
+          application/json: {}
+        "500":
+          application/json: {}
+  updateFlowTemplate:
+    speakeasy-default-update-flow-template:
+      parameters:
+        path:
+          flowId: "7hj28akg"
+      requestBody:
+        application/json: {"name": "<value>", "trigger": {"type": "automation", "automation_id": "g92j2-sg9ug92hjt1gh-9s9gajgs-a979gg"}, "enabled": true, "version": "v2", "created_at": "2021-04-27T12:01:13.000Z", "updated_at": "2021-04-27T12:01:13.000Z", "due_date": "2021-04-27T12:00:00.000Z", "phases": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z"}], "tasks": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z", "task_type": "AI_AGENT", "trigger_mode": "automatic", "conditions": [{"id": "<id>", "branch_name": "Branch 1", "logical_operator": "OR", "statements": []}]}], "edges": [], "entity_sync": [{"trigger": {"event": "FlowStarted"}, "value": {"source": "workflow_name"}, "target": {"entitySchema": "opportunity", "entityAttribute": "title"}}]}
+      responses:
+        "200":
+          application/json: {"name": "<value>", "trigger": {"type": "automation", "automation_id": "g92j2-sg9ug92hjt1gh-9s9gajgs-a979gg"}, "enabled": true, "version": "v1", "created_at": "2021-04-27T12:01:13.000Z", "updated_at": "2021-04-27T12:01:13.000Z", "due_date": "2021-04-27T12:00:00.000Z", "phases": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z"}], "tasks": [], "edges": [], "entity_sync": [{"trigger": {"event": "FlowStarted"}, "value": {"source": "workflow_name"}, "target": {"entitySchema": "opportunity", "entityAttribute": "title"}}]}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  deleteFlowTemplate:
+    speakeasy-default-delete-flow-template:
+      parameters:
+        path:
+          flowId: "7hj28akg"
+      responses:
+        "401":
+          application/json: {}
+  duplicateFlowTemplate:
+    speakeasy-default-duplicate-flow-template:
+      parameters:
+        path:
+          flowId: "7hj28akg"
+      responses:
+        "201":
+          application/json: {"name": "<value>", "trigger": {"type": "automation", "automation_id": "g92j2-sg9ug92hjt1gh-9s9gajgs-a979gg"}, "enabled": true, "version": "v2", "created_at": "2021-04-27T12:01:13.000Z", "updated_at": "2021-04-27T12:01:13.000Z", "due_date": "2021-04-27T12:00:00.000Z", "phases": [{"id": "<id>", "name": "<value>", "due_date": "2021-04-27T12:00:00.000Z"}], "tasks": [], "edges": [], "entity_sync": [{"trigger": {"event": "FlowStarted"}, "value": {"source": "workflow_name"}, "target": {"entitySchema": "opportunity", "entityAttribute": "title"}}]}
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  getAllClosingReasons:
+    speakeasy-default-get-all-closing-reasons:
+      parameters:
+        query:
+          includeInactive: true
+      responses:
+        "200":
+          application/json: {"reasons": [{"title": "<value>", "status": "INACTIVE"}]}
+  createClosingReason:
+    speakeasy-default-create-closing-reason:
+      requestBody:
+        application/json: {"title": "<value>", "status": "INACTIVE"}
+      responses:
+        "201":
+          application/json: {"title": "<value>", "status": "ACTIVE"}
+  getClosingReason:
+    speakeasy-default-get-closing-reason:
+      parameters:
+        path:
+          reasonId: "x739cew"
+      responses:
+        "200":
+          application/json: {"title": "<value>", "status": "ACTIVE"}
+        "400":
+          application/json: {}
+        "404":
+          application/json: {}
+  updateClosingReason:
+    speakeasy-default-update-closing-reason:
+      parameters:
+        path:
+          reasonId: "x739cew"
+      requestBody:
+        application/json: {"title": "<value>", "status": "ACTIVE"}
+      responses:
+        "200":
+          application/json: {"title": "<value>", "status": "INACTIVE"}
+        "400":
+          application/json: {}
+        "404":
+          application/json: {}
+  deleteClosingReason:
+    speakeasy-default-delete-closing-reason:
+      parameters:
+        path:
+          reasonId: "x739cew"
+      responses:
+        "403":
+          application/json: {}
+        "404":
+          application/json: {}
+  getClosingReasonV1:
+    speakeasy-default-get-closing-reason-v1:
+      parameters:
+        path:
+          reasonId: "-poOAPBa-jFZA_AWV3zN0"
+      responses:
+        "200":
+          application/json: {"title": "<value>", "status": "INACTIVE"}
+        "400":
+          application/json: {}
+        "404":
+          application/json: {}
+        "500":
+          application/json: {}
+  changeReasonStatus:
+    speakeasy-default-change-reason-status:
+      parameters:
+        path:
+          reasonId: "<id>"
+      responses:
+        "400":
+          application/json: {}
+        "500":
+          application/json: {}
+  queryAccessLogs:
+    speakeasy-default-query-access-logs:
+      parameters:
+        path:
+          integrationId: "ffe3b558-983d-4439-a73f-af914e7f2685"
+      requestBody:
+        application/json: {"token_id": "api_5ZugdRXasLfWBypHi93Fk", "service": "entity", "path": "/v1/entity", "status": 200, "from_date": "2025-01-01T00:00:00Z", "to_date": "2025-01-31T23:59:59Z", "limit": 50}
+      responses:
+        "200":
+          application/json: {}
         "400":
           application/json: {}
         "500":

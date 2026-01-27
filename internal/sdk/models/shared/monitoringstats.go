@@ -11,6 +11,8 @@ import (
 type MonitoringStats struct {
 	// Total number of events in the period
 	TotalEvents int64 `json:"total_events"`
+	// Total number of unique correlation IDs (a correlation_id groups multiple event_ids)
+	TotalCorrelations int64 `json:"total_correlations"`
 	// Number of successful events
 	SuccessCount int64 `json:"success_count"`
 	// Number of failed events
@@ -41,6 +43,13 @@ func (m *MonitoringStats) GetTotalEvents() int64 {
 		return 0
 	}
 	return m.TotalEvents
+}
+
+func (m *MonitoringStats) GetTotalCorrelations() int64 {
+	if m == nil {
+		return 0
+	}
+	return m.TotalCorrelations
 }
 
 func (m *MonitoringStats) GetSuccessCount() int64 {
