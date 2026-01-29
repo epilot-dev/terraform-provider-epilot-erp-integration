@@ -59,7 +59,7 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: `Optional description of the integration`,
 			},
 			"id": schema.StringAttribute{
-				Computed:    true,
+				Required:    true,
 				Description: `Unique identifier for the integration`,
 			},
 			"name": schema.StringAttribute{
@@ -653,10 +653,69 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 									Computed:    true,
 									Description: `Description of the last change made to this use case`,
 								},
-								"configuration": schema.MapAttribute{
-									Computed:    true,
-									ElementType: jsontypes.NormalizedType{},
-									Description: `Configuration for outbound use cases (epilot to ERP). Structure TBD.`,
+								"configuration": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"event_catalog_event": schema.StringAttribute{
+											Computed:    true,
+											Description: `The Event Catalog event name that triggers this outbound flow`,
+										},
+										"mappings": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"created_at": schema.StringAttribute{
+														Computed:    true,
+														Description: `Timestamp when the mapping was created`,
+													},
+													"delivery": schema.SingleNestedAttribute{
+														Computed: true,
+														Attributes: map[string]schema.Attribute{
+															"type": schema.StringAttribute{
+																Computed:    true,
+																Description: `Delivery mechanism type (currently only webhook is supported)`,
+															},
+															"webhook_id": schema.StringAttribute{
+																Computed:    true,
+																Description: `Reference to the webhook configuration in svc-webhooks`,
+															},
+															"webhook_name": schema.StringAttribute{
+																Computed:    true,
+																Description: `Cached webhook name for display purposes`,
+															},
+															"webhook_url": schema.StringAttribute{
+																Computed:    true,
+																Description: `Cached webhook URL for display purposes`,
+															},
+														},
+														Description: `Configuration for how the transformed event should be delivered`,
+													},
+													"enabled": schema.BoolAttribute{
+														Computed:    true,
+														Description: `Whether this mapping is active`,
+													},
+													"id": schema.StringAttribute{
+														Computed:    true,
+														Description: `Unique identifier for this mapping`,
+													},
+													"jsonata_expression": schema.StringAttribute{
+														Computed:    true,
+														Description: `JSONata expression to transform the event payload`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Description: `Human-readable name for this mapping`,
+													},
+													"updated_at": schema.StringAttribute{
+														Computed:    true,
+														Description: `Timestamp when the mapping was last updated`,
+													},
+												},
+											},
+											Description: `List of mappings that transform and deliver the event`,
+										},
+									},
+									Description: `Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings.`,
 								},
 								"created_at": schema.StringAttribute{
 									Computed:    true,

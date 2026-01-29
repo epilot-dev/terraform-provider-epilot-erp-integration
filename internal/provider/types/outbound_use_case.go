@@ -3,18 +3,17 @@
 package types
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type OutboundUseCase struct {
-	ChangeDescription types.String                    `tfsdk:"change_description"`
-	Configuration     map[string]jsontypes.Normalized `tfsdk:"configuration"`
-	CreatedAt         types.String                    `tfsdk:"created_at"`
-	Enabled           types.Bool                      `tfsdk:"enabled"`
-	ID                types.String                    `tfsdk:"id"`
-	IntegrationID     types.String                    `tfsdk:"integration_id"`
-	Name              types.String                    `tfsdk:"name"`
-	Type              types.String                    `tfsdk:"type"`
-	UpdatedAt         types.String                    `tfsdk:"updated_at"`
+	ChangeDescription types.String                           `tfsdk:"change_description"`
+	Configuration     *OutboundIntegrationEventConfiguration `tfsdk:"configuration"`
+	CreatedAt         types.String                           `tfsdk:"created_at"`
+	Enabled           types.Bool                             `tfsdk:"enabled"`
+	ID                types.String                           `tfsdk:"id"`
+	IntegrationID     types.String                           `tfsdk:"integration_id"`
+	Name              types.String                           `tfsdk:"name"`
+	Type              types.String                           `tfsdk:"type"`
+	UpdatedAt         types.String                           `tfsdk:"updated_at"`
 }

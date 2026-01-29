@@ -386,11 +386,28 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 			if useCasesItem.OutboundUseCase != nil {
 				useCases.Outbound = &tfTypes.OutboundUseCase1{}
 				useCases.Outbound.ChangeDescription = types.StringPointerValue(useCasesItem.OutboundUseCase.ChangeDescription)
-				if len(useCasesItem.OutboundUseCase.Configuration) > 0 {
-					useCases.Outbound.Configuration = make(map[string]jsontypes.Normalized, len(useCasesItem.OutboundUseCase.Configuration))
-					for key, value := range useCasesItem.OutboundUseCase.Configuration {
-						result, _ := json.Marshal(value)
-						useCases.Outbound.Configuration[key] = jsontypes.NewNormalizedValue(string(result))
+				if useCasesItem.OutboundUseCase.Configuration == nil {
+					useCases.Outbound.Configuration = nil
+				} else {
+					useCases.Outbound.Configuration = &tfTypes.OutboundIntegrationEventConfiguration{}
+					useCases.Outbound.Configuration.EventCatalogEvent = types.StringValue(useCasesItem.OutboundUseCase.Configuration.EventCatalogEvent)
+					useCases.Outbound.Configuration.Mappings = []tfTypes.OutboundMapping{}
+
+					for _, mappingsItem := range useCasesItem.OutboundUseCase.Configuration.Mappings {
+						var mappings tfTypes.OutboundMapping
+
+						mappings.CreatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(mappingsItem.CreatedAt))
+						mappings.Delivery.Type = types.StringValue(string(mappingsItem.Delivery.Type))
+						mappings.Delivery.WebhookID = types.StringValue(mappingsItem.Delivery.WebhookID)
+						mappings.Delivery.WebhookName = types.StringPointerValue(mappingsItem.Delivery.WebhookName)
+						mappings.Delivery.WebhookURL = types.StringPointerValue(mappingsItem.Delivery.WebhookURL)
+						mappings.Enabled = types.BoolPointerValue(mappingsItem.Enabled)
+						mappings.ID = types.StringValue(mappingsItem.ID)
+						mappings.JsonataExpression = types.StringValue(mappingsItem.JsonataExpression)
+						mappings.Name = types.StringValue(mappingsItem.Name)
+						mappings.UpdatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(mappingsItem.UpdatedAt))
+
+						useCases.Outbound.Configuration.Mappings = append(useCases.Outbound.Configuration.Mappings, mappings)
 					}
 				}
 				useCases.Outbound.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.OutboundUseCase.CreatedAt))
