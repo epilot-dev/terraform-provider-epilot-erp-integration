@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"time"
 )
 
 func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx context.Context, resp *shared.IntegrationWithUseCases) diag.Diagnostics {
@@ -386,11 +387,28 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 			if useCasesItem.OutboundUseCase != nil {
 				useCases.Outbound = &tfTypes.OutboundUseCase{}
 				useCases.Outbound.ChangeDescription = types.StringPointerValue(useCasesItem.OutboundUseCase.ChangeDescription)
-				if len(useCasesItem.OutboundUseCase.Configuration) > 0 {
-					useCases.Outbound.Configuration = make(map[string]jsontypes.Normalized, len(useCasesItem.OutboundUseCase.Configuration))
-					for key, value := range useCasesItem.OutboundUseCase.Configuration {
-						result, _ := json.Marshal(value)
-						useCases.Outbound.Configuration[key] = jsontypes.NewNormalizedValue(string(result))
+				if useCasesItem.OutboundUseCase.Configuration == nil {
+					useCases.Outbound.Configuration = nil
+				} else {
+					useCases.Outbound.Configuration = &tfTypes.OutboundIntegrationEventConfiguration{}
+					useCases.Outbound.Configuration.EventCatalogEvent = types.StringValue(useCasesItem.OutboundUseCase.Configuration.EventCatalogEvent)
+					useCases.Outbound.Configuration.Mappings = []tfTypes.OutboundMapping{}
+
+					for _, mappingsItem := range useCasesItem.OutboundUseCase.Configuration.Mappings {
+						var mappings tfTypes.OutboundMapping
+
+						mappings.CreatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(mappingsItem.CreatedAt))
+						mappings.Delivery.Type = types.StringValue(string(mappingsItem.Delivery.Type))
+						mappings.Delivery.WebhookID = types.StringValue(mappingsItem.Delivery.WebhookID)
+						mappings.Delivery.WebhookName = types.StringPointerValue(mappingsItem.Delivery.WebhookName)
+						mappings.Delivery.WebhookURL = types.StringPointerValue(mappingsItem.Delivery.WebhookURL)
+						mappings.Enabled = types.BoolPointerValue(mappingsItem.Enabled)
+						mappings.ID = types.StringValue(mappingsItem.ID)
+						mappings.JsonataExpression = types.StringValue(mappingsItem.JsonataExpression)
+						mappings.Name = types.StringValue(mappingsItem.Name)
+						mappings.UpdatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(mappingsItem.UpdatedAt))
+
+						useCases.Outbound.Configuration.Mappings = append(useCases.Outbound.Configuration.Mappings, mappings)
 					}
 				}
 				useCases.Outbound.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.OutboundUseCase.CreatedAt))
@@ -1128,11 +1146,76 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 				changeDescription1 = nil
 			}
 			typeVar1 := shared.EmbeddedOutboundUseCaseRequestType(r.UseCases[useCasesItem].Outbound.Type.ValueString())
-			configuration1 := make(map[string]interface{})
-			for configurationKey := range r.UseCases[useCasesItem].Outbound.Configuration {
-				var configurationInst interface{}
-				_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Outbound.Configuration[configurationKey].ValueString()), &configurationInst)
-				configuration1[configurationKey] = configurationInst
+			var configuration1 *shared.OutboundIntegrationEventConfiguration
+			if r.UseCases[useCasesItem].Outbound.Configuration != nil {
+				var eventCatalogEvent string
+				eventCatalogEvent = r.UseCases[useCasesItem].Outbound.Configuration.EventCatalogEvent.ValueString()
+
+				mappings := make([]shared.OutboundMapping, 0, len(r.UseCases[useCasesItem].Outbound.Configuration.Mappings))
+				for mappingsIndex := range r.UseCases[useCasesItem].Outbound.Configuration.Mappings {
+					var id2 string
+					id2 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].ID.ValueString()
+
+					var name3 string
+					name3 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Name.ValueString()
+
+					var jsonataExpression16 string
+					jsonataExpression16 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].JsonataExpression.ValueString()
+
+					enabled5 := new(bool)
+					if !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.IsUnknown() && !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.IsNull() {
+						*enabled5 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.ValueBool()
+					} else {
+						enabled5 = nil
+					}
+					typeVar2 := shared.DeliveryConfigType(r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.Type.ValueString())
+					var webhookID string
+					webhookID = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookID.ValueString()
+
+					webhookName := new(string)
+					if !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookName.IsUnknown() && !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookName.IsNull() {
+						*webhookName = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookName.ValueString()
+					} else {
+						webhookName = nil
+					}
+					webhookURL := new(string)
+					if !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookURL.IsUnknown() && !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookURL.IsNull() {
+						*webhookURL = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookURL.ValueString()
+					} else {
+						webhookURL = nil
+					}
+					delivery := shared.DeliveryConfig{
+						Type:        typeVar2,
+						WebhookID:   webhookID,
+						WebhookName: webhookName,
+						WebhookURL:  webhookURL,
+					}
+					createdAt := new(time.Time)
+					if !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].CreatedAt.IsUnknown() && !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].CreatedAt.IsNull() {
+						*createdAt, _ = time.Parse(time.RFC3339Nano, r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].CreatedAt.ValueString())
+					} else {
+						createdAt = nil
+					}
+					updatedAt := new(time.Time)
+					if !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].UpdatedAt.IsUnknown() && !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].UpdatedAt.IsNull() {
+						*updatedAt, _ = time.Parse(time.RFC3339Nano, r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].UpdatedAt.ValueString())
+					} else {
+						updatedAt = nil
+					}
+					mappings = append(mappings, shared.OutboundMapping{
+						ID:                id2,
+						Name:              name3,
+						JsonataExpression: jsonataExpression16,
+						Enabled:           enabled5,
+						Delivery:          delivery,
+						CreatedAt:         createdAt,
+						UpdatedAt:         updatedAt,
+					})
+				}
+				configuration1 = &shared.OutboundIntegrationEventConfiguration{
+					EventCatalogEvent: eventCatalogEvent,
+					Mappings:          mappings,
+				}
 			}
 			embeddedOutboundUseCaseRequest := shared.EmbeddedOutboundUseCaseRequest{
 				ID:                id1,

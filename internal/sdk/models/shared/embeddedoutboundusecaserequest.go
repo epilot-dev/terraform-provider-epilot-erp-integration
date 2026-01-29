@@ -47,8 +47,8 @@ type EmbeddedOutboundUseCaseRequest struct {
 	ChangeDescription *string `json:"change_description,omitempty"`
 	// Use case type
 	Type EmbeddedOutboundUseCaseRequestType `json:"type"`
-	// Configuration for outbound use cases (epilot to ERP). Structure TBD.
-	Configuration map[string]any `json:"configuration,omitempty"`
+	// Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings.
+	Configuration *OutboundIntegrationEventConfiguration `json:"configuration,omitempty"`
 }
 
 func (e EmbeddedOutboundUseCaseRequest) MarshalJSON() ([]byte, error) {
@@ -97,7 +97,7 @@ func (e *EmbeddedOutboundUseCaseRequest) GetType() EmbeddedOutboundUseCaseReques
 	return e.Type
 }
 
-func (e *EmbeddedOutboundUseCaseRequest) GetConfiguration() map[string]any {
+func (e *EmbeddedOutboundUseCaseRequest) GetConfiguration() *OutboundIntegrationEventConfiguration {
 	if e == nil {
 		return nil
 	}

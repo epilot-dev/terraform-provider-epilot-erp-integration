@@ -21,7 +21,23 @@ resource "epilot-erp-integration_integration" "my_integration" {
       outbound = {
         change_description = "...my_change_description..."
         configuration = {
-          key = jsonencode("value")
+          event_catalog_event = "contract.created"
+          mappings = [
+            {
+              created_at = "2022-06-02T04:05:14.534Z"
+              delivery = {
+                type         = "webhook"
+                webhook_id   = "...my_webhook_id..."
+                webhook_name = "...my_webhook_name..."
+                webhook_url  = "...my_webhook_url..."
+              }
+              enabled            = false
+              id                 = "bfd4bcb8-1d02-4b3b-a2a9-0fee857c42f2"
+              jsonata_expression = "{ \"id\": entity._id, \"customer\": entity.customer_name }"
+              name               = "ERP Contract Sync"
+              updated_at         = "2022-02-21T23:55:34.826Z"
+            }
+          ]
         }
         enabled = true
         id      = "eb4ac4d2-540e-4705-aba9-48085a4461e0"
@@ -428,7 +444,7 @@ must be one of ["email", "phone"]
 Optional:
 
 - `change_description` (String) Optional description of this change (like a commit message)
-- `configuration` (Map of String) Configuration for outbound use cases (epilot to ERP). Structure TBD.
+- `configuration` (Attributes) Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings. (see [below for nested schema](#nestedatt--use_cases--outbound--configuration))
 - `enabled` (Boolean) Whether the use case is enabled. Not Null
 - `id` (String) Optional use case ID for update matching.
 - If provided and matches an existing use case, that use case is updated
@@ -442,6 +458,37 @@ Read-Only:
 - `created_at` (String) ISO-8601 timestamp when the use case was created
 - `integration_id` (String) Parent integration ID
 - `updated_at` (String) ISO-8601 timestamp when the use case was last updated
+
+<a id="nestedatt--use_cases--outbound--configuration"></a>
+### Nested Schema for `use_cases.outbound.configuration`
+
+Optional:
+
+- `event_catalog_event` (String) The Event Catalog event name that triggers this outbound flow. Not Null
+- `mappings` (Attributes List) List of mappings that transform and deliver the event. Not Null (see [below for nested schema](#nestedatt--use_cases--outbound--configuration--mappings))
+
+<a id="nestedatt--use_cases--outbound--configuration--mappings"></a>
+### Nested Schema for `use_cases.outbound.configuration.mappings`
+
+Optional:
+
+- `created_at` (String) Timestamp when the mapping was created
+- `delivery` (Attributes) Configuration for how the transformed event should be delivered. Not Null (see [below for nested schema](#nestedatt--use_cases--outbound--configuration--mappings--delivery))
+- `enabled` (Boolean) Whether this mapping is active. Default: true
+- `id` (String) Unique identifier for this mapping. Not Null
+- `jsonata_expression` (String) JSONata expression to transform the event payload. Not Null
+- `name` (String) Human-readable name for this mapping. Not Null
+- `updated_at` (String) Timestamp when the mapping was last updated
+
+<a id="nestedatt--use_cases--outbound--configuration--mappings--delivery"></a>
+### Nested Schema for `use_cases.outbound.configuration.mappings.delivery`
+
+Optional:
+
+- `type` (String) Delivery mechanism type (currently only webhook is supported). Not Null; must be "webhook"
+- `webhook_id` (String) Reference to the webhook configuration in svc-webhooks. Not Null
+- `webhook_name` (String) Cached webhook name for display purposes
+- `webhook_url` (String) Cached webhook URL for display purposes
 
 ## Import
 

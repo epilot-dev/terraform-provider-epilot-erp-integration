@@ -5,9 +5,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	speakeasy_boolplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/boolplanmodifier"
-	speakeasy_objectplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/objectplanmodifier"
-	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators"
@@ -18,13 +15,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -105,9 +101,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 					Attributes: map[string]schema.Attribute{
 						"inbound": schema.SingleNestedAttribute{
 							Optional: true,
-							PlanModifiers: []planmodifier.Object{
-								speakeasy_objectplanmodifier.UseConfigValue(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"change_description": schema.StringAttribute{
 									Computed:    true,
@@ -135,9 +128,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 														Attributes: map[string]schema.Attribute{
 															"boolean": schema.BoolAttribute{
 																Optional: true,
-																PlanModifiers: []planmodifier.Bool{
-																	speakeasy_boolplanmodifier.UseConfigValue(),
-																},
 																Validators: []validator.Bool{
 																	boolvalidator.ConflictsWith(path.Expressions{
 																		path.MatchRelative().AtParent().AtName("str"),
@@ -146,9 +136,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 															},
 															"str": schema.StringAttribute{
 																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	speakeasy_stringplanmodifier.UseConfigValue(),
-																},
 																Validators: []validator.String{
 																	stringvalidator.ConflictsWith(path.Expressions{
 																		path.MatchRelative().AtParent().AtName("boolean"),
@@ -194,9 +181,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																	Attributes: map[string]schema.Attribute{
 																		"boolean": schema.BoolAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.Bool{
-																				speakeasy_boolplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.Bool{
 																				boolvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("str"),
@@ -205,9 +189,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																		},
 																		"str": schema.StringAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.String{
-																				speakeasy_stringplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.String{
 																				stringvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("boolean"),
@@ -571,9 +552,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																	Attributes: map[string]schema.Attribute{
 																		"boolean": schema.BoolAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.Bool{
-																				speakeasy_boolplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.Bool{
 																				boolvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("str"),
@@ -582,9 +560,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																		},
 																		"str": schema.StringAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.String{
-																				speakeasy_stringplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.String{
 																				stringvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("boolean"),
@@ -1098,9 +1073,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 						"outbound": schema.SingleNestedAttribute{
 							Optional: true,
-							PlanModifiers: []planmodifier.Object{
-								speakeasy_objectplanmodifier.UseConfigValue(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"change_description": schema.StringAttribute{
 									Computed:    true,
@@ -1110,14 +1082,119 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 										stringvalidator.UTF8LengthAtMost(2000),
 									},
 								},
-								"configuration": schema.MapAttribute{
-									Computed:    true,
-									Optional:    true,
-									ElementType: jsontypes.NormalizedType{},
-									Description: `Configuration for outbound use cases (epilot to ERP). Structure TBD.`,
-									Validators: []validator.Map{
-										mapvalidator.ValueStringsAre(validators.IsValidJSON()),
+								"configuration": schema.SingleNestedAttribute{
+									Computed: true,
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"event_catalog_event": schema.StringAttribute{
+											Computed:    true,
+											Optional:    true,
+											Description: `The Event Catalog event name that triggers this outbound flow. Not Null`,
+											Validators: []validator.String{
+												speakeasy_stringvalidators.NotNull(),
+											},
+										},
+										"mappings": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"created_at": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Timestamp when the mapping was created`,
+														Validators: []validator.String{
+															validators.IsRFC3339(),
+														},
+													},
+													"delivery": schema.SingleNestedAttribute{
+														Computed: true,
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"type": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Delivery mechanism type (currently only webhook is supported). Not Null; must be "webhook"`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.OneOf("webhook"),
+																},
+															},
+															"webhook_id": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Reference to the webhook configuration in svc-webhooks. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+															"webhook_name": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Cached webhook name for display purposes`,
+															},
+															"webhook_url": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Cached webhook URL for display purposes`,
+															},
+														},
+														Description: `Configuration for how the transformed event should be delivered. Not Null`,
+														Validators: []validator.Object{
+															speakeasy_objectvalidators.NotNull(),
+														},
+													},
+													"enabled": schema.BoolAttribute{
+														Computed:    true,
+														Optional:    true,
+														Default:     booldefault.StaticBool(true),
+														Description: `Whether this mapping is active. Default: true`,
+													},
+													"id": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Unique identifier for this mapping. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"jsonata_expression": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `JSONata expression to transform the event payload. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Human-readable name for this mapping. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"updated_at": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Timestamp when the mapping was last updated`,
+														Validators: []validator.String{
+															validators.IsRFC3339(),
+														},
+													},
+												},
+											},
+											Description: `List of mappings that transform and deliver the event. Not Null`,
+											Validators: []validator.List{
+												speakeasy_listvalidators.NotNull(),
+												listvalidator.SizeAtLeast(1),
+											},
+										},
 									},
+									Description: `Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings.`,
 								},
 								"created_at": schema.StringAttribute{
 									Computed:    true,
