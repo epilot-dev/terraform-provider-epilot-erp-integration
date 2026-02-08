@@ -54,8 +54,8 @@ type OutboundUseCaseHistoryEntry struct {
 	HistoryCreatedAt time.Time `json:"history_created_at"`
 	// Use case type
 	Type OutboundUseCaseHistoryEntryType `json:"type"`
-	// Configuration for outbound use cases (epilot to ERP). Structure TBD.
-	Configuration map[string]any `json:"configuration,omitempty"`
+	// Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings.
+	Configuration *OutboundIntegrationEventConfiguration `json:"configuration,omitempty"`
 }
 
 func (o OutboundUseCaseHistoryEntry) MarshalJSON() ([]byte, error) {
@@ -139,7 +139,7 @@ func (o *OutboundUseCaseHistoryEntry) GetType() OutboundUseCaseHistoryEntryType 
 	return o.Type
 }
 
-func (o *OutboundUseCaseHistoryEntry) GetConfiguration() map[string]any {
+func (o *OutboundUseCaseHistoryEntry) GetConfiguration() *OutboundIntegrationEventConfiguration {
 	if o == nil {
 		return nil
 	}

@@ -18,6 +18,10 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		r.AccessTokenIds = make([]types.String, 0, len(resp.AccessTokenIds))
+		for _, v := range resp.AccessTokenIds {
+			r.AccessTokenIds = append(r.AccessTokenIds, types.StringValue(v))
+		}
 		r.CreatedAt = types.StringValue(typeconvert.TimeToString(resp.CreatedAt))
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringValue(resp.ID)
@@ -112,6 +116,7 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 
 										items.UniqueIds = append(items.UniqueIds, uniqueIds)
 									}
+									items.Value = &tfTypes.RelationRefValueConfig{}
 									items.Value.Attribute = types.StringValue(itemsItem.Value.Attribute)
 									if itemsItem.Value.Constant == nil {
 										items.Value.Constant = jsontypes.NewNormalizedNull()
@@ -178,6 +183,62 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 							entities.Fields = append(entities.Fields, fields)
 						}
 						entities.JsonataExpression = types.StringPointerValue(entitiesItem.JsonataExpression)
+						if entitiesItem.Mode != nil {
+							entities.Mode = types.StringValue(string(*entitiesItem.Mode))
+						} else {
+							entities.Mode = types.StringNull()
+						}
+						if entitiesItem.Scope == nil {
+							entities.Scope = nil
+						} else {
+							entities.Scope = &tfTypes.PruneScopeConfig{}
+							entities.Scope.Query = []tfTypes.RelationUniqueIDField{}
+
+							for _, queryItem := range entitiesItem.Scope.Query {
+								var query tfTypes.RelationUniqueIDField
+
+								if queryItem.Type != nil {
+									query.Type = types.StringValue(string(*queryItem.Type))
+								} else {
+									query.Type = types.StringNull()
+								}
+								query.Attribute = types.StringValue(queryItem.Attribute)
+								if queryItem.Constant == nil {
+									query.Constant = jsontypes.NewNormalizedNull()
+								} else {
+									constantResult4, _ := json.Marshal(queryItem.Constant)
+									query.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
+								}
+								query.Field = types.StringPointerValue(queryItem.Field)
+								query.JsonataExpression = types.StringPointerValue(queryItem.JsonataExpression)
+
+								entities.Scope.Query = append(entities.Scope.Query, query)
+							}
+							entities.Scope.Schema = types.StringPointerValue(entitiesItem.Scope.Schema)
+							entities.Scope.ScopeMode = types.StringValue(string(entitiesItem.Scope.ScopeMode))
+							entities.Scope.UniqueIds = []tfTypes.RelationUniqueIDField{}
+
+							for _, uniqueIdsItem2 := range entitiesItem.Scope.UniqueIds {
+								var uniqueIds2 tfTypes.RelationUniqueIDField
+
+								if uniqueIdsItem2.Type != nil {
+									uniqueIds2.Type = types.StringValue(string(*uniqueIdsItem2.Type))
+								} else {
+									uniqueIds2.Type = types.StringNull()
+								}
+								uniqueIds2.Attribute = types.StringValue(uniqueIdsItem2.Attribute)
+								if uniqueIdsItem2.Constant == nil {
+									uniqueIds2.Constant = jsontypes.NewNormalizedNull()
+								} else {
+									constantResult5, _ := json.Marshal(uniqueIdsItem2.Constant)
+									uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
+								}
+								uniqueIds2.Field = types.StringPointerValue(uniqueIdsItem2.Field)
+								uniqueIds2.JsonataExpression = types.StringPointerValue(uniqueIdsItem2.JsonataExpression)
+
+								entities.Scope.UniqueIds = append(entities.Scope.UniqueIds, uniqueIds2)
+							}
+						}
 						entities.UniqueIds = make([]types.String, 0, len(entitiesItem.UniqueIds))
 						for _, v := range entitiesItem.UniqueIds {
 							entities.UniqueIds = append(entities.UniqueIds, types.StringValue(v))
@@ -204,8 +265,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 							if fieldsItem1.Constant == nil {
 								fields1.Constant = jsontypes.NewNormalizedNull()
 							} else {
-								constantResult4, _ := json.Marshal(fieldsItem1.Constant)
-								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
+								constantResult6, _ := json.Marshal(fieldsItem1.Constant)
+								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
 							}
 							if fieldsItem1.Enabled != nil {
 								fields1.Enabled = &tfTypes.Enabled{}
@@ -231,32 +292,33 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 									items2.Path = types.StringValue(itemsItem2.Path)
 									items2.UniqueIds = []tfTypes.RelationUniqueIDField{}
 
-									for _, uniqueIdsItem2 := range itemsItem2.UniqueIds {
-										var uniqueIds2 tfTypes.RelationUniqueIDField
+									for _, uniqueIdsItem3 := range itemsItem2.UniqueIds {
+										var uniqueIds3 tfTypes.RelationUniqueIDField
 
-										if uniqueIdsItem2.Type != nil {
-											uniqueIds2.Type = types.StringValue(string(*uniqueIdsItem2.Type))
+										if uniqueIdsItem3.Type != nil {
+											uniqueIds3.Type = types.StringValue(string(*uniqueIdsItem3.Type))
 										} else {
-											uniqueIds2.Type = types.StringNull()
+											uniqueIds3.Type = types.StringNull()
 										}
-										uniqueIds2.Attribute = types.StringValue(uniqueIdsItem2.Attribute)
-										if uniqueIdsItem2.Constant == nil {
-											uniqueIds2.Constant = jsontypes.NewNormalizedNull()
+										uniqueIds3.Attribute = types.StringValue(uniqueIdsItem3.Attribute)
+										if uniqueIdsItem3.Constant == nil {
+											uniqueIds3.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult5, _ := json.Marshal(uniqueIdsItem2.Constant)
-											uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
+											constantResult7, _ := json.Marshal(uniqueIdsItem3.Constant)
+											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
 										}
-										uniqueIds2.Field = types.StringPointerValue(uniqueIdsItem2.Field)
-										uniqueIds2.JsonataExpression = types.StringPointerValue(uniqueIdsItem2.JsonataExpression)
+										uniqueIds3.Field = types.StringPointerValue(uniqueIdsItem3.Field)
+										uniqueIds3.JsonataExpression = types.StringPointerValue(uniqueIdsItem3.JsonataExpression)
 
-										items2.UniqueIds = append(items2.UniqueIds, uniqueIds2)
+										items2.UniqueIds = append(items2.UniqueIds, uniqueIds3)
 									}
+									items2.Value = &tfTypes.RelationRefValueConfig{}
 									items2.Value.Attribute = types.StringValue(itemsItem2.Value.Attribute)
 									if itemsItem2.Value.Constant == nil {
 										items2.Value.Constant = jsontypes.NewNormalizedNull()
 									} else {
-										constantResult6, _ := json.Marshal(itemsItem2.Value.Constant)
-										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
+										constantResult8, _ := json.Marshal(itemsItem2.Value.Constant)
+										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
 									}
 									items2.Value.Field = types.StringPointerValue(itemsItem2.Value.Field)
 									items2.Value.JsonataExpression = types.StringPointerValue(itemsItem2.Value.JsonataExpression)
@@ -287,25 +349,25 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 									items3.EntitySchema = types.StringValue(itemsItem3.EntitySchema)
 									items3.UniqueIds = []tfTypes.RelationUniqueIDField{}
 
-									for _, uniqueIdsItem3 := range itemsItem3.UniqueIds {
-										var uniqueIds3 tfTypes.RelationUniqueIDField
+									for _, uniqueIdsItem4 := range itemsItem3.UniqueIds {
+										var uniqueIds4 tfTypes.RelationUniqueIDField
 
-										if uniqueIdsItem3.Type != nil {
-											uniqueIds3.Type = types.StringValue(string(*uniqueIdsItem3.Type))
+										if uniqueIdsItem4.Type != nil {
+											uniqueIds4.Type = types.StringValue(string(*uniqueIdsItem4.Type))
 										} else {
-											uniqueIds3.Type = types.StringNull()
+											uniqueIds4.Type = types.StringNull()
 										}
-										uniqueIds3.Attribute = types.StringValue(uniqueIdsItem3.Attribute)
-										if uniqueIdsItem3.Constant == nil {
-											uniqueIds3.Constant = jsontypes.NewNormalizedNull()
+										uniqueIds4.Attribute = types.StringValue(uniqueIdsItem4.Attribute)
+										if uniqueIdsItem4.Constant == nil {
+											uniqueIds4.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult7, _ := json.Marshal(uniqueIdsItem3.Constant)
-											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
+											constantResult9, _ := json.Marshal(uniqueIdsItem4.Constant)
+											uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
 										}
-										uniqueIds3.Field = types.StringPointerValue(uniqueIdsItem3.Field)
-										uniqueIds3.JsonataExpression = types.StringPointerValue(uniqueIdsItem3.JsonataExpression)
+										uniqueIds4.Field = types.StringPointerValue(uniqueIdsItem4.Field)
+										uniqueIds4.JsonataExpression = types.StringPointerValue(uniqueIdsItem4.JsonataExpression)
 
-										items3.UniqueIds = append(items3.UniqueIds, uniqueIds3)
+										items3.UniqueIds = append(items3.UniqueIds, uniqueIds4)
 									}
 
 									fields1.Relations.Items = append(fields1.Relations.Items, items3)
@@ -317,27 +379,28 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 							meterReadings.Fields = append(meterReadings.Fields, fields1)
 						}
 						meterReadings.JsonataExpression = types.StringPointerValue(meterReadingsItem.JsonataExpression)
+						meterReadings.Meter = &tfTypes.MeterUniqueIdsConfig{}
 						meterReadings.Meter.UniqueIds = []tfTypes.RelationUniqueIDField{}
 
-						for _, uniqueIdsItem4 := range meterReadingsItem.Meter.UniqueIds {
-							var uniqueIds4 tfTypes.RelationUniqueIDField
+						for _, uniqueIdsItem5 := range meterReadingsItem.Meter.UniqueIds {
+							var uniqueIds5 tfTypes.RelationUniqueIDField
 
-							if uniqueIdsItem4.Type != nil {
-								uniqueIds4.Type = types.StringValue(string(*uniqueIdsItem4.Type))
+							if uniqueIdsItem5.Type != nil {
+								uniqueIds5.Type = types.StringValue(string(*uniqueIdsItem5.Type))
 							} else {
-								uniqueIds4.Type = types.StringNull()
+								uniqueIds5.Type = types.StringNull()
 							}
-							uniqueIds4.Attribute = types.StringValue(uniqueIdsItem4.Attribute)
-							if uniqueIdsItem4.Constant == nil {
-								uniqueIds4.Constant = jsontypes.NewNormalizedNull()
+							uniqueIds5.Attribute = types.StringValue(uniqueIdsItem5.Attribute)
+							if uniqueIdsItem5.Constant == nil {
+								uniqueIds5.Constant = jsontypes.NewNormalizedNull()
 							} else {
-								constantResult8, _ := json.Marshal(uniqueIdsItem4.Constant)
-								uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
+								constantResult10, _ := json.Marshal(uniqueIdsItem5.Constant)
+								uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult10))
 							}
-							uniqueIds4.Field = types.StringPointerValue(uniqueIdsItem4.Field)
-							uniqueIds4.JsonataExpression = types.StringPointerValue(uniqueIdsItem4.JsonataExpression)
+							uniqueIds5.Field = types.StringPointerValue(uniqueIdsItem5.Field)
+							uniqueIds5.JsonataExpression = types.StringPointerValue(uniqueIdsItem5.JsonataExpression)
 
-							meterReadings.Meter.UniqueIds = append(meterReadings.Meter.UniqueIds, uniqueIds4)
+							meterReadings.Meter.UniqueIds = append(meterReadings.Meter.UniqueIds, uniqueIds5)
 						}
 						if meterReadingsItem.MeterCounter == nil {
 							meterReadings.MeterCounter = nil
@@ -345,25 +408,25 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 							meterReadings.MeterCounter = &tfTypes.MeterUniqueIdsConfig{}
 							meterReadings.MeterCounter.UniqueIds = []tfTypes.RelationUniqueIDField{}
 
-							for _, uniqueIdsItem5 := range meterReadingsItem.MeterCounter.UniqueIds {
-								var uniqueIds5 tfTypes.RelationUniqueIDField
+							for _, uniqueIdsItem6 := range meterReadingsItem.MeterCounter.UniqueIds {
+								var uniqueIds6 tfTypes.RelationUniqueIDField
 
-								if uniqueIdsItem5.Type != nil {
-									uniqueIds5.Type = types.StringValue(string(*uniqueIdsItem5.Type))
+								if uniqueIdsItem6.Type != nil {
+									uniqueIds6.Type = types.StringValue(string(*uniqueIdsItem6.Type))
 								} else {
-									uniqueIds5.Type = types.StringNull()
+									uniqueIds6.Type = types.StringNull()
 								}
-								uniqueIds5.Attribute = types.StringValue(uniqueIdsItem5.Attribute)
-								if uniqueIdsItem5.Constant == nil {
-									uniqueIds5.Constant = jsontypes.NewNormalizedNull()
+								uniqueIds6.Attribute = types.StringValue(uniqueIdsItem6.Attribute)
+								if uniqueIdsItem6.Constant == nil {
+									uniqueIds6.Constant = jsontypes.NewNormalizedNull()
 								} else {
-									constantResult9, _ := json.Marshal(uniqueIdsItem5.Constant)
-									uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
+									constantResult11, _ := json.Marshal(uniqueIdsItem6.Constant)
+									uniqueIds6.Constant = jsontypes.NewNormalizedValue(string(constantResult11))
 								}
-								uniqueIds5.Field = types.StringPointerValue(uniqueIdsItem5.Field)
-								uniqueIds5.JsonataExpression = types.StringPointerValue(uniqueIdsItem5.JsonataExpression)
+								uniqueIds6.Field = types.StringPointerValue(uniqueIdsItem6.Field)
+								uniqueIds6.JsonataExpression = types.StringPointerValue(uniqueIdsItem6.JsonataExpression)
 
-								meterReadings.MeterCounter.UniqueIds = append(meterReadings.MeterCounter.UniqueIds, uniqueIds5)
+								meterReadings.MeterCounter.UniqueIds = append(meterReadings.MeterCounter.UniqueIds, uniqueIds6)
 							}
 						}
 						if meterReadingsItem.ReadingMatching != nil {
@@ -386,11 +449,29 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 			if useCasesItem.OutboundUseCase != nil {
 				useCases.Outbound = &tfTypes.OutboundUseCase1{}
 				useCases.Outbound.ChangeDescription = types.StringPointerValue(useCasesItem.OutboundUseCase.ChangeDescription)
-				if len(useCasesItem.OutboundUseCase.Configuration) > 0 {
-					useCases.Outbound.Configuration = make(map[string]jsontypes.Normalized, len(useCasesItem.OutboundUseCase.Configuration))
-					for key, value := range useCasesItem.OutboundUseCase.Configuration {
-						result, _ := json.Marshal(value)
-						useCases.Outbound.Configuration[key] = jsontypes.NewNormalizedValue(string(result))
+				if useCasesItem.OutboundUseCase.Configuration == nil {
+					useCases.Outbound.Configuration = nil
+				} else {
+					useCases.Outbound.Configuration = &tfTypes.OutboundIntegrationEventConfiguration{}
+					useCases.Outbound.Configuration.EventCatalogEvent = types.StringValue(useCasesItem.OutboundUseCase.Configuration.EventCatalogEvent)
+					useCases.Outbound.Configuration.Mappings = []tfTypes.OutboundMapping{}
+
+					for _, mappingsItem := range useCasesItem.OutboundUseCase.Configuration.Mappings {
+						var mappings tfTypes.OutboundMapping
+
+						mappings.CreatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(mappingsItem.CreatedAt))
+						mappings.Delivery = &tfTypes.DeliveryConfig{}
+						mappings.Delivery.Type = types.StringValue(string(mappingsItem.Delivery.Type))
+						mappings.Delivery.WebhookID = types.StringValue(mappingsItem.Delivery.WebhookID)
+						mappings.Delivery.WebhookName = types.StringPointerValue(mappingsItem.Delivery.WebhookName)
+						mappings.Delivery.WebhookURL = types.StringPointerValue(mappingsItem.Delivery.WebhookURL)
+						mappings.Enabled = types.BoolPointerValue(mappingsItem.Enabled)
+						mappings.ID = types.StringValue(mappingsItem.ID)
+						mappings.JsonataExpression = types.StringValue(mappingsItem.JsonataExpression)
+						mappings.Name = types.StringValue(mappingsItem.Name)
+						mappings.UpdatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(mappingsItem.UpdatedAt))
+
+						useCases.Outbound.Configuration.Mappings = append(useCases.Outbound.Configuration.Mappings, mappings)
 					}
 				}
 				useCases.Outbound.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.OutboundUseCase.CreatedAt))

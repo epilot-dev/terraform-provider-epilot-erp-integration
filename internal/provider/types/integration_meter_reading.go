@@ -9,7 +9,7 @@ import (
 type IntegrationMeterReading struct {
 	Fields            []IntegrationEntityField `tfsdk:"fields"`
 	JsonataExpression types.String             `tfsdk:"jsonata_expression"`
-	Meter             MeterUniqueIdsConfig     `tfsdk:"meter"`
+	Meter             *MeterUniqueIdsConfig    `tfsdk:"meter"`
 	MeterCounter      *MeterUniqueIdsConfig    `tfsdk:"meter_counter"`
 	ReadingMatching   types.String             `tfsdk:"reading_matching"`
 }

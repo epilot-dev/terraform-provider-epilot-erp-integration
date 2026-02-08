@@ -85,8 +85,11 @@ func (q *QueryAccessLogsRequestCursor) GetRequestID() *string {
 }
 
 type QueryAccessLogsRequest struct {
-	// Filter by access token ID (e.g., 'api_5ZugdRXasLfWBypHi93Fk')
-	TokenID string `json:"token_id"`
+	// Filter by a specific access token ID (e.g., 'api_5ZugdRXasLfWBypHi93Fk').
+	// Must be one of the access_token_ids linked to the integration.
+	// If omitted, returns logs for all access tokens linked to the integration.
+	//
+	TokenID *string `json:"token_id,omitempty"`
 	// Filter by service name (e.g., 'entity', 'metering', 'submission-api')
 	Service *string `json:"service,omitempty"`
 	// Filter by HTTP method
@@ -116,9 +119,9 @@ func (q *QueryAccessLogsRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (q *QueryAccessLogsRequest) GetTokenID() string {
+func (q *QueryAccessLogsRequest) GetTokenID() *string {
 	if q == nil {
-		return ""
+		return nil
 	}
 	return q.TokenID
 }
