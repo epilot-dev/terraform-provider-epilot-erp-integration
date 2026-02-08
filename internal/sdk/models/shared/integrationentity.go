@@ -3,6 +3,7 @@
 package shared
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
@@ -98,6 +99,47 @@ func (u Enabled) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type Enabled: all fields are null")
 }
 
+// Mode - Operation mode for entity mapping:
+// - 'upsert': Create or update the entity (default)
+// - 'delete': Soft delete the entity (marks as deleted)
+// - 'purge': Hard delete the entity (permanent removal)
+// - 'upsert-prune-scope-purge': Upsert entities from array, then purge entities in scope that weren't upserted
+// - 'upsert-prune-scope-delete': Upsert entities from array, then soft delete entities in scope that weren't upserted
+type Mode string
+
+const (
+	ModeUpsert                 Mode = "upsert"
+	ModeDelete                 Mode = "delete"
+	ModePurge                  Mode = "purge"
+	ModeUpsertPruneScopePurge  Mode = "upsert-prune-scope-purge"
+	ModeUpsertPruneScopeDelete Mode = "upsert-prune-scope-delete"
+)
+
+func (e Mode) ToPointer() *Mode {
+	return &e
+}
+func (e *Mode) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "upsert":
+		fallthrough
+	case "delete":
+		fallthrough
+	case "purge":
+		fallthrough
+	case "upsert-prune-scope-purge":
+		fallthrough
+	case "upsert-prune-scope-delete":
+		*e = Mode(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Mode: %v", v)
+	}
+}
+
 type IntegrationEntity struct {
 	// Target entity schema (e.g., 'contact', 'contract')
 	EntitySchema string `json:"entity_schema"`
@@ -110,6 +152,19 @@ type IntegrationEntity struct {
 	JsonataExpression *string `json:"jsonataExpression,omitempty"`
 	// Controls whether this entity mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean.
 	Enabled *Enabled `json:"enabled,omitempty"`
+	// Operation mode for entity mapping:
+	// - 'upsert': Create or update the entity (default)
+	// - 'delete': Soft delete the entity (marks as deleted)
+	// - 'purge': Hard delete the entity (permanent removal)
+	// - 'upsert-prune-scope-purge': Upsert entities from array, then purge entities in scope that weren't upserted
+	// - 'upsert-prune-scope-delete': Upsert entities from array, then soft delete entities in scope that weren't upserted
+	//
+	Mode *Mode `default:"upsert" json:"mode"`
+	// Scope configuration for upsert-prune-scope modes.
+	// Defines how to find entities that should be pruned if not in the upsert payload.
+	// The scope is resolved against the original event payload (not individual array items).
+	//
+	Scope *PruneScopeConfig `json:"scope,omitempty"`
 	// Field mapping definitions
 	Fields []IntegrationEntityField `json:"fields"`
 }
@@ -151,6 +206,20 @@ func (i *IntegrationEntity) GetEnabled() *Enabled {
 		return nil
 	}
 	return i.Enabled
+}
+
+func (i *IntegrationEntity) GetMode() *Mode {
+	if i == nil {
+		return nil
+	}
+	return i.Mode
+}
+
+func (i *IntegrationEntity) GetScope() *PruneScopeConfig {
+	if i == nil {
+		return nil
+	}
+	return i.Scope
 }
 
 func (i *IntegrationEntity) GetFields() []IntegrationEntityField {

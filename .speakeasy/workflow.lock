@@ -1,0 +1,31 @@
+speakeasyVersion: 1.709.0
+sources:
+    my-source:
+        sourceNamespace: my-source
+        sourceRevisionDigest: sha256:64b5aeedde4dfe66d2916121d5d2f81a62233841be54dc9d76ecd81bc8b9ae47
+        sourceBlobDigest: sha256:ad976d038d7506a4d7c674a599ad82c68b0fd0e57b8475c7490553aee6c26c5c
+        tags:
+            - latest
+            - speakeasy-sdk-regen-1769213464
+            - 0.29.0
+targets:
+    terraform:
+        source: my-source
+        sourceNamespace: my-source
+        sourceRevisionDigest: sha256:64b5aeedde4dfe66d2916121d5d2f81a62233841be54dc9d76ecd81bc8b9ae47
+        sourceBlobDigest: sha256:ad976d038d7506a4d7c674a599ad82c68b0fd0e57b8475c7490553aee6c26c5c
+workflow:
+    workflowVersion: 1.0.0
+    speakeasyVersion: latest
+    sources:
+        my-source:
+            inputs:
+                - location: https://docs.api.epilot.io/erp-integration.yaml
+            overlays:
+                - location: overlay.yaml
+            registry:
+                location: registry.speakeasyapi.dev/epilot/epilot/my-source
+    targets:
+        terraform:
+            target: terraform
+            source: my-source

@@ -7,6 +7,8 @@ type CreateIntegrationRequest struct {
 	Name string `json:"name"`
 	// Optional description of the integration
 	Description *string `json:"description,omitempty"`
+	// List of access token IDs to associate with this integration
+	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 }
 
 func (c *CreateIntegrationRequest) GetName() string {
@@ -21,4 +23,11 @@ func (c *CreateIntegrationRequest) GetDescription() *string {
 		return nil
 	}
 	return c.Description
+}
+
+func (c *CreateIntegrationRequest) GetAccessTokenIds() []string {
+	if c == nil {
+		return nil
+	}
+	return c.AccessTokenIds
 }
