@@ -16,6 +16,8 @@ type Integration struct {
 	Name string `json:"name"`
 	// Optional description of the integration
 	Description *string `json:"description,omitempty"`
+	// List of access token IDs associated with this integration
+	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 	// ISO-8601 timestamp when the integration was created
 	CreatedAt time.Time `json:"created_at"`
 	// ISO-8601 timestamp when the integration was last updated
@@ -59,6 +61,13 @@ func (i *Integration) GetDescription() *string {
 		return nil
 	}
 	return i.Description
+}
+
+func (i *Integration) GetAccessTokenIds() []string {
+	if i == nil {
+		return nil
+	}
+	return i.AccessTokenIds
 }
 
 func (i *Integration) GetCreatedAt() time.Time {

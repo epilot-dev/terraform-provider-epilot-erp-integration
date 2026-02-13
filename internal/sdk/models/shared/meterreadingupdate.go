@@ -29,7 +29,7 @@ func (m *MeterCounter) GetDollarEntityUniqueIds() map[string]any {
 type MeterReadingUpdate struct {
 	Meter        Meter         `json:"meter"`
 	MeterCounter *MeterCounter `json:"meter_counter,omitempty"`
-	// Meter reading attributes (external_id, timestamp, source, value, etc.)
+	// Meter reading attributes. Required: external_id, timestamp, source, value. `source` must be one of: ECP, ERP, 360, journey-submission. `reason` (optional) must be one of: regular, irregular, last, first, meter_change, contract_change, meter_adjustment (or empty/null).
 	Attributes map[string]any `json:"attributes"`
 }
 

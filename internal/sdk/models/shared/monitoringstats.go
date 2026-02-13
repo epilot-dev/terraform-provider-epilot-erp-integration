@@ -7,89 +7,198 @@ import (
 	"time"
 )
 
-// MonitoringStats - Monitoring statistics retrieved successfully
-type MonitoringStats struct {
-	// Total number of events in the period
+// Inbound - Statistics for inbound (ERP sync) events
+type Inbound struct {
+	// Total number of inbound events in the period
 	TotalEvents int64 `json:"total_events"`
-	// Total number of unique correlation IDs (a correlation_id groups multiple event_ids)
-	TotalCorrelations int64 `json:"total_correlations"`
+	// Total number of unique correlation IDs
+	TotalCorrelations *int64 `json:"total_correlations,omitempty"`
 	// Number of successful events
 	SuccessCount int64 `json:"success_count"`
 	// Number of failed events
 	ErrorCount int64 `json:"error_count"`
 	// Number of skipped events
 	SkippedCount int64 `json:"skipped_count"`
+	// Number of warning events
+	WarningCount *int64 `json:"warning_count,omitempty"`
 	// Success rate as percentage (0-100)
 	SuccessRate *float32 `json:"success_rate,omitempty"`
 	// Timestamp of the most recent error
 	LastErrorAt *time.Time `json:"last_error_at,omitempty"`
-	// Statistics breakdown by requested group_by fields
+	// Statistics breakdown by requested inbound_group_by fields
 	Breakdown []map[string]any `json:"breakdown,omitempty"`
 }
 
-func (m MonitoringStats) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
+func (i Inbound) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(i, "", false)
 }
 
-func (m *MonitoringStats) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+func (i *Inbound) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MonitoringStats) GetTotalEvents() int64 {
-	if m == nil {
+func (i *Inbound) GetTotalEvents() int64 {
+	if i == nil {
 		return 0
 	}
-	return m.TotalEvents
+	return i.TotalEvents
 }
 
-func (m *MonitoringStats) GetTotalCorrelations() int64 {
-	if m == nil {
-		return 0
-	}
-	return m.TotalCorrelations
-}
-
-func (m *MonitoringStats) GetSuccessCount() int64 {
-	if m == nil {
-		return 0
-	}
-	return m.SuccessCount
-}
-
-func (m *MonitoringStats) GetErrorCount() int64 {
-	if m == nil {
-		return 0
-	}
-	return m.ErrorCount
-}
-
-func (m *MonitoringStats) GetSkippedCount() int64 {
-	if m == nil {
-		return 0
-	}
-	return m.SkippedCount
-}
-
-func (m *MonitoringStats) GetSuccessRate() *float32 {
-	if m == nil {
+func (i *Inbound) GetTotalCorrelations() *int64 {
+	if i == nil {
 		return nil
 	}
-	return m.SuccessRate
+	return i.TotalCorrelations
 }
 
-func (m *MonitoringStats) GetLastErrorAt() *time.Time {
-	if m == nil {
-		return nil
+func (i *Inbound) GetSuccessCount() int64 {
+	if i == nil {
+		return 0
 	}
-	return m.LastErrorAt
+	return i.SuccessCount
 }
 
-func (m *MonitoringStats) GetBreakdown() []map[string]any {
-	if m == nil {
+func (i *Inbound) GetErrorCount() int64 {
+	if i == nil {
+		return 0
+	}
+	return i.ErrorCount
+}
+
+func (i *Inbound) GetSkippedCount() int64 {
+	if i == nil {
+		return 0
+	}
+	return i.SkippedCount
+}
+
+func (i *Inbound) GetWarningCount() *int64 {
+	if i == nil {
 		return nil
 	}
-	return m.Breakdown
+	return i.WarningCount
+}
+
+func (i *Inbound) GetSuccessRate() *float32 {
+	if i == nil {
+		return nil
+	}
+	return i.SuccessRate
+}
+
+func (i *Inbound) GetLastErrorAt() *time.Time {
+	if i == nil {
+		return nil
+	}
+	return i.LastErrorAt
+}
+
+func (i *Inbound) GetBreakdown() []map[string]any {
+	if i == nil {
+		return nil
+	}
+	return i.Breakdown
+}
+
+// Outbound - Statistics for outbound (webhook delivery) events
+type Outbound struct {
+	// Total number of outbound events in the period
+	TotalEvents int64 `json:"total_events"`
+	// Number of successful deliveries
+	SuccessCount int64 `json:"success_count"`
+	// Number of failed deliveries
+	ErrorCount int64 `json:"error_count"`
+	// Number of pending deliveries
+	PendingCount *int64 `json:"pending_count,omitempty"`
+	// Success rate as percentage (0-100)
+	SuccessRate *float32 `json:"success_rate,omitempty"`
+	// Timestamp of the most recent error
+	LastErrorAt *time.Time `json:"last_error_at,omitempty"`
+	// Statistics breakdown by requested outbound_group_by fields
+	Breakdown []map[string]any `json:"breakdown,omitempty"`
+}
+
+func (o Outbound) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
+}
+
+func (o *Outbound) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *Outbound) GetTotalEvents() int64 {
+	if o == nil {
+		return 0
+	}
+	return o.TotalEvents
+}
+
+func (o *Outbound) GetSuccessCount() int64 {
+	if o == nil {
+		return 0
+	}
+	return o.SuccessCount
+}
+
+func (o *Outbound) GetErrorCount() int64 {
+	if o == nil {
+		return 0
+	}
+	return o.ErrorCount
+}
+
+func (o *Outbound) GetPendingCount() *int64 {
+	if o == nil {
+		return nil
+	}
+	return o.PendingCount
+}
+
+func (o *Outbound) GetSuccessRate() *float32 {
+	if o == nil {
+		return nil
+	}
+	return o.SuccessRate
+}
+
+func (o *Outbound) GetLastErrorAt() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.LastErrorAt
+}
+
+func (o *Outbound) GetBreakdown() []map[string]any {
+	if o == nil {
+		return nil
+	}
+	return o.Breakdown
+}
+
+// MonitoringStats - Monitoring statistics retrieved successfully
+type MonitoringStats struct {
+	// Statistics for inbound (ERP sync) events
+	Inbound Inbound `json:"inbound"`
+	// Statistics for outbound (webhook delivery) events
+	Outbound Outbound `json:"outbound"`
+}
+
+func (m *MonitoringStats) GetInbound() Inbound {
+	if m == nil {
+		return Inbound{}
+	}
+	return m.Inbound
+}
+
+func (m *MonitoringStats) GetOutbound() Outbound {
+	if m == nil {
+		return Outbound{}
+	}
+	return m.Outbound
 }

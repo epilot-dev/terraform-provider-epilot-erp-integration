@@ -14,6 +14,9 @@ Integration Resource
 
 ```terraform
 resource "epilot-erp-integration_integration" "my_integration" {
+  access_token_ids = [
+    "..."
+  ]
   description = "...my_description..."
   name        = "...my_name..."
   use_cases = [
@@ -21,7 +24,23 @@ resource "epilot-erp-integration_integration" "my_integration" {
       outbound = {
         change_description = "...my_change_description..."
         configuration = {
-          key = jsonencode("value")
+          event_catalog_event = "contract.created"
+          mappings = [
+            {
+              created_at = "2022-06-02T04:05:14.534Z"
+              delivery = {
+                type         = "webhook"
+                webhook_id   = "...my_webhook_id..."
+                webhook_name = "...my_webhook_name..."
+                webhook_url  = "...my_webhook_url..."
+              }
+              enabled            = false
+              id                 = "bfd4bcb8-1d02-4b3b-a2a9-0fee857c42f2"
+              jsonata_expression = "{ \"id\": entity._id, \"customer\": entity.customer_name }"
+              name               = "ERP Contract Sync"
+              updated_at         = "2022-02-21T23:55:34.826Z"
+            }
+          ]
         }
         enabled = true
         id      = "eb4ac4d2-540e-4705-aba9-48085a4461e0"
@@ -42,6 +61,7 @@ resource "epilot-erp-integration_integration" "my_integration" {
 
 ### Optional
 
+- `access_token_ids` (List of String) List of access token IDs to associate with this integration
 - `description` (String) Optional description of the integration
 - `use_cases` (Attributes List) Full list of use cases (declarative). This replaces ALL existing use cases.
 - Use cases with an `id` field matching an existing use case will be updated
@@ -101,6 +121,16 @@ Optional:
 - `entity_schema` (String) Target entity schema (e.g., 'contact', 'contract'). Not Null
 - `fields` (Attributes List) Field mapping definitions. Not Null (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields))
 - `jsonata_expression` (String) Optional JSONata expression to pre-process the event data before field mapping
+- `mode` (String) Operation mode for entity mapping:
+- 'upsert': Create or update the entity (default)
+- 'delete': Soft delete the entity (marks as deleted)
+- 'purge': Hard delete the entity (permanent removal)
+- 'upsert-prune-scope-purge': Upsert entities from array, then purge entities in scope that weren't upserted
+- 'upsert-prune-scope-delete': Upsert entities from array, then soft delete entities in scope that weren't upserted
+Default: "upsert"; must be one of ["upsert", "delete", "purge", "upsert-prune-scope-purge", "upsert-prune-scope-delete"]
+- `scope` (Attributes) Scope configuration for upsert-prune-scope modes.
+Defines how to find entities that should be pruned if not in the upsert payload.
+The scope is resolved against the original event payload (not individual array items). (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--scope))
 - `unique_ids` (List of String) Array of attribute names that uniquely identify this entity.
 The _type hint for repeatable fields (e.g., email, phone) should be specified
 on the corresponding field definition in the fields array.
@@ -233,6 +263,51 @@ These fields are stored as arrays of objects (e.g., email: [{ email: "value" }])
 must be one of ["email", "phone"]
 
 
+
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--scope"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.scope`
+
+Optional:
+
+- `query` (Attributes List) For 'query' mode: Direct query parameters to find scope entities.
+Not used for 'relations' or 'reverse-relations' modes. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--scope--query))
+- `schema` (String) For 'relations' mode: The schema of the entity to find (e.g., 'billing_account').
+Not used for 'query' mode.
+- `scope_mode` (String) Scope mode for finding entities to prune:
+- 'relations': Find scope by looking at all entities related to a specific entity (both direct and reverse relations)
+- 'query': Find scope entities directly via query parameters
+Not Null; must be one of ["relations", "query"]
+- `unique_ids` (Attributes List) For 'relations' mode: How to identify the scope entity from the payload.
+Not used for 'query' mode. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--scope--unique_ids))
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--scope--query"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.scope.query`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--scope--unique_ids"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.scope.unique_ids`
+
+Optional:
+
+- `attribute` (String) Target attribute name in the related entity. Not Null
+- `constant` (String) Constant value (any type). Parsed as JSON.
+- `field` (String) Source field name from the event data
+- `jsonata_expression` (String) JSONata expression to compute the value
+- `type` (String) Type hint for repeatable fields that require special search handling.
+These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
+must be one of ["email", "phone"]
 
 
 
@@ -428,7 +503,7 @@ must be one of ["email", "phone"]
 Optional:
 
 - `change_description` (String) Optional description of this change (like a commit message)
-- `configuration` (Map of String) Configuration for outbound use cases (epilot to ERP). Structure TBD.
+- `configuration` (Attributes) Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings. (see [below for nested schema](#nestedatt--use_cases--outbound--configuration))
 - `enabled` (Boolean) Whether the use case is enabled. Not Null
 - `id` (String) Optional use case ID for update matching.
 - If provided and matches an existing use case, that use case is updated
@@ -442,6 +517,37 @@ Read-Only:
 - `created_at` (String) ISO-8601 timestamp when the use case was created
 - `integration_id` (String) Parent integration ID
 - `updated_at` (String) ISO-8601 timestamp when the use case was last updated
+
+<a id="nestedatt--use_cases--outbound--configuration"></a>
+### Nested Schema for `use_cases.outbound.configuration`
+
+Optional:
+
+- `event_catalog_event` (String) The Event Catalog event name that triggers this outbound flow. Not Null
+- `mappings` (Attributes List) List of mappings that transform and deliver the event. Not Null (see [below for nested schema](#nestedatt--use_cases--outbound--configuration--mappings))
+
+<a id="nestedatt--use_cases--outbound--configuration--mappings"></a>
+### Nested Schema for `use_cases.outbound.configuration.mappings`
+
+Optional:
+
+- `created_at` (String) Timestamp when the mapping was created
+- `delivery` (Attributes) Configuration for how the transformed event should be delivered. Not Null (see [below for nested schema](#nestedatt--use_cases--outbound--configuration--mappings--delivery))
+- `enabled` (Boolean) Whether this mapping is active. Default: true
+- `id` (String) Unique identifier for this mapping. Not Null
+- `jsonata_expression` (String) JSONata expression to transform the event payload. Not Null
+- `name` (String) Human-readable name for this mapping. Not Null
+- `updated_at` (String) Timestamp when the mapping was last updated
+
+<a id="nestedatt--use_cases--outbound--configuration--mappings--delivery"></a>
+### Nested Schema for `use_cases.outbound.configuration.mappings.delivery`
+
+Optional:
+
+- `type` (String) Delivery mechanism type (currently only webhook is supported). Not Null; must be "webhook"
+- `webhook_id` (String) Reference to the webhook configuration in svc-webhooks. Not Null
+- `webhook_name` (String) Cached webhook name for display purposes
+- `webhook_url` (String) Cached webhook URL for display purposes
 
 ## Import
 

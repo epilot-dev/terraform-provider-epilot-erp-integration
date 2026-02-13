@@ -11,5 +11,7 @@ type IntegrationEntity struct {
 	EntitySchema      types.String             `tfsdk:"entity_schema"`
 	Fields            []IntegrationEntityField `tfsdk:"fields"`
 	JsonataExpression types.String             `tfsdk:"jsonata_expression"`
+	Mode              types.String             `tfsdk:"mode"`
+	Scope             *PruneScopeConfig        `tfsdk:"scope"`
 	UniqueIds         []types.String           `tfsdk:"unique_ids"`
 }

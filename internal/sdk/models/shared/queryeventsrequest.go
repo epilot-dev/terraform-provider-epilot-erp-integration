@@ -81,6 +81,8 @@ type QueryEventsRequest struct {
 	CorrelationID *string `json:"correlation_id,omitempty"`
 	// Filter by object type
 	ObjectType *string `json:"object_type,omitempty"`
+	// Filter by event name (alias for object_type)
+	EventName *string `json:"event_name,omitempty"`
 	// Maximum number of results to return
 	Limit *int64 `default:"25" json:"limit"`
 	// Cursor for pagination. Use the next_cursor from the previous response to get the next page.
@@ -124,6 +126,13 @@ func (q *QueryEventsRequest) GetObjectType() *string {
 		return nil
 	}
 	return q.ObjectType
+}
+
+func (q *QueryEventsRequest) GetEventName() *string {
+	if q == nil {
+		return nil
+	}
+	return q.EventName
 }
 
 func (q *QueryEventsRequest) GetLimit() *int64 {

@@ -49,8 +49,8 @@ type OutboundUseCase struct {
 	CreatedAt time.Time `json:"created_at"`
 	// ISO-8601 timestamp when the use case was last updated
 	UpdatedAt time.Time `json:"updated_at"`
-	// Configuration for outbound use cases (epilot to ERP). Structure TBD.
-	Configuration map[string]any `json:"configuration,omitempty"`
+	// Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings.
+	Configuration *OutboundIntegrationEventConfiguration `json:"configuration,omitempty"`
 }
 
 func (o OutboundUseCase) MarshalJSON() ([]byte, error) {
@@ -120,7 +120,7 @@ func (o *OutboundUseCase) GetUpdatedAt() time.Time {
 	return o.UpdatedAt
 }
 
-func (o *OutboundUseCase) GetConfiguration() map[string]any {
+func (o *OutboundUseCase) GetConfiguration() *OutboundIntegrationEventConfiguration {
 	if o == nil {
 		return nil
 	}
