@@ -9,6 +9,8 @@ type CreateIntegrationRequest struct {
 	Description *string `json:"description,omitempty"`
 	// List of access token IDs to associate with this integration
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
+	// Configuration defining environment variables needed by this integration
+	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 }
 
 func (c *CreateIntegrationRequest) GetName() string {
@@ -30,4 +32,11 @@ func (c *CreateIntegrationRequest) GetAccessTokenIds() []string {
 		return nil
 	}
 	return c.AccessTokenIds
+}
+
+func (c *CreateIntegrationRequest) GetEnvironmentConfig() []EnvironmentFieldConfig {
+	if c == nil {
+		return nil
+	}
+	return c.EnvironmentConfig
 }

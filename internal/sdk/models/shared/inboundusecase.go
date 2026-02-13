@@ -9,27 +9,27 @@ import (
 	"time"
 )
 
-// Type - Use case type
-type Type string
+// InboundUseCaseType - Use case type
+type InboundUseCaseType string
 
 const (
-	TypeInbound Type = "inbound"
+	InboundUseCaseTypeInbound InboundUseCaseType = "inbound"
 )
 
-func (e Type) ToPointer() *Type {
+func (e InboundUseCaseType) ToPointer() *InboundUseCaseType {
 	return &e
 }
-func (e *Type) UnmarshalJSON(data []byte) error {
+func (e *InboundUseCaseType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
 	case "inbound":
-		*e = Type(v)
+		*e = InboundUseCaseType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for Type: %v", v)
+		return fmt.Errorf("invalid value for InboundUseCaseType: %v", v)
 	}
 }
 
@@ -41,8 +41,8 @@ type InboundUseCase struct {
 	// Use case name
 	Name string `json:"name"`
 	// Use case type
-	Type    Type `json:"type"`
-	Enabled bool `json:"enabled"`
+	Type    InboundUseCaseType `json:"type"`
+	Enabled bool               `json:"enabled"`
 	// Description of the last change made to this use case
 	ChangeDescription *string `json:"change_description,omitempty"`
 	// ISO-8601 timestamp when the use case was created
@@ -85,9 +85,9 @@ func (i *InboundUseCase) GetName() string {
 	return i.Name
 }
 
-func (i *InboundUseCase) GetType() Type {
+func (i *InboundUseCase) GetType() InboundUseCaseType {
 	if i == nil {
-		return Type("")
+		return InboundUseCaseType("")
 	}
 	return i.Type
 }

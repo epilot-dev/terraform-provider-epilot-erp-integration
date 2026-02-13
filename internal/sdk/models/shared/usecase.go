@@ -26,7 +26,7 @@ type UseCase struct {
 func CreateUseCaseInbound(inbound InboundUseCase) UseCase {
 	typ := UseCaseTypeInbound
 
-	typStr := Type(typ)
+	typStr := InboundUseCaseType(typ)
 	inbound.Type = typStr
 
 	return UseCase{

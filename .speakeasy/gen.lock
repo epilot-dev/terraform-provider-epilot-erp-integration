@@ -1,29 +1,29 @@
 lockVersion: 2.0.0
 id: 15fc1ae3-2912-47ad-8b62-703c6db72e27
 management:
-  docChecksum: 05e3887d8a117a745b9d0bd28c255202
-  docVersion: 0.35.0
-  speakeasyVersion: 1.713.2
-  generationVersion: 2.821.6
-  releaseVersion: 0.16.0
-  configChecksum: 7d693a95ac1ede863f32382f039e809b
+  docChecksum: e594dc5ddb22fbb7e2d49d0c5e46e7c6
+  docVersion: 0.36.0
+  speakeasyVersion: 1.715.0
+  generationVersion: 2.822.1
+  releaseVersion: 0.17.0
+  configChecksum: 46025bac8e3481698f5e2401b6789b6f
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-erp-integration.git
 persistentEdits:
-  generation_id: 1822d798-5dd1-4123-9543-603bbceb5858
-  pristine_commit_hash: de3cd8f9ab714506f4bee39e695c87ea24203980
-  pristine_tree_hash: 854c9af79a6e7897438429eb42673d449c97835d
+  generation_id: 7388d994-dfd0-4ac5-9c0d-ab781600fc40
+  pristine_commit_hash: 030a47787c2f0b4a4fbd77e0201c928589c345c6
+  pristine_tree_hash: 591da1758916907cad0af674a2ad0e8edcd9893b
 features:
   terraform:
     additionalDependencies: 0.1.0
     additionalProperties: 0.1.4
     constsAndDefaults: 0.3.1
-    core: 3.46.36
+    core: 3.46.37
     deprecations: 2.82.0
     globalSecurity: 2.82.2
     globalServerURLs: 2.83.0
     nullables: 0.0.0
     retries: 2.81.4
-    unions: 2.82.11
+    unions: 2.82.12
 trackedFiles:
   .gitattributes:
     id: 24139dae6567
@@ -39,8 +39,8 @@ trackedFiles:
     pristine_git_object: bb02e077500de84a623de57ffe46448bc951cc58
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:ccedca548e6d49f35062476d6a3d608ab495bee1
-    pristine_git_object: 6643800d215a53e6867339e06ff89cd92ca9902a
+    last_write_checksum: sha1:329f329cd1b0f2bf65bd4687197418cc32621263
+    pristine_git_object: 8f2bf064932d3e87f8218439c6a52013cab13d66
   examples/resources/epilot-erp-integration_integration/import-by-string-id.tf:
     id: 4183e30b18a7
     last_write_checksum: sha1:7b6c3500f63071e0e923f524c8e7d71fb8bf087c
@@ -603,8 +603,8 @@ trackedFiles:
     pristine_git_object: dedd485259492cf645b04f1e84de9e0556a9acf6
   internal/sdk/models/shared/createintegrationrequest.go:
     id: 139f97c5a6cf
-    last_write_checksum: sha1:5df402b641dcab4625091ff8b71d181b8d90484a
-    pristine_git_object: cddda4813a11f49970c7637502a95ff3c8597f6a
+    last_write_checksum: sha1:2b16ee18d97ac900dac583d14c56129b53836d75
+    pristine_git_object: 562906acfaa9252b28a060857121142f78daca96
   internal/sdk/models/shared/createoutboundusecaserequest.go:
     id: 05f04e05a2ac
     last_write_checksum: sha1:a985e9d5ed8ebc4c604da2a4c22cc75cc57b936c
@@ -637,6 +637,10 @@ trackedFiles:
     id: 734ff2e169c0
     last_write_checksum: sha1:65b052d903dd4926a9f2cefe3df1ab09da074e06
     pristine_git_object: 370a3906a6800604f97748aa50d72bd8bf358b68
+  internal/sdk/models/shared/environmentfieldconfig.go:
+    id: ad5a66e55ace
+    last_write_checksum: sha1:410d0ce32c849b4dff11b3746aba4d712fedbb33
+    pristine_git_object: 3761bfbae9ee66c3fba61d7075d241d9f68c066e
   internal/sdk/models/shared/erpevent.go:
     id: 5b07da54a43b
     last_write_checksum: sha1:a265259aa40616e498e67dd953942bab75583b26
@@ -675,16 +679,16 @@ trackedFiles:
     pristine_git_object: a821dfb29836c81979da707507000233716485b8
   internal/sdk/models/shared/inboundusecase.go:
     id: 73c50710b0bb
-    last_write_checksum: sha1:04b0b7e180882bc466371ef6460870e9dc59ffe4
-    pristine_git_object: 2cd9aa1221b60d992c03070a5a7c0dd7ad010dc5
+    last_write_checksum: sha1:16d780fc7e7b6fbb851a051037df80a9a40d372a
+    pristine_git_object: 62cdb3187096f4c450496c38ea1909ffe599c7e6
   internal/sdk/models/shared/inboundusecasehistoryentry.go:
     id: 1fd9ca8f7fde
     last_write_checksum: sha1:3bba40b76ebcd90ee26ca243ab9a04e5b4571bd1
     pristine_git_object: 3b05aa6ccfb370c8dd84e6e6a99ebcdd48ec42d6
   internal/sdk/models/shared/integration.go:
     id: 52f4a253e9b9
-    last_write_checksum: sha1:fefbdb02e981c1ab48aa54798fc56a5d884d3509
-    pristine_git_object: 455263928a9b544460047b75ccdf03b4fa30d28e
+    last_write_checksum: sha1:d1cb03fd53217901b31bed9e7fca99d69bc1f482
+    pristine_git_object: 4caf3e3062a9f4be5fd16a2ae1c0908d5d80cb12
   internal/sdk/models/shared/integrationappmapping.go:
     id: 78fefbc76c61
     last_write_checksum: sha1:ab4d553d68ca732b77fae2d9bc3ac4f471b3daba
@@ -855,8 +859,8 @@ trackedFiles:
     pristine_git_object: 84fb727b1146c1267a07af1a19852944547c75b1
   internal/sdk/models/shared/updateintegrationrequest.go:
     id: af27d7ca51b5
-    last_write_checksum: sha1:7cd9bc02702b7db829a614b202cf739531a64d13
-    pristine_git_object: 2bb22fc55913454af8b701105a099bcf8f13cb11
+    last_write_checksum: sha1:42c60f9f639b53d276a3bb5488e7021b73efe432
+    pristine_git_object: db58b81eb2879082d21bbebe095bf09541e7749c
   internal/sdk/models/shared/updateoutboundusecaserequest.go:
     id: 9de0f8cbf31b
     last_write_checksum: sha1:6fd0528fdd3881e67202edb940d0f497927e249b
@@ -871,8 +875,8 @@ trackedFiles:
     pristine_git_object: 21bf976380540ed35952e84e16e6fa6afd1340ea
   internal/sdk/models/shared/usecase.go:
     id: caafcfcb29c6
-    last_write_checksum: sha1:0ca76a22385ef4b4bf0b65579ce2f1cd99b90e65
-    pristine_git_object: 803f7b87988b36d4e1b372fdc31b601f094e4691
+    last_write_checksum: sha1:a78bb9cc53b43621e774da0436c5ca1d68dc2cb7
+    pristine_git_object: 0e682ae015173634776acc1b58e84dee49f7fafd
   internal/sdk/models/shared/usecasehistoryentry.go:
     id: fbaf0e19f104
     last_write_checksum: sha1:dc83686002eabe34724b1e46f69e71ee026bc887
@@ -899,8 +903,8 @@ trackedFiles:
     pristine_git_object: aa809fccb3445b1e2530a979dad620512f50e70f
   internal/sdk/sdk.go:
     id: 02d7190ee502
-    last_write_checksum: sha1:92df8d04cc4dae10eb9697f9a4a48aa1be6bdc1c
-    pristine_git_object: d323e6bf64397bd235c4c3213ae7b0ae68b18fea
+    last_write_checksum: sha1:03f9ee226967d0ac0058ceae8959b6172a9ca4b9
+    pristine_git_object: eafb5a3848e62091e0d6ebc603467d9e7ee13f45
   internal/sdk/trigger.go:
     id: 8bbb8a8ac0b5
     last_write_checksum: sha1:be342c10fed9c2e2b6d479f8d0b666fb641bceb6
@@ -1751,6 +1755,7 @@ examples:
         "500":
           application/json: {}
 examplesVersion: 1.0.2
+releaseNotes: "## Terraform SDK Changes:\n* `SDK.integrations.listIntegrations()`:  `response.integrations[].environment_config` **Added**\n* `SDK.integrations.createIntegration()`: \n  *  `request.environment_config` **Added**\n  *  `response.environment_config` **Added**\n* `SDK.integrations.getIntegration()`:  `response.environment_config` **Added**\n* `SDK.integrations.updateIntegration()`: \n  *  `request.UpdateIntegrationRequest.environment_config` **Added**\n  *  `response.environment_config` **Added**\n"
 generatedFiles:
   - .gitattributes
   - USAGE.md
