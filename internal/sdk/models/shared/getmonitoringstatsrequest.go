@@ -9,56 +9,27 @@ import (
 	"time"
 )
 
-// GetMonitoringStatsRequestDirection - Filter by sync direction
-type GetMonitoringStatsRequestDirection string
+type InboundGroupBy string
 
 const (
-	GetMonitoringStatsRequestDirectionInbound  GetMonitoringStatsRequestDirection = "inbound"
-	GetMonitoringStatsRequestDirectionOutbound GetMonitoringStatsRequestDirection = "outbound"
+	InboundGroupByUseCaseID     InboundGroupBy = "use_case_id"
+	InboundGroupBySyncType      InboundGroupBy = "sync_type"
+	InboundGroupByStatus        InboundGroupBy = "status"
+	InboundGroupByErrorCategory InboundGroupBy = "error_category"
+	InboundGroupByObjectType    InboundGroupBy = "object_type"
+	InboundGroupByEventName     InboundGroupBy = "event_name"
+	InboundGroupByDate          InboundGroupBy = "date"
 )
 
-func (e GetMonitoringStatsRequestDirection) ToPointer() *GetMonitoringStatsRequestDirection {
+func (e InboundGroupBy) ToPointer() *InboundGroupBy {
 	return &e
 }
-func (e *GetMonitoringStatsRequestDirection) UnmarshalJSON(data []byte) error {
+func (e *InboundGroupBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
-	case "inbound":
-		fallthrough
-	case "outbound":
-		*e = GetMonitoringStatsRequestDirection(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for GetMonitoringStatsRequestDirection: %v", v)
-	}
-}
-
-type GroupBy string
-
-const (
-	GroupByDirection     GroupBy = "direction"
-	GroupByUseCaseID     GroupBy = "use_case_id"
-	GroupBySyncType      GroupBy = "sync_type"
-	GroupByStatus        GroupBy = "status"
-	GroupByErrorCategory GroupBy = "error_category"
-	GroupByObjectType    GroupBy = "object_type"
-	GroupByDate          GroupBy = "date"
-)
-
-func (e GroupBy) ToPointer() *GroupBy {
-	return &e
-}
-func (e *GroupBy) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "direction":
-		fallthrough
 	case "use_case_id":
 		fallthrough
 	case "sync_type":
@@ -69,25 +40,57 @@ func (e *GroupBy) UnmarshalJSON(data []byte) error {
 		fallthrough
 	case "object_type":
 		fallthrough
+	case "event_name":
+		fallthrough
 	case "date":
-		*e = GroupBy(v)
+		*e = InboundGroupBy(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for GroupBy: %v", v)
+		return fmt.Errorf("invalid value for InboundGroupBy: %v", v)
+	}
+}
+
+type OutboundGroupBy string
+
+const (
+	OutboundGroupByEventName       OutboundGroupBy = "event_name"
+	OutboundGroupByStatus          OutboundGroupBy = "status"
+	OutboundGroupByWebhookConfigID OutboundGroupBy = "webhook_config_id"
+	OutboundGroupByDate            OutboundGroupBy = "date"
+)
+
+func (e OutboundGroupBy) ToPointer() *OutboundGroupBy {
+	return &e
+}
+func (e *OutboundGroupBy) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "event_name":
+		fallthrough
+	case "status":
+		fallthrough
+	case "webhook_config_id":
+		fallthrough
+	case "date":
+		*e = OutboundGroupBy(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for OutboundGroupBy: %v", v)
 	}
 }
 
 type GetMonitoringStatsRequest struct {
-	// Filter by use case ID
-	UseCaseID *string `json:"use_case_id,omitempty"`
-	// Filter by sync direction
-	Direction *GetMonitoringStatsRequestDirection `json:"direction,omitempty"`
 	// Start date for statistics period (inclusive)
 	FromDate *time.Time `json:"from_date,omitempty"`
 	// End date for statistics period (inclusive)
 	ToDate *time.Time `json:"to_date,omitempty"`
-	// Fields to group statistics by
-	GroupBy []GroupBy `json:"group_by,omitempty"`
+	// Fields to group inbound statistics by
+	InboundGroupBy []InboundGroupBy `json:"inbound_group_by,omitempty"`
+	// Fields to group outbound statistics by
+	OutboundGroupBy []OutboundGroupBy `json:"outbound_group_by,omitempty"`
 }
 
 func (g GetMonitoringStatsRequest) MarshalJSON() ([]byte, error) {
@@ -99,20 +102,6 @@ func (g *GetMonitoringStatsRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
-}
-
-func (g *GetMonitoringStatsRequest) GetUseCaseID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.UseCaseID
-}
-
-func (g *GetMonitoringStatsRequest) GetDirection() *GetMonitoringStatsRequestDirection {
-	if g == nil {
-		return nil
-	}
-	return g.Direction
 }
 
 func (g *GetMonitoringStatsRequest) GetFromDate() *time.Time {
@@ -129,9 +118,16 @@ func (g *GetMonitoringStatsRequest) GetToDate() *time.Time {
 	return g.ToDate
 }
 
-func (g *GetMonitoringStatsRequest) GetGroupBy() []GroupBy {
+func (g *GetMonitoringStatsRequest) GetInboundGroupBy() []InboundGroupBy {
 	if g == nil {
 		return nil
 	}
-	return g.GroupBy
+	return g.InboundGroupBy
+}
+
+func (g *GetMonitoringStatsRequest) GetOutboundGroupBy() []OutboundGroupBy {
+	if g == nil {
+		return nil
+	}
+	return g.OutboundGroupBy
 }

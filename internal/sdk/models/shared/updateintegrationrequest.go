@@ -7,6 +7,8 @@ type UpdateIntegrationRequest struct {
 	Name *string `json:"name,omitempty"`
 	// Optional description of the integration
 	Description *string `json:"description,omitempty"`
+	// List of access token IDs to associate with this integration
+	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 }
 
 func (u *UpdateIntegrationRequest) GetName() *string {
@@ -21,4 +23,11 @@ func (u *UpdateIntegrationRequest) GetDescription() *string {
 		return nil
 	}
 	return u.Description
+}
+
+func (u *UpdateIntegrationRequest) GetAccessTokenIds() []string {
+	if u == nil {
+		return nil
+	}
+	return u.AccessTokenIds
 }

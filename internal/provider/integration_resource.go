@@ -5,9 +5,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	speakeasy_boolplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/boolplanmodifier"
-	speakeasy_objectplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/objectplanmodifier"
-	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators"
@@ -18,13 +15,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -47,13 +43,14 @@ type IntegrationResource struct {
 
 // IntegrationResourceModel describes the resource data model.
 type IntegrationResourceModel struct {
-	CreatedAt   types.String      `tfsdk:"created_at"`
-	Description types.String      `tfsdk:"description"`
-	ID          types.String      `tfsdk:"id"`
-	Name        types.String      `tfsdk:"name"`
-	OrgID       types.String      `tfsdk:"org_id"`
-	UpdatedAt   types.String      `tfsdk:"updated_at"`
-	UseCases    []tfTypes.UseCase `tfsdk:"use_cases"`
+	AccessTokenIds []types.String    `tfsdk:"access_token_ids"`
+	CreatedAt      types.String      `tfsdk:"created_at"`
+	Description    types.String      `tfsdk:"description"`
+	ID             types.String      `tfsdk:"id"`
+	Name           types.String      `tfsdk:"name"`
+	OrgID          types.String      `tfsdk:"org_id"`
+	UpdatedAt      types.String      `tfsdk:"updated_at"`
+	UseCases       []tfTypes.UseCase `tfsdk:"use_cases"`
 }
 
 func (r *IntegrationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -64,6 +61,12 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Integration Resource",
 		Attributes: map[string]schema.Attribute{
+			"access_token_ids": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `List of access token IDs to associate with this integration`,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was created`,
@@ -105,9 +108,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 					Attributes: map[string]schema.Attribute{
 						"inbound": schema.SingleNestedAttribute{
 							Optional: true,
-							PlanModifiers: []planmodifier.Object{
-								speakeasy_objectplanmodifier.UseConfigValue(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"change_description": schema.StringAttribute{
 									Computed:    true,
@@ -135,9 +135,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 														Attributes: map[string]schema.Attribute{
 															"boolean": schema.BoolAttribute{
 																Optional: true,
-																PlanModifiers: []planmodifier.Bool{
-																	speakeasy_boolplanmodifier.UseConfigValue(),
-																},
 																Validators: []validator.Bool{
 																	boolvalidator.ConflictsWith(path.Expressions{
 																		path.MatchRelative().AtParent().AtName("str"),
@@ -146,9 +143,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 															},
 															"str": schema.StringAttribute{
 																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	speakeasy_stringplanmodifier.UseConfigValue(),
-																},
 																Validators: []validator.String{
 																	stringvalidator.ConflictsWith(path.Expressions{
 																		path.MatchRelative().AtParent().AtName("boolean"),
@@ -194,9 +188,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																	Attributes: map[string]schema.Attribute{
 																		"boolean": schema.BoolAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.Bool{
-																				speakeasy_boolplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.Bool{
 																				boolvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("str"),
@@ -205,9 +196,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																		},
 																		"str": schema.StringAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.String{
-																				speakeasy_stringplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.String{
 																				stringvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("boolean"),
@@ -519,6 +507,157 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 														Optional:    true,
 														Description: `Optional JSONata expression to pre-process the event data before field mapping`,
 													},
+													"mode": schema.StringAttribute{
+														Computed: true,
+														Optional: true,
+														Default:  stringdefault.StaticString(`upsert`),
+														MarkdownDescription: `Operation mode for entity mapping:` + "\n" +
+															`- 'upsert': Create or update the entity (default)` + "\n" +
+															`- 'delete': Soft delete the entity (marks as deleted)` + "\n" +
+															`- 'purge': Hard delete the entity (permanent removal)` + "\n" +
+															`- 'upsert-prune-scope-purge': Upsert entities from array, then purge entities in scope that weren't upserted` + "\n" +
+															`- 'upsert-prune-scope-delete': Upsert entities from array, then soft delete entities in scope that weren't upserted` + "\n" +
+															`Default: "upsert"; must be one of ["upsert", "delete", "purge", "upsert-prune-scope-purge", "upsert-prune-scope-delete"]`,
+														Validators: []validator.String{
+															stringvalidator.OneOf(
+																"upsert",
+																"delete",
+																"purge",
+																"upsert-prune-scope-purge",
+																"upsert-prune-scope-delete",
+															),
+														},
+													},
+													"scope": schema.SingleNestedAttribute{
+														Computed: true,
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"query": schema.ListNestedAttribute{
+																Computed: true,
+																Optional: true,
+																NestedObject: schema.NestedAttributeObject{
+																	Validators: []validator.Object{
+																		speakeasy_objectvalidators.NotNull(),
+																	},
+																	Attributes: map[string]schema.Attribute{
+																		"attribute": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Target attribute name in the related entity. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
+																		"constant": schema.StringAttribute{
+																			CustomType:  jsontypes.NormalizedType{},
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Constant value (any type). Parsed as JSON.`,
+																		},
+																		"field": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Source field name from the event data`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression to compute the value`,
+																		},
+																		"type": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																				`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																				`must be one of ["email", "phone"]`,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"email",
+																					"phone",
+																				),
+																			},
+																		},
+																	},
+																},
+																MarkdownDescription: `For 'query' mode: Direct query parameters to find scope entities.` + "\n" +
+																	`Not used for 'relations' or 'reverse-relations' modes.`,
+															},
+															"schema": schema.StringAttribute{
+																Computed: true,
+																Optional: true,
+																MarkdownDescription: `For 'relations' mode: The schema of the entity to find (e.g., 'billing_account').` + "\n" +
+																	`Not used for 'query' mode.`,
+															},
+															"scope_mode": schema.StringAttribute{
+																Computed: true,
+																Optional: true,
+																MarkdownDescription: `Scope mode for finding entities to prune:` + "\n" +
+																	`- 'relations': Find scope by looking at all entities related to a specific entity (both direct and reverse relations)` + "\n" +
+																	`- 'query': Find scope entities directly via query parameters` + "\n" +
+																	`Not Null; must be one of ["relations", "query"]`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.OneOf(
+																		"relations",
+																		"query",
+																	),
+																},
+															},
+															"unique_ids": schema.ListNestedAttribute{
+																Computed: true,
+																Optional: true,
+																NestedObject: schema.NestedAttributeObject{
+																	Validators: []validator.Object{
+																		speakeasy_objectvalidators.NotNull(),
+																	},
+																	Attributes: map[string]schema.Attribute{
+																		"attribute": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Target attribute name in the related entity. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
+																		"constant": schema.StringAttribute{
+																			CustomType:  jsontypes.NormalizedType{},
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Constant value (any type). Parsed as JSON.`,
+																		},
+																		"field": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `Source field name from the event data`,
+																		},
+																		"jsonata_expression": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `JSONata expression to compute the value`,
+																		},
+																		"type": schema.StringAttribute{
+																			Computed: true,
+																			Optional: true,
+																			MarkdownDescription: `Type hint for repeatable fields that require special search handling.` + "\n" +
+																				`These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).` + "\n" +
+																				`must be one of ["email", "phone"]`,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"email",
+																					"phone",
+																				),
+																			},
+																		},
+																	},
+																},
+																MarkdownDescription: `For 'relations' mode: How to identify the scope entity from the payload.` + "\n" +
+																	`Not used for 'query' mode.`,
+															},
+														},
+														MarkdownDescription: `Scope configuration for upsert-prune-scope modes.` + "\n" +
+															`Defines how to find entities that should be pruned if not in the upsert payload.` + "\n" +
+															`The scope is resolved against the original event payload (not individual array items).`,
+													},
 													"unique_ids": schema.ListAttribute{
 														Computed:    true,
 														Optional:    true,
@@ -571,9 +710,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																	Attributes: map[string]schema.Attribute{
 																		"boolean": schema.BoolAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.Bool{
-																				speakeasy_boolplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.Bool{
 																				boolvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("str"),
@@ -582,9 +718,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																		},
 																		"str": schema.StringAttribute{
 																			Optional: true,
-																			PlanModifiers: []planmodifier.String{
-																				speakeasy_stringplanmodifier.UseConfigValue(),
-																			},
 																			Validators: []validator.String{
 																				stringvalidator.ConflictsWith(path.Expressions{
 																					path.MatchRelative().AtParent().AtName("boolean"),
@@ -1098,9 +1231,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 						"outbound": schema.SingleNestedAttribute{
 							Optional: true,
-							PlanModifiers: []planmodifier.Object{
-								speakeasy_objectplanmodifier.UseConfigValue(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"change_description": schema.StringAttribute{
 									Computed:    true,
@@ -1110,14 +1240,119 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 										stringvalidator.UTF8LengthAtMost(2000),
 									},
 								},
-								"configuration": schema.MapAttribute{
-									Computed:    true,
-									Optional:    true,
-									ElementType: jsontypes.NormalizedType{},
-									Description: `Configuration for outbound use cases (epilot to ERP). Structure TBD.`,
-									Validators: []validator.Map{
-										mapvalidator.ValueStringsAre(validators.IsValidJSON()),
+								"configuration": schema.SingleNestedAttribute{
+									Computed: true,
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"event_catalog_event": schema.StringAttribute{
+											Computed:    true,
+											Optional:    true,
+											Description: `The Event Catalog event name that triggers this outbound flow. Not Null`,
+											Validators: []validator.String{
+												speakeasy_stringvalidators.NotNull(),
+											},
+										},
+										"mappings": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"created_at": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Timestamp when the mapping was created`,
+														Validators: []validator.String{
+															validators.IsRFC3339(),
+														},
+													},
+													"delivery": schema.SingleNestedAttribute{
+														Computed: true,
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"type": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Delivery mechanism type (currently only webhook is supported). Not Null; must be "webhook"`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.OneOf("webhook"),
+																},
+															},
+															"webhook_id": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Reference to the webhook configuration in svc-webhooks. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+															"webhook_name": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Cached webhook name for display purposes`,
+															},
+															"webhook_url": schema.StringAttribute{
+																Computed:    true,
+																Optional:    true,
+																Description: `Cached webhook URL for display purposes`,
+															},
+														},
+														Description: `Configuration for how the transformed event should be delivered. Not Null`,
+														Validators: []validator.Object{
+															speakeasy_objectvalidators.NotNull(),
+														},
+													},
+													"enabled": schema.BoolAttribute{
+														Computed:    true,
+														Optional:    true,
+														Default:     booldefault.StaticBool(true),
+														Description: `Whether this mapping is active. Default: true`,
+													},
+													"id": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Unique identifier for this mapping. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"jsonata_expression": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `JSONata expression to transform the event payload. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Human-readable name for this mapping. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"updated_at": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Timestamp when the mapping was last updated`,
+														Validators: []validator.String{
+															validators.IsRFC3339(),
+														},
+													},
+												},
+											},
+											Description: `List of mappings that transform and deliver the event. Not Null`,
+											Validators: []validator.List{
+												speakeasy_listvalidators.NotNull(),
+												listvalidator.SizeAtLeast(1),
+											},
+										},
 									},
+									Description: `Configuration for outbound use cases. Defines the event that triggers the flow and the webhook mappings.`,
 								},
 								"created_at": schema.StringAttribute{
 									Computed:    true,

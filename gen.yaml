@@ -21,6 +21,7 @@ generation:
   schemas:
     allOfMergeStrategy: shallowMerge
   requestBodyFieldName: ""
+  versioningStrategy: automatic
   persistentEdits: {}
   tests:
     generateTests: true
@@ -29,10 +30,12 @@ generation:
   sdkFlattening: true
   telemetryEnabled: false
 terraform:
-  version: 0.15.0
+  version: 0.16.0
+  additionalActions: []
   additionalDataSources: []
   additionalDependencies: {}
   additionalEphemeralResources: []
+  additionalFunctions: []
   additionalListResources: []
   additionalProviderAttributes:
     httpHeaders: ""
@@ -63,4 +66,5 @@ terraform:
   outputModelSuffix: output
   packageName: epilot-erp-integration
   respectRequiredFields: false
+  respectTitlesForPrimitiveUnionMembers: false
   unionStrategy: populated-fields

@@ -81,13 +81,14 @@ func (p *ProcessErpUpdatesEventsRequestBody) GetEvents() []shared.ErpEvent {
 	return p.Events
 }
 
-// Status - Processing status for the event (skipped indicates duplicate deduplication_id)
+// Status - Processing status for the event (skipped indicates duplicate deduplication_id, ignored indicates unconfigured event)
 type Status string
 
 const (
 	StatusSuccess Status = "success"
 	StatusError   Status = "error"
 	StatusSkipped Status = "skipped"
+	StatusIgnored Status = "ignored"
 )
 
 func (e Status) ToPointer() *Status {
@@ -104,6 +105,8 @@ func (e *Status) UnmarshalJSON(data []byte) error {
 	case "error":
 		fallthrough
 	case "skipped":
+		fallthrough
+	case "ignored":
 		*e = Status(v)
 		return nil
 	default:
@@ -114,7 +117,7 @@ func (e *Status) UnmarshalJSON(data []byte) error {
 type Results struct {
 	// ID of the processed event
 	EventID string `json:"event_id"`
-	// Processing status for the event (skipped indicates duplicate deduplication_id)
+	// Processing status for the event (skipped indicates duplicate deduplication_id, ignored indicates unconfigured event)
 	Status  Status  `json:"status"`
 	Message *string `json:"message,omitempty"`
 }

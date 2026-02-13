@@ -9,6 +9,8 @@ type UpsertIntegrationWithUseCasesRequest struct {
 	Name string `json:"name"`
 	// Optional description of the integration
 	Description *string `json:"description,omitempty"`
+	// List of access token IDs to associate with this integration
+	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 	// Full list of use cases (declarative). This replaces ALL existing use cases.
 	// - Use cases with an `id` field matching an existing use case will be updated
 	// - Use cases without an `id` or with a non-matching `id` will be created
@@ -29,6 +31,13 @@ func (u *UpsertIntegrationWithUseCasesRequest) GetDescription() *string {
 		return nil
 	}
 	return u.Description
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetAccessTokenIds() []string {
+	if u == nil {
+		return nil
+	}
+	return u.AccessTokenIds
 }
 
 func (u *UpsertIntegrationWithUseCasesRequest) GetUseCases() []EmbeddedUseCaseRequest {

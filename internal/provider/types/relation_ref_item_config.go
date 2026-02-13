@@ -10,5 +10,5 @@ type RelationRefItemConfig struct {
 	EntitySchema types.String            `tfsdk:"entity_schema"`
 	Path         types.String            `tfsdk:"path"`
 	UniqueIds    []RelationUniqueIDField `tfsdk:"unique_ids"`
-	Value        RelationRefValueConfig  `tfsdk:"value"`
+	Value        *RelationRefValueConfig `tfsdk:"value"`
 }
