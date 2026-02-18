@@ -1153,6 +1153,23 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 															},
 														},
 													},
+													"mode": schema.StringAttribute{
+														Computed: true,
+														Optional: true,
+														Default:  stringdefault.StaticString(`upsert`),
+														MarkdownDescription: `Operation mode for meter reading mapping:` + "\n" +
+															`- 'upsert': Create or update meter readings (default)` + "\n" +
+															`- 'delete': Delete the meter reading` + "\n" +
+															`- 'upsert-prune-scope': Upsert readings from array, then delete all other readings for the same meter+counter that weren't upserted` + "\n" +
+															`Default: "upsert"; must be one of ["upsert", "delete", "upsert-prune-scope"]`,
+														Validators: []validator.String{
+															stringvalidator.OneOf(
+																"upsert",
+																"delete",
+																"upsert-prune-scope",
+															),
+														},
+													},
 													"reading_matching": schema.StringAttribute{
 														Computed: true,
 														Optional: true,
@@ -1168,6 +1185,20 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																"strict-date",
 															),
 														},
+													},
+													"scope": schema.SingleNestedAttribute{
+														Computed: true,
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"source": schema.StringAttribute{
+																Computed: true,
+																Optional: true,
+																MarkdownDescription: `Optional source filter. When set, only readings with this source` + "\n" +
+																	`are eligible for pruning (e.g., 'ERP' to only prune ERP-synced readings).`,
+															},
+														},
+														MarkdownDescription: `Scope configuration for meter reading upsert-prune-scope mode.` + "\n" +
+															`The scope is all readings for the same meter + counter.`,
 													},
 												},
 											},

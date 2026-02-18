@@ -38,6 +38,39 @@ func (e *ReadingMatching) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// IntegrationMeterReadingMode - Operation mode for meter reading mapping:
+// - 'upsert': Create or update meter readings (default)
+// - 'delete': Delete the meter reading
+// - 'upsert-prune-scope': Upsert readings from array, then delete all other readings for the same meter+counter that weren't upserted
+type IntegrationMeterReadingMode string
+
+const (
+	IntegrationMeterReadingModeUpsert           IntegrationMeterReadingMode = "upsert"
+	IntegrationMeterReadingModeDelete           IntegrationMeterReadingMode = "delete"
+	IntegrationMeterReadingModeUpsertPruneScope IntegrationMeterReadingMode = "upsert-prune-scope"
+)
+
+func (e IntegrationMeterReadingMode) ToPointer() *IntegrationMeterReadingMode {
+	return &e
+}
+func (e *IntegrationMeterReadingMode) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "upsert":
+		fallthrough
+	case "delete":
+		fallthrough
+	case "upsert-prune-scope":
+		*e = IntegrationMeterReadingMode(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for IntegrationMeterReadingMode: %v", v)
+	}
+}
+
 type IntegrationMeterReading struct {
 	// Optional JSONata expression to extract meter reading items from the event data.
 	// If not provided, the entire payload is used as the reading data.
@@ -49,9 +82,19 @@ type IntegrationMeterReading struct {
 	// - 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).
 	//   Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.
 	//
-	ReadingMatching *ReadingMatching      `default:"external_id" json:"reading_matching"`
-	Meter           MeterUniqueIdsConfig  `json:"meter"`
-	MeterCounter    *MeterUniqueIdsConfig `json:"meter_counter,omitempty"`
+	ReadingMatching *ReadingMatching `default:"external_id" json:"reading_matching"`
+	// Operation mode for meter reading mapping:
+	// - 'upsert': Create or update meter readings (default)
+	// - 'delete': Delete the meter reading
+	// - 'upsert-prune-scope': Upsert readings from array, then delete all other readings for the same meter+counter that weren't upserted
+	//
+	Mode *IntegrationMeterReadingMode `default:"upsert" json:"mode"`
+	// Scope configuration for meter reading upsert-prune-scope mode.
+	// The scope is all readings for the same meter + counter.
+	//
+	Scope        *MeterReadingPruneScopeConfig `json:"scope,omitempty"`
+	Meter        MeterUniqueIdsConfig          `json:"meter"`
+	MeterCounter *MeterUniqueIdsConfig         `json:"meter_counter,omitempty"`
 	// Field mapping definitions for meter reading attributes
 	Fields []IntegrationEntityField `json:"fields"`
 }
@@ -79,6 +122,20 @@ func (i *IntegrationMeterReading) GetReadingMatching() *ReadingMatching {
 		return nil
 	}
 	return i.ReadingMatching
+}
+
+func (i *IntegrationMeterReading) GetMode() *IntegrationMeterReadingMode {
+	if i == nil {
+		return nil
+	}
+	return i.Mode
+}
+
+func (i *IntegrationMeterReading) GetScope() *MeterReadingPruneScopeConfig {
+	if i == nil {
+		return nil
+	}
+	return i.Scope
 }
 
 func (i *IntegrationMeterReading) GetMeter() MeterUniqueIdsConfig {

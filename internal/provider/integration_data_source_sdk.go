@@ -429,10 +429,21 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 								meterReadings.MeterCounter.UniqueIds = append(meterReadings.MeterCounter.UniqueIds, uniqueIds6)
 							}
 						}
+						if meterReadingsItem.Mode != nil {
+							meterReadings.Mode = types.StringValue(string(*meterReadingsItem.Mode))
+						} else {
+							meterReadings.Mode = types.StringNull()
+						}
 						if meterReadingsItem.ReadingMatching != nil {
 							meterReadings.ReadingMatching = types.StringValue(string(*meterReadingsItem.ReadingMatching))
 						} else {
 							meterReadings.ReadingMatching = types.StringNull()
+						}
+						if meterReadingsItem.Scope == nil {
+							meterReadings.Scope = nil
+						} else {
+							meterReadings.Scope = &tfTypes.MeterReadingPruneScopeConfig{}
+							meterReadings.Scope.Source = types.StringPointerValue(meterReadingsItem.Scope.Source)
 						}
 
 						useCases.Inbound.Configuration.MeterReadings = append(useCases.Inbound.Configuration.MeterReadings, meterReadings)

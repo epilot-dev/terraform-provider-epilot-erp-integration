@@ -699,12 +699,31 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 															},
 														},
 													},
+													"mode": schema.StringAttribute{
+														Computed: true,
+														MarkdownDescription: `Operation mode for meter reading mapping:` + "\n" +
+															`- 'upsert': Create or update meter readings (default)` + "\n" +
+															`- 'delete': Delete the meter reading` + "\n" +
+															`- 'upsert-prune-scope': Upsert readings from array, then delete all other readings for the same meter+counter that weren't upserted`,
+													},
 													"reading_matching": schema.StringAttribute{
 														Computed: true,
 														MarkdownDescription: `Strategy for matching incoming readings against existing readings.` + "\n" +
 															`- 'external_id': Match readings by external_id attribute (default behavior)` + "\n" +
 															`- 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).` + "\n" +
 															`  Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.`,
+													},
+													"scope": schema.SingleNestedAttribute{
+														Computed: true,
+														Attributes: map[string]schema.Attribute{
+															"source": schema.StringAttribute{
+																Computed: true,
+																MarkdownDescription: `Optional source filter. When set, only readings with this source` + "\n" +
+																	`are eligible for pruning (e.g., 'ERP' to only prune ERP-synced readings).`,
+															},
+														},
+														MarkdownDescription: `Scope configuration for meter reading upsert-prune-scope mode.` + "\n" +
+															`The scope is all readings for the same meter + counter.`,
 													},
 												},
 											},
