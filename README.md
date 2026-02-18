@@ -14,11 +14,16 @@ Terraform Provider for the *epilot-erp-integration* API.
 ERP Integration API: API for integrating with ERP systems, handling tracking acknowledgments, triggering ERP processes, and processing ERP updates.
 <!-- End Summary [summary] -->
 
+<!-- Start Summary [summary] -->
+## Summary
+
+ERP Integration API: API for integrating with ERP systems, handling tracking acknowledgments, triggering ERP processes, and processing ERP updates.
+<!-- End Summary [summary] -->
+
 <!-- Start Table of Contents [toc] -->
 ## Table of Contents
 <!-- $toc-max-depth=2 -->
 * [epilot-erp-integration](#epilot-erp-integration)
-  * [🏗 **Welcome to your new Terraform Provider!** 🏗](#welcome-to-your-new-terraform-provider)
   * [Installation](#installation)
   * [Authentication](#authentication)
   * [Available Resources and Data Sources](#available-resources-and-data-sources)
@@ -36,7 +41,7 @@ terraform {
   required_providers {
     epilot-erp-integration = {
       source  = "epilot-dev/epilot-erp-integration"
-      version = "0.18.0"
+      version = "0.18.1"
     }
   }
 }
@@ -63,9 +68,10 @@ Available configuration:
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
-### Resources
+### Managed Resources
 
 * [epilot-erp-integration_integration](docs/resources/integration.md)
+
 ### Data Sources
 
 * [epilot-erp-integration_integration](docs/data-sources/integration.md)

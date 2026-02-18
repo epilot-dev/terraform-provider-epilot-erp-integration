@@ -3,24 +3,24 @@ id: 15fc1ae3-2912-47ad-8b62-703c6db72e27
 management:
   docChecksum: 2afe00892a6985d3d6390a0f09ae9b50
   docVersion: 0.38.0
-  speakeasyVersion: 1.722.0
-  generationVersion: 2.829.1
-  releaseVersion: 0.18.0
-  configChecksum: 52ae710011011a926c47b87a2dcfb4c2
+  speakeasyVersion: 1.722.2
+  generationVersion: 2.832.2
+  releaseVersion: 0.18.1
+  configChecksum: d9c437c7c52f84228a525f4952c4e661
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-erp-integration.git
 persistentEdits:
-  generation_id: ac524e13-0b51-4d20-b551-0e98ed99f5a7
-  pristine_commit_hash: 26575c3a36ea13edf0c182fb597671b367c74dac
-  pristine_tree_hash: fc48fccab3dd736872ff602ae27a5fc8018b5290
+  generation_id: 719c2df9-09ff-4c3c-b5e8-874c5abe7735
+  pristine_commit_hash: 340b7411828aa144664df0af945549359bfe6a8d
+  pristine_tree_hash: 32436b85af541aa8313218dae1b35e0a93e9d779
 features:
   terraform:
     additionalDependencies: 0.1.0
     additionalProperties: 0.1.4
     constsAndDefaults: 0.3.1
-    core: 3.46.38
+    core: 3.46.39
     deprecations: 2.82.0
     globalSecurity: 2.82.2
-    globalServerURLs: 2.83.0
+    globalServerURLs: 2.83.1
     nullables: 0.0.0
     retries: 2.81.4
     unions: 2.82.12
@@ -39,8 +39,8 @@ trackedFiles:
     pristine_git_object: bb02e077500de84a623de57ffe46448bc951cc58
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:632c4cdcc67486f3ffae6716d7f36e24aad250d1
-    pristine_git_object: 0364dbdef6b9c7366b7d8f58aedd8eb9fee3fe65
+    last_write_checksum: sha1:9686552df66f21d306a6aa7f635bfd1ebf6e025e
+    pristine_git_object: ff7e8ac619eb8833c526058fa715507ee51c6906
   examples/resources/epilot-erp-integration_integration/import-by-string-id.tf:
     id: 4183e30b18a7
     last_write_checksum: sha1:7b6c3500f63071e0e923f524c8e7d71fb8bf087c
@@ -55,8 +55,8 @@ trackedFiles:
     pristine_git_object: 91cee0618d5902636535941cda2d46cdcb5cfdbc
   go.mod:
     id: c47645c391ad
-    last_write_checksum: sha1:c3771d25c64f378fb24b721000710d2f638645ce
-    pristine_git_object: 428880b8e1673629cad3ba8c2ff21eac7ca49ab9
+    last_write_checksum: sha1:53c6dba7f502467b7ddacb8294edfa184c0039d2
+    pristine_git_object: 2b687da6459a27d6a0d48dc806831582261c0d62
   internal/planmodifiers/boolplanmodifier/suppress_diff.go:
     id: 3cf85b98963e
     last_write_checksum: sha1:56a62808eef897f96e6bb10c4a31dcf1c5e43d3e
@@ -911,8 +911,8 @@ trackedFiles:
     pristine_git_object: aa809fccb3445b1e2530a979dad620512f50e70f
   internal/sdk/sdk.go:
     id: 02d7190ee502
-    last_write_checksum: sha1:264dc1b84251ae5b9fcfb11e8871970ed7c96d6b
-    pristine_git_object: abc37c23f31e1cfa4c064259316532ab584c30b4
+    last_write_checksum: sha1:0debb2d1d36069db4e8c304310d44a609550bb4d
+    pristine_git_object: 7d56b736844fcf7bc1bce9a1b884786ac2432267
   internal/sdk/trigger.go:
     id: 8bbb8a8ac0b5
     last_write_checksum: sha1:be342c10fed9c2e2b6d479f8d0b666fb641bceb6
@@ -1763,7 +1763,6 @@ examples:
         "500":
           application/json: {}
 examplesVersion: 1.0.2
-releaseNotes: "## Terraform SDK Changes:\n* `SDK.erp.simulateMappingV2()`: \n  *  `request.event_configuration.meter_readings[]` **Changed**\n* `SDK.erp.simulateMapping()`: \n  *  `request.mapping_configuration.union(IntegrationConfigurationV2).mapping.events.Map<InboundIntegrationEventConfiguration>.meter_readings[]` **Changed**\n* `SDK.integrations.listIntegrations()`:  `response.integrations[].app_ids` **Added**\n* `SDK.integrations.createIntegration()`: \n  *  `request.app_ids` **Added**\n  *  `response.app_ids` **Added**\n* `SDK.integrations.getIntegration()`:  `response.app_ids` **Added**\n* `SDK.integrations.updateIntegration()`: \n  *  `request.UpdateIntegrationRequest.app_ids` **Added**\n  *  `response.app_ids` **Added**\n* `SDK.integrations.listUseCases()`:  `response.use_cases[].union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.createUseCase()`: \n  *  `request.CreateUseCaseRequest.union(inbound).configuration.meter_readings[]` **Changed**\n  *  `response.union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.getUseCase()`:  `response.union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.updateUseCase()`: \n  *  `request.UpdateUseCaseRequest.union(inbound).configuration.meter_readings[]` **Changed**\n  *  `response.union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.listUseCaseHistory()`:  `response.history[].union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.listIntegrationsV2()`:  `response.integrations[].use_cases[].union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.createIntegrationV2()`: \n  *  `request.use_cases[].union(inbound).configuration.meter_readings[]` **Changed**\n  *  `response.use_cases[].union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.getIntegrationV2()`:  `response.use_cases[].union(inbound).configuration.meter_readings[]` **Changed**\n* `SDK.integrations.updateIntegrationV2()`: \n  *  `request.UpsertIntegrationWithUseCasesRequest.use_cases[].union(inbound).configuration.meter_readings[]` **Changed**\n  *  `response.use_cases[].union(inbound).configuration.meter_readings[]` **Changed**\n"
 generatedFiles:
   - .gitattributes
   - USAGE.md
