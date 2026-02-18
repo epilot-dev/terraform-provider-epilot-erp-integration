@@ -18,6 +18,8 @@ type Integration struct {
 	Description *string `json:"description,omitempty"`
 	// List of access token IDs associated with this integration
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
+	// List of app IDs associated with this integration
+	AppIds []string `json:"app_ids,omitempty"`
 	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
 	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// ISO-8601 timestamp when the integration was created
@@ -70,6 +72,13 @@ func (i *Integration) GetAccessTokenIds() []string {
 		return nil
 	}
 	return i.AccessTokenIds
+}
+
+func (i *Integration) GetAppIds() []string {
+	if i == nil {
+		return nil
+	}
+	return i.AppIds
 }
 
 func (i *Integration) GetEnvironmentConfig() []EnvironmentFieldConfig {

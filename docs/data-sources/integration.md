@@ -266,10 +266,16 @@ If not provided, the entire payload is used as the reading data.
 Useful when you need to extract an array of readings from a nested structure (e.g., "$.readings").
 - `meter` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--meter))
 - `meter_counter` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--meter_counter))
+- `mode` (String) Operation mode for meter reading mapping:
+- 'upsert': Create or update meter readings (default)
+- 'delete': Delete the meter reading
+- 'upsert-prune-scope': Upsert readings from array, then delete all other readings for the same meter+counter that weren't upserted
 - `reading_matching` (String) Strategy for matching incoming readings against existing readings.
 - 'external_id': Match readings by external_id attribute (default behavior)
 - 'strict-date': Match by meter_id + counter_id + direction + date (German timezone).
   Useful when readings originate from ECP and are echoed back by the ERP with truncated timestamps.
+- `scope` (Attributes) Scope configuration for meter reading upsert-prune-scope mode.
+The scope is all readings for the same meter + counter. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--scope))
 
 <a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields"></a>
 ### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields`
@@ -426,6 +432,15 @@ Read-Only:
 - `type` (String) Type hint for repeatable fields that require special search handling.
 These fields are stored as arrays of objects (e.g., email: [{ email: "value" }]).
 
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--scope"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.scope`
+
+Read-Only:
+
+- `source` (String) Optional source filter. When set, only readings with this source
+are eligible for pruning (e.g., 'ERP' to only prune ERP-synced readings).
 
 
 

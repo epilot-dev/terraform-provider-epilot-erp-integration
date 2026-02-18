@@ -430,10 +430,21 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 								meterReadings.MeterCounter.UniqueIds = append(meterReadings.MeterCounter.UniqueIds, uniqueIds6)
 							}
 						}
+						if meterReadingsItem.Mode != nil {
+							meterReadings.Mode = types.StringValue(string(*meterReadingsItem.Mode))
+						} else {
+							meterReadings.Mode = types.StringNull()
+						}
 						if meterReadingsItem.ReadingMatching != nil {
 							meterReadings.ReadingMatching = types.StringValue(string(*meterReadingsItem.ReadingMatching))
 						} else {
 							meterReadings.ReadingMatching = types.StringNull()
+						}
+						if meterReadingsItem.Scope == nil {
+							meterReadings.Scope = nil
+						} else {
+							meterReadings.Scope = &tfTypes.MeterReadingPruneScopeConfig{}
+							meterReadings.Scope.Source = types.StringPointerValue(meterReadingsItem.Scope.Source)
 						}
 
 						useCases.Inbound.Configuration.MeterReadings = append(useCases.Inbound.Configuration.MeterReadings, meterReadings)
@@ -959,6 +970,24 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 					} else {
 						readingMatching = nil
 					}
+					mode1 := new(shared.IntegrationMeterReadingMode)
+					if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Mode.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Mode.IsNull() {
+						*mode1 = shared.IntegrationMeterReadingMode(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Mode.ValueString())
+					} else {
+						mode1 = nil
+					}
+					var scope1 *shared.MeterReadingPruneScopeConfig
+					if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Scope != nil {
+						source := new(string)
+						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Scope.Source.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Scope.Source.IsNull() {
+							*source = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Scope.Source.ValueString()
+						} else {
+							source = nil
+						}
+						scope1 = &shared.MeterReadingPruneScopeConfig{
+							Source: source,
+						}
+					}
 					uniqueIds4 := make([]shared.RelationUniqueIDField, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds))
 					for uniqueIdsIndex4 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds {
 						var attribute6 string
@@ -1266,6 +1295,8 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 					meterReadings = append(meterReadings, shared.IntegrationMeterReading{
 						JsonataExpression: jsonataExpression9,
 						ReadingMatching:   readingMatching,
+						Mode:              mode1,
+						Scope:             scope1,
 						Meter:             meter,
 						MeterCounter:      meterCounter,
 						Fields:            fields1,

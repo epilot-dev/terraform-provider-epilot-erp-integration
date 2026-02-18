@@ -7,9 +7,11 @@ import (
 )
 
 type IntegrationMeterReading struct {
-	Fields            []IntegrationEntityField `tfsdk:"fields"`
-	JsonataExpression types.String             `tfsdk:"jsonata_expression"`
-	Meter             *MeterUniqueIdsConfig    `tfsdk:"meter"`
-	MeterCounter      *MeterUniqueIdsConfig    `tfsdk:"meter_counter"`
-	ReadingMatching   types.String             `tfsdk:"reading_matching"`
+	Fields            []IntegrationEntityField      `tfsdk:"fields"`
+	JsonataExpression types.String                  `tfsdk:"jsonata_expression"`
+	Meter             *MeterUniqueIdsConfig         `tfsdk:"meter"`
+	MeterCounter      *MeterUniqueIdsConfig         `tfsdk:"meter_counter"`
+	Mode              types.String                  `tfsdk:"mode"`
+	ReadingMatching   types.String                  `tfsdk:"reading_matching"`
+	Scope             *MeterReadingPruneScopeConfig `tfsdk:"scope"`
 }
