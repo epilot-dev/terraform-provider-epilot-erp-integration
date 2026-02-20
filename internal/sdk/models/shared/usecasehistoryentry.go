@@ -12,13 +12,15 @@ import (
 type UseCaseHistoryEntryType string
 
 const (
-	UseCaseHistoryEntryTypeInbound  UseCaseHistoryEntryType = "inbound"
-	UseCaseHistoryEntryTypeOutbound UseCaseHistoryEntryType = "outbound"
+	UseCaseHistoryEntryTypeInbound   UseCaseHistoryEntryType = "inbound"
+	UseCaseHistoryEntryTypeOutbound  UseCaseHistoryEntryType = "outbound"
+	UseCaseHistoryEntryTypeFileProxy UseCaseHistoryEntryType = "file_proxy"
 )
 
 type UseCaseHistoryEntry struct {
-	InboundUseCaseHistoryEntry  *InboundUseCaseHistoryEntry  `queryParam:"inline" union:"member"`
-	OutboundUseCaseHistoryEntry *OutboundUseCaseHistoryEntry `queryParam:"inline" union:"member"`
+	InboundUseCaseHistoryEntry   *InboundUseCaseHistoryEntry   `queryParam:"inline" union:"member"`
+	OutboundUseCaseHistoryEntry  *OutboundUseCaseHistoryEntry  `queryParam:"inline" union:"member"`
+	FileProxyUseCaseHistoryEntry *FileProxyUseCaseHistoryEntry `queryParam:"inline" union:"member"`
 
 	Type UseCaseHistoryEntryType
 }
@@ -44,6 +46,18 @@ func CreateUseCaseHistoryEntryOutbound(outbound OutboundUseCaseHistoryEntry) Use
 	return UseCaseHistoryEntry{
 		OutboundUseCaseHistoryEntry: &outbound,
 		Type:                        typ,
+	}
+}
+
+func CreateUseCaseHistoryEntryFileProxy(fileProxy FileProxyUseCaseHistoryEntry) UseCaseHistoryEntry {
+	typ := UseCaseHistoryEntryTypeFileProxy
+
+	typStr := FileProxyUseCaseHistoryEntryType(typ)
+	fileProxy.Type = typStr
+
+	return UseCaseHistoryEntry{
+		FileProxyUseCaseHistoryEntry: &fileProxy,
+		Type:                         typ,
 	}
 }
 
@@ -77,6 +91,15 @@ func (u *UseCaseHistoryEntry) UnmarshalJSON(data []byte) error {
 		u.OutboundUseCaseHistoryEntry = outboundUseCaseHistoryEntry
 		u.Type = UseCaseHistoryEntryTypeOutbound
 		return nil
+	case "file_proxy":
+		fileProxyUseCaseHistoryEntry := new(FileProxyUseCaseHistoryEntry)
+		if err := utils.UnmarshalJSON(data, &fileProxyUseCaseHistoryEntry, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == file_proxy) type FileProxyUseCaseHistoryEntry within UseCaseHistoryEntry: %w", string(data), err)
+		}
+
+		u.FileProxyUseCaseHistoryEntry = fileProxyUseCaseHistoryEntry
+		u.Type = UseCaseHistoryEntryTypeFileProxy
+		return nil
 	}
 
 	return fmt.Errorf("could not unmarshal `%s` into any supported union types for UseCaseHistoryEntry", string(data))
@@ -89,6 +112,10 @@ func (u UseCaseHistoryEntry) MarshalJSON() ([]byte, error) {
 
 	if u.OutboundUseCaseHistoryEntry != nil {
 		return utils.MarshalJSON(u.OutboundUseCaseHistoryEntry, "", true)
+	}
+
+	if u.FileProxyUseCaseHistoryEntry != nil {
+		return utils.MarshalJSON(u.FileProxyUseCaseHistoryEntry, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type UseCaseHistoryEntry: all fields are null")

@@ -19,6 +19,8 @@ type IntegrationWithUseCases struct {
 	Description *string `json:"description,omitempty"`
 	// List of access token IDs associated with this integration
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
+	// Settings for the integration
+	Settings *IntegrationSettings `json:"settings,omitempty"`
 	// All use cases belonging to this integration
 	UseCases []UseCase `json:"use_cases"`
 	// ISO-8601 timestamp when the integration was created
@@ -71,6 +73,13 @@ func (i *IntegrationWithUseCases) GetAccessTokenIds() []string {
 		return nil
 	}
 	return i.AccessTokenIds
+}
+
+func (i *IntegrationWithUseCases) GetSettings() *IntegrationSettings {
+	if i == nil {
+		return nil
+	}
+	return i.Settings
 }
 
 func (i *IntegrationWithUseCases) GetUseCases() []UseCase {

@@ -32,16 +32,113 @@ data "epilot-erp-integration_integration" "my_integration" {
 - `description` (String) Optional description of the integration
 - `name` (String) Integration name
 - `org_id` (String) Organization ID
+- `settings` (Attributes) Settings for the integration (see [below for nested schema](#nestedatt--settings))
 - `updated_at` (String) ISO-8601 timestamp when the integration was last updated
 - `use_cases` (Attributes List) All use cases belonging to this integration (see [below for nested schema](#nestedatt--use_cases))
+
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Read-Only:
+
+- `auto_refresh` (Attributes) Auto-refresh settings for keeping integration data fresh (see [below for nested schema](#nestedatt--settings--auto_refresh))
+
+<a id="nestedatt--settings--auto_refresh"></a>
+### Nested Schema for `settings.auto_refresh`
+
+Read-Only:
+
+- `enabled` (Boolean) Whether auto-refresh is enabled
+- `freshness_threshold_minutes` (Number) Maximum age (in minutes) of data before it is considered stale and eligible for refresh
+- `min_interval_between_syncs_minutes` (Number) Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls
+
+
 
 <a id="nestedatt--use_cases"></a>
 ### Nested Schema for `use_cases`
 
 Read-Only:
 
+- `file_proxy` (Attributes) (see [below for nested schema](#nestedatt--use_cases--file_proxy))
 - `inbound` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound))
 - `outbound` (Attributes) (see [below for nested schema](#nestedatt--use_cases--outbound))
+
+<a id="nestedatt--use_cases--file_proxy"></a>
+### Nested Schema for `use_cases.file_proxy`
+
+Read-Only:
+
+- `change_description` (String) Description of the last change made to this use case
+- `configuration` (Attributes) Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
+
+The file proxy download URL always requires `orgId`, `integrationId`, and `useCaseId` as query parameters.
+The `orgId` is included in the signed URL to establish organization context without requiring authentication.
+Additional use-case-specific parameters are declared in the `params` array. (see [below for nested schema](#nestedatt--use_cases--file_proxy--configuration))
+- `created_at` (String) ISO-8601 timestamp when the use case was created
+- `enabled` (Boolean)
+- `id` (String) Unique identifier for the use case
+- `integration_id` (String) Parent integration ID
+- `name` (String) Use case name
+- `type` (String) Use case type
+- `updated_at` (String) ISO-8601 timestamp when the use case was last updated
+
+<a id="nestedatt--use_cases--file_proxy--configuration"></a>
+### Nested Schema for `use_cases.file_proxy.configuration`
+
+Read-Only:
+
+- `auth` (Attributes) (see [below for nested schema](#nestedatt--use_cases--file_proxy--configuration--auth))
+- `params` (Attributes List) Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, useCaseId) (see [below for nested schema](#nestedatt--use_cases--file_proxy--configuration--params))
+- `requires_vpc` (Boolean) Whether requests require VPC routing for IP allowlisting
+- `response` (Attributes) (see [below for nested schema](#nestedatt--use_cases--file_proxy--configuration--response))
+- `steps` (Attributes List) Ordered list of HTTP steps to execute to retrieve the file (see [below for nested schema](#nestedatt--use_cases--file_proxy--configuration--steps))
+
+<a id="nestedatt--use_cases--file_proxy--configuration--auth"></a>
+### Nested Schema for `use_cases.file_proxy.configuration.auth`
+
+Read-Only:
+
+- `client_id` (String) Handlebars template for the OAuth2 client ID
+- `client_secret` (String) Handlebars template for the OAuth2 client secret
+- `scope` (String) Optional OAuth2 scope
+- `token_url` (String) Handlebars template for the OAuth2 token endpoint URL
+- `type` (String) Authentication type
+
+
+<a id="nestedatt--use_cases--file_proxy--configuration--params"></a>
+### Nested Schema for `use_cases.file_proxy.configuration.params`
+
+Read-Only:
+
+- `description` (String) Human-readable description of the parameter
+- `name` (String) Parameter name as it appears in the query string
+- `required` (Boolean) Whether this parameter is required
+
+
+<a id="nestedatt--use_cases--file_proxy--configuration--response"></a>
+### Nested Schema for `use_cases.file_proxy.configuration.response`
+
+Read-Only:
+
+- `body` (String) JSONata expression to extract file content from step results
+- `content_type` (String) JSONata expression to extract the content type
+- `encoding` (String) Encoding of the extracted body
+- `filename` (String) JSONata expression to extract the filename
+
+
+<a id="nestedatt--use_cases--file_proxy--configuration--steps"></a>
+### Nested Schema for `use_cases.file_proxy.configuration.steps`
+
+Read-Only:
+
+- `body` (String) Handlebars template for the request body (POST only)
+- `headers` (Map of String) Handlebars templates for request headers
+- `method` (String) HTTP method
+- `response_type` (String) Expected response type
+- `url` (String) Handlebars template for the request URL
+
+
+
 
 <a id="nestedatt--use_cases--inbound"></a>
 ### Nested Schema for `use_cases.inbound`

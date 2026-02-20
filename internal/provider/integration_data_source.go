@@ -30,14 +30,15 @@ type IntegrationDataSource struct {
 
 // IntegrationDataSourceModel describes the data model.
 type IntegrationDataSourceModel struct {
-	AccessTokenIds []types.String     `tfsdk:"access_token_ids"`
-	CreatedAt      types.String       `tfsdk:"created_at"`
-	Description    types.String       `tfsdk:"description"`
-	ID             types.String       `tfsdk:"id"`
-	Name           types.String       `tfsdk:"name"`
-	OrgID          types.String       `tfsdk:"org_id"`
-	UpdatedAt      types.String       `tfsdk:"updated_at"`
-	UseCases       []tfTypes.UseCase1 `tfsdk:"use_cases"`
+	AccessTokenIds []types.String               `tfsdk:"access_token_ids"`
+	CreatedAt      types.String                 `tfsdk:"created_at"`
+	Description    types.String                 `tfsdk:"description"`
+	ID             types.String                 `tfsdk:"id"`
+	Name           types.String                 `tfsdk:"name"`
+	OrgID          types.String                 `tfsdk:"org_id"`
+	Settings       *tfTypes.IntegrationSettings `tfsdk:"settings"`
+	UpdatedAt      types.String                 `tfsdk:"updated_at"`
+	UseCases       []tfTypes.UseCase1           `tfsdk:"use_cases"`
 }
 
 // Metadata returns the data source type name.
@@ -76,6 +77,30 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				Description: `Organization ID`,
 			},
+			"settings": schema.SingleNestedAttribute{
+				Computed: true,
+				Attributes: map[string]schema.Attribute{
+					"auto_refresh": schema.SingleNestedAttribute{
+						Computed: true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Computed:    true,
+								Description: `Whether auto-refresh is enabled`,
+							},
+							"freshness_threshold_minutes": schema.Int64Attribute{
+								Computed:    true,
+								Description: `Maximum age (in minutes) of data before it is considered stale and eligible for refresh`,
+							},
+							"min_interval_between_syncs_minutes": schema.Int64Attribute{
+								Computed:    true,
+								Description: `Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls`,
+							},
+						},
+						Description: `Auto-refresh settings for keeping integration data fresh`,
+					},
+				},
+				Description: `Settings for the integration`,
+			},
 			"updated_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was last updated`,
@@ -84,6 +109,151 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"file_proxy": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"change_description": schema.StringAttribute{
+									Computed:    true,
+									Description: `Description of the last change made to this use case`,
+								},
+								"configuration": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"auth": schema.SingleNestedAttribute{
+											Computed: true,
+											Attributes: map[string]schema.Attribute{
+												"client_id": schema.StringAttribute{
+													Computed:    true,
+													Description: `Handlebars template for the OAuth2 client ID`,
+												},
+												"client_secret": schema.StringAttribute{
+													Computed:    true,
+													Description: `Handlebars template for the OAuth2 client secret`,
+												},
+												"scope": schema.StringAttribute{
+													Computed:    true,
+													Description: `Optional OAuth2 scope`,
+												},
+												"token_url": schema.StringAttribute{
+													Computed:    true,
+													Description: `Handlebars template for the OAuth2 token endpoint URL`,
+												},
+												"type": schema.StringAttribute{
+													Computed:    true,
+													Description: `Authentication type`,
+												},
+											},
+										},
+										"params": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"description": schema.StringAttribute{
+														Computed:    true,
+														Description: `Human-readable description of the parameter`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Description: `Parameter name as it appears in the query string`,
+													},
+													"required": schema.BoolAttribute{
+														Computed:    true,
+														Description: `Whether this parameter is required`,
+													},
+												},
+											},
+											Description: `Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, useCaseId)`,
+										},
+										"requires_vpc": schema.BoolAttribute{
+											Computed:    true,
+											Description: `Whether requests require VPC routing for IP allowlisting`,
+										},
+										"response": schema.SingleNestedAttribute{
+											Computed: true,
+											Attributes: map[string]schema.Attribute{
+												"body": schema.StringAttribute{
+													Computed:    true,
+													Description: `JSONata expression to extract file content from step results`,
+												},
+												"content_type": schema.StringAttribute{
+													Computed:    true,
+													Description: `JSONata expression to extract the content type`,
+												},
+												"encoding": schema.StringAttribute{
+													Computed:    true,
+													Description: `Encoding of the extracted body`,
+												},
+												"filename": schema.StringAttribute{
+													Computed:    true,
+													Description: `JSONata expression to extract the filename`,
+												},
+											},
+										},
+										"steps": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"body": schema.StringAttribute{
+														Computed:    true,
+														Description: `Handlebars template for the request body (POST only)`,
+													},
+													"headers": schema.MapAttribute{
+														Computed:    true,
+														ElementType: types.StringType,
+														Description: `Handlebars templates for request headers`,
+													},
+													"method": schema.StringAttribute{
+														Computed:    true,
+														Description: `HTTP method`,
+													},
+													"response_type": schema.StringAttribute{
+														Computed:    true,
+														Description: `Expected response type`,
+													},
+													"url": schema.StringAttribute{
+														Computed:    true,
+														Description: `Handlebars template for the request URL`,
+													},
+												},
+											},
+											Description: `Ordered list of HTTP steps to execute to retrieve the file`,
+										},
+									},
+									MarkdownDescription: `Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.` + "\n" +
+										`` + "\n" +
+										`The file proxy download URL always requires ` + "`" + `orgId` + "`" + `, ` + "`" + `integrationId` + "`" + `, and ` + "`" + `useCaseId` + "`" + ` as query parameters.` + "\n" +
+										`The ` + "`" + `orgId` + "`" + ` is included in the signed URL to establish organization context without requiring authentication.` + "\n" +
+										`Additional use-case-specific parameters are declared in the ` + "`" + `params` + "`" + ` array.`,
+								},
+								"created_at": schema.StringAttribute{
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was created`,
+								},
+								"enabled": schema.BoolAttribute{
+									Computed: true,
+								},
+								"id": schema.StringAttribute{
+									Computed:    true,
+									Description: `Unique identifier for the use case`,
+								},
+								"integration_id": schema.StringAttribute{
+									Computed:    true,
+									Description: `Parent integration ID`,
+								},
+								"name": schema.StringAttribute{
+									Computed:    true,
+									Description: `Use case name`,
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Description: `Use case type`,
+								},
+								"updated_at": schema.StringAttribute{
+									Computed:    true,
+									Description: `ISO-8601 timestamp when the use case was last updated`,
+								},
+							},
+						},
 						"inbound": schema.SingleNestedAttribute{
 							Computed: true,
 							Attributes: map[string]schema.Attribute{

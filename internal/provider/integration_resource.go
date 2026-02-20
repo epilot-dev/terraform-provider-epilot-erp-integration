@@ -14,6 +14,7 @@ import (
 	speakeasy_stringvalidators "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators/stringvalidators"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -43,14 +44,15 @@ type IntegrationResource struct {
 
 // IntegrationResourceModel describes the resource data model.
 type IntegrationResourceModel struct {
-	AccessTokenIds []types.String    `tfsdk:"access_token_ids"`
-	CreatedAt      types.String      `tfsdk:"created_at"`
-	Description    types.String      `tfsdk:"description"`
-	ID             types.String      `tfsdk:"id"`
-	Name           types.String      `tfsdk:"name"`
-	OrgID          types.String      `tfsdk:"org_id"`
-	UpdatedAt      types.String      `tfsdk:"updated_at"`
-	UseCases       []tfTypes.UseCase `tfsdk:"use_cases"`
+	AccessTokenIds []types.String               `tfsdk:"access_token_ids"`
+	CreatedAt      types.String                 `tfsdk:"created_at"`
+	Description    types.String                 `tfsdk:"description"`
+	ID             types.String                 `tfsdk:"id"`
+	Name           types.String                 `tfsdk:"name"`
+	OrgID          types.String                 `tfsdk:"org_id"`
+	Settings       *tfTypes.IntegrationSettings `tfsdk:"settings"`
+	UpdatedAt      types.String                 `tfsdk:"updated_at"`
+	UseCases       []tfTypes.UseCase            `tfsdk:"use_cases"`
 }
 
 func (r *IntegrationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -94,6 +96,42 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed:    true,
 				Description: `Organization ID`,
 			},
+			"settings": schema.SingleNestedAttribute{
+				Computed: true,
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"auto_refresh": schema.SingleNestedAttribute{
+						Computed: true,
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"enabled": schema.BoolAttribute{
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(false),
+								Description: `Whether auto-refresh is enabled. Default: false`,
+							},
+							"freshness_threshold_minutes": schema.Int64Attribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `Maximum age (in minutes) of data before it is considered stale and eligible for refresh`,
+								Validators: []validator.Int64{
+									int64validator.AtLeast(1),
+								},
+							},
+							"min_interval_between_syncs_minutes": schema.Int64Attribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls`,
+								Validators: []validator.Int64{
+									int64validator.AtLeast(1),
+								},
+							},
+						},
+						Description: `Auto-refresh settings for keeping integration data fresh`,
+					},
+				},
+				Description: `Settings for the integration`,
+			},
 			"updated_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was last updated`,
@@ -106,6 +144,281 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 						speakeasy_objectvalidators.NotNull(),
 					},
 					Attributes: map[string]schema.Attribute{
+						"file_proxy_use_case": schema.SingleNestedAttribute{
+							Optional: true,
+							Attributes: map[string]schema.Attribute{
+								"change_description": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Description of the last change made to this use case`,
+									Validators: []validator.String{
+										stringvalidator.UTF8LengthAtMost(2000),
+									},
+								},
+								"configuration": schema.SingleNestedAttribute{
+									Computed: true,
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"auth": schema.SingleNestedAttribute{
+											Computed: true,
+											Optional: true,
+											Attributes: map[string]schema.Attribute{
+												"client_id": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `Handlebars template for the OAuth2 client ID. Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
+												},
+												"client_secret": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `Handlebars template for the OAuth2 client secret. Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
+												},
+												"scope": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `Optional OAuth2 scope`,
+												},
+												"token_url": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `Handlebars template for the OAuth2 token endpoint URL. Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
+												},
+												"type": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `Authentication type. Not Null; must be "oauth2_client_credentials"`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+														stringvalidator.OneOf(
+															"oauth2_client_credentials",
+														),
+													},
+												},
+											},
+										},
+										"params": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"description": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Human-readable description of the parameter`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Parameter name as it appears in the query string. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"required": schema.BoolAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Whether this parameter is required. Not Null`,
+														Validators: []validator.Bool{
+															speakeasy_boolvalidators.NotNull(),
+														},
+													},
+												},
+											},
+											Description: `Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, useCaseId)`,
+										},
+										"requires_vpc": schema.BoolAttribute{
+											Computed:    true,
+											Optional:    true,
+											Default:     booldefault.StaticBool(false),
+											Description: `Whether requests require VPC routing for IP allowlisting. Default: false`,
+										},
+										"response": schema.SingleNestedAttribute{
+											Computed: true,
+											Optional: true,
+											Attributes: map[string]schema.Attribute{
+												"body": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `JSONata expression to extract file content from step results. Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
+												},
+												"content_type": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `JSONata expression to extract the content type`,
+												},
+												"encoding": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `Encoding of the extracted body. Not Null; must be one of ["base64", "binary"]`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+														stringvalidator.OneOf(
+															"base64",
+															"binary",
+														),
+													},
+												},
+												"filename": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Description: `JSONata expression to extract the filename`,
+												},
+											},
+											Description: `Not Null`,
+											Validators: []validator.Object{
+												speakeasy_objectvalidators.NotNull(),
+											},
+										},
+										"steps": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"body": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Handlebars template for the request body (POST only)`,
+													},
+													"headers": schema.MapAttribute{
+														Computed:    true,
+														Optional:    true,
+														ElementType: types.StringType,
+														Description: `Handlebars templates for request headers`,
+													},
+													"method": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `HTTP method. Not Null; must be one of ["GET", "POST"]`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf(
+																"GET",
+																"POST",
+															),
+														},
+													},
+													"response_type": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Expected response type. Not Null; must be one of ["json", "binary"]`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf(
+																"json",
+																"binary",
+															),
+														},
+													},
+													"url": schema.StringAttribute{
+														Computed:    true,
+														Optional:    true,
+														Description: `Handlebars template for the request URL. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+											},
+											Description: `Ordered list of HTTP steps to execute to retrieve the file. Not Null`,
+											Validators: []validator.List{
+												speakeasy_listvalidators.NotNull(),
+												listvalidator.SizeAtLeast(1),
+											},
+										},
+									},
+									MarkdownDescription: `Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.` + "\n" +
+										`` + "\n" +
+										`The file proxy download URL always requires ` + "`" + `orgId` + "`" + `, ` + "`" + `integrationId` + "`" + `, and ` + "`" + `useCaseId` + "`" + ` as query parameters.` + "\n" +
+										`The ` + "`" + `orgId` + "`" + ` is included in the signed URL to establish organization context without requiring authentication.` + "\n" +
+										`Additional use-case-specific parameters are declared in the ` + "`" + `params` + "`" + ` array.`,
+								},
+								"created_at": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `ISO-8601 timestamp when the use case was created. Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										validators.IsRFC3339(),
+									},
+								},
+								"enabled": schema.BoolAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Not Null`,
+									Validators: []validator.Bool{
+										speakeasy_boolvalidators.NotNull(),
+									},
+								},
+								"id": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Unique identifier for the use case. Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+									},
+								},
+								"integration_id": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Parent integration ID. Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+									},
+								},
+								"name": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Use case name. Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+									},
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Use case type. Not Null; must be "file_proxy"`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										stringvalidator.OneOf(
+											"file_proxy",
+										),
+									},
+								},
+								"updated_at": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `ISO-8601 timestamp when the use case was last updated. Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										validators.IsRFC3339(),
+									},
+								},
+							},
+							Validators: []validator.Object{
+								objectvalidator.ConflictsWith(path.Expressions{
+									path.MatchRelative().AtParent().AtName("inbound"),
+									path.MatchRelative().AtParent().AtName("outbound"),
+								}...),
+							},
+						},
 						"inbound": schema.SingleNestedAttribute{
 							Optional: true,
 							Attributes: map[string]schema.Attribute{
@@ -1257,6 +1570,7 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 							Validators: []validator.Object{
 								objectvalidator.ConflictsWith(path.Expressions{
 									path.MatchRelative().AtParent().AtName("outbound"),
+									path.MatchRelative().AtParent().AtName("file_proxy_use_case"),
 								}...),
 							},
 						},
@@ -1435,6 +1749,7 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 							Validators: []validator.Object{
 								objectvalidator.ConflictsWith(path.Expressions{
 									path.MatchRelative().AtParent().AtName("inbound"),
+									path.MatchRelative().AtParent().AtName("file_proxy_use_case"),
 								}...),
 							},
 						},

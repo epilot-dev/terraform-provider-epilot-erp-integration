@@ -12,13 +12,15 @@ import (
 type UseCaseType string
 
 const (
-	UseCaseTypeInbound  UseCaseType = "inbound"
-	UseCaseTypeOutbound UseCaseType = "outbound"
+	UseCaseTypeInbound   UseCaseType = "inbound"
+	UseCaseTypeOutbound  UseCaseType = "outbound"
+	UseCaseTypeFileProxy UseCaseType = "file_proxy"
 )
 
 type UseCase struct {
-	InboundUseCase  *InboundUseCase  `queryParam:"inline" union:"member"`
-	OutboundUseCase *OutboundUseCase `queryParam:"inline" union:"member"`
+	InboundUseCase   *InboundUseCase   `queryParam:"inline" union:"member"`
+	OutboundUseCase  *OutboundUseCase  `queryParam:"inline" union:"member"`
+	FileProxyUseCase *FileProxyUseCase `queryParam:"inline" union:"member"`
 
 	Type UseCaseType
 }
@@ -44,6 +46,18 @@ func CreateUseCaseOutbound(outbound OutboundUseCase) UseCase {
 	return UseCase{
 		OutboundUseCase: &outbound,
 		Type:            typ,
+	}
+}
+
+func CreateUseCaseFileProxy(fileProxy FileProxyUseCase) UseCase {
+	typ := UseCaseTypeFileProxy
+
+	typStr := FileProxyUseCaseType(typ)
+	fileProxy.Type = typStr
+
+	return UseCase{
+		FileProxyUseCase: &fileProxy,
+		Type:             typ,
 	}
 }
 
@@ -77,6 +91,15 @@ func (u *UseCase) UnmarshalJSON(data []byte) error {
 		u.OutboundUseCase = outboundUseCase
 		u.Type = UseCaseTypeOutbound
 		return nil
+	case "file_proxy":
+		fileProxyUseCase := new(FileProxyUseCase)
+		if err := utils.UnmarshalJSON(data, &fileProxyUseCase, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == file_proxy) type FileProxyUseCase within UseCase: %w", string(data), err)
+		}
+
+		u.FileProxyUseCase = fileProxyUseCase
+		u.Type = UseCaseTypeFileProxy
+		return nil
 	}
 
 	return fmt.Errorf("could not unmarshal `%s` into any supported union types for UseCase", string(data))
@@ -89,6 +112,10 @@ func (u UseCase) MarshalJSON() ([]byte, error) {
 
 	if u.OutboundUseCase != nil {
 		return utils.MarshalJSON(u.OutboundUseCase, "", true)
+	}
+
+	if u.FileProxyUseCase != nil {
+		return utils.MarshalJSON(u.FileProxyUseCase, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type UseCase: all fields are null")

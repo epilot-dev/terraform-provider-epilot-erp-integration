@@ -4,33 +4,208 @@ resource "epilot-erp-integration_integration" "my_integration" {
   ]
   description = "...my_description..."
   name        = "...my_name..."
+  settings = {
+    auto_refresh = {
+      enabled                            = true
+      freshness_threshold_minutes        = 1
+      min_interval_between_syncs_minutes = 4
+    }
+  }
   use_cases = [
     {
-      outbound = {
+      inbound = {
         change_description = "...my_change_description..."
         configuration = {
-          event_catalog_event = "contract.created"
-          mappings = [
+          entities = [
             {
-              created_at = "2022-06-02T04:05:14.534Z"
-              delivery = {
-                type         = "webhook"
-                webhook_id   = "...my_webhook_id..."
-                webhook_name = "...my_webhook_name..."
-                webhook_url  = "...my_webhook_url..."
+              enabled = {
+                str = "...my_str..."
               }
-              enabled            = false
-              id                 = "bfd4bcb8-1d02-4b3b-a2a9-0fee857c42f2"
-              jsonata_expression = "{ \"id\": entity._id, \"customer\": entity.customer_name }"
-              name               = "ERP Contract Sync"
-              updated_at         = "2022-02-21T23:55:34.826Z"
+              entity_schema = "...my_entity_schema..."
+              fields = [
+                {
+                  attribute = "...my_attribute..."
+                  constant  = "{ \"see\": \"documentation\" }"
+                  enabled = {
+                    boolean = false
+                  }
+                  field              = "...my_field..."
+                  jsonata_expression = "...my_jsonata_expression..."
+                  relation_refs = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        path          = "...my_path..."
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "phone"
+                          }
+                        ]
+                        value = {
+                          attribute          = "...my_attribute..."
+                          constant           = "{ \"see\": \"documentation\" }"
+                          field              = "...my_field..."
+                          jsonata_expression = "...my_jsonata_expression..."
+                          operation          = "_append_all"
+                        }
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_append_all"
+                  }
+                  relations = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        tags = [
+                          "..."
+                        ]
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "email"
+                          }
+                        ]
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_set"
+                  }
+                  type = "phone"
+                }
+              ]
+              jsonata_expression = "...my_jsonata_expression..."
+              mode               = "delete"
+              scope = {
+                query = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "phone"
+                  }
+                ]
+                schema     = "...my_schema..."
+                scope_mode = "query"
+                unique_ids = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "email"
+                  }
+                ]
+              }
+              unique_ids = [
+                "..."
+              ]
+            }
+          ]
+          meter_readings = [
+            {
+              fields = [
+                {
+                  attribute = "...my_attribute..."
+                  constant  = "{ \"see\": \"documentation\" }"
+                  enabled = {
+                    boolean = true
+                  }
+                  field              = "...my_field..."
+                  jsonata_expression = "...my_jsonata_expression..."
+                  relation_refs = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        path          = "...my_path..."
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "phone"
+                          }
+                        ]
+                        value = {
+                          attribute          = "...my_attribute..."
+                          constant           = "{ \"see\": \"documentation\" }"
+                          field              = "...my_field..."
+                          jsonata_expression = "...my_jsonata_expression..."
+                          operation          = "_append"
+                        }
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_append_all"
+                  }
+                  relations = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        tags = [
+                          "..."
+                        ]
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "phone"
+                          }
+                        ]
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_append_all"
+                  }
+                  type = "email"
+                }
+              ]
+              jsonata_expression = "...my_jsonata_expression..."
+              meter = {
+                unique_ids = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "email"
+                  }
+                ]
+              }
+              meter_counter = {
+                unique_ids = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "phone"
+                  }
+                ]
+              }
+              mode             = "upsert"
+              reading_matching = "strict-date"
+              scope = {
+                source = "...my_source..."
+              }
             }
           ]
         }
         enabled = true
-        id      = "eb4ac4d2-540e-4705-aba9-48085a4461e0"
+        id      = "f21f5505-531e-48a5-bb28-64853db4e487"
         name    = "...my_name..."
-        type    = "outbound"
+        type    = "inbound"
       }
     }
   ]

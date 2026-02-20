@@ -44,6 +44,10 @@ func (u *UpdateUseCaseRequest) GetUpdateUseCaseRequestOutbound() *shared.UpdateO
 	return u.GetUpdateUseCaseRequest().UpdateOutboundUseCaseRequest
 }
 
+func (u *UpdateUseCaseRequest) GetUpdateUseCaseRequestFileProxy() *shared.UpdateFileProxyUseCaseRequest {
+	return u.GetUpdateUseCaseRequest().UpdateFileProxyUseCaseRequest
+}
+
 type UpdateUseCaseResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
@@ -95,6 +99,13 @@ func (u *UpdateUseCaseResponse) GetUseCaseInbound() *shared.InboundUseCase {
 func (u *UpdateUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCase {
 	if v := u.GetUseCase(); v != nil {
 		return v.OutboundUseCase
+	}
+	return nil
+}
+
+func (u *UpdateUseCaseResponse) GetUseCaseFileProxy() *shared.FileProxyUseCase {
+	if v := u.GetUseCase(); v != nil {
+		return v.FileProxyUseCase
 	}
 	return nil
 }

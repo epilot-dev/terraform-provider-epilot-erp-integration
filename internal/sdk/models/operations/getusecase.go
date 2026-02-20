@@ -83,6 +83,13 @@ func (g *GetUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCase {
 	return nil
 }
 
+func (g *GetUseCaseResponse) GetUseCaseFileProxy() *shared.FileProxyUseCase {
+	if v := g.GetUseCase(); v != nil {
+		return v.FileProxyUseCase
+	}
+	return nil
+}
+
 func (g *GetUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
 	if g == nil {
 		return nil

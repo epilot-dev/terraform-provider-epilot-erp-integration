@@ -35,6 +35,10 @@ func (c *CreateUseCaseRequest) GetCreateUseCaseRequestOutbound() *shared.CreateO
 	return c.GetCreateUseCaseRequest().CreateOutboundUseCaseRequest
 }
 
+func (c *CreateUseCaseRequest) GetCreateUseCaseRequestFileProxy() *shared.CreateFileProxyUseCaseRequest {
+	return c.GetCreateUseCaseRequest().CreateFileProxyUseCaseRequest
+}
+
 type CreateUseCaseResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
@@ -86,6 +90,13 @@ func (c *CreateUseCaseResponse) GetUseCaseInbound() *shared.InboundUseCase {
 func (c *CreateUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCase {
 	if v := c.GetUseCase(); v != nil {
 		return v.OutboundUseCase
+	}
+	return nil
+}
+
+func (c *CreateUseCaseResponse) GetUseCaseFileProxy() *shared.FileProxyUseCase {
+	if v := c.GetUseCase(); v != nil {
+		return v.FileProxyUseCase
 	}
 	return nil
 }

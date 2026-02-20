@@ -27,12 +27,86 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 		r.ID = types.StringValue(resp.ID)
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)
+		if resp.Settings == nil {
+			r.Settings = nil
+		} else {
+			r.Settings = &tfTypes.IntegrationSettings{}
+			if resp.Settings.AutoRefresh == nil {
+				r.Settings.AutoRefresh = nil
+			} else {
+				r.Settings.AutoRefresh = &tfTypes.AutoRefreshSettings{}
+				r.Settings.AutoRefresh.Enabled = types.BoolPointerValue(resp.Settings.AutoRefresh.Enabled)
+				r.Settings.AutoRefresh.FreshnessThresholdMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.FreshnessThresholdMinutes)
+				r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes)
+			}
+		}
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
 		r.UseCases = []tfTypes.UseCase1{}
 
 		for _, useCasesItem := range resp.UseCases {
 			var useCases tfTypes.UseCase1
 
+			if useCasesItem.FileProxyUseCase != nil {
+				useCases.FileProxy = &tfTypes.FileProxyUseCase{}
+				useCases.FileProxy.ChangeDescription = types.StringPointerValue(useCasesItem.FileProxyUseCase.ChangeDescription)
+				if useCasesItem.FileProxyUseCase.Configuration == nil {
+					useCases.FileProxy.Configuration = nil
+				} else {
+					useCases.FileProxy.Configuration = &tfTypes.FileProxyUseCaseConfiguration{}
+					if useCasesItem.FileProxyUseCase.Configuration.Auth == nil {
+						useCases.FileProxy.Configuration.Auth = nil
+					} else {
+						useCases.FileProxy.Configuration.Auth = &tfTypes.FileProxyAuth{}
+						useCases.FileProxy.Configuration.Auth.ClientID = types.StringValue(useCasesItem.FileProxyUseCase.Configuration.Auth.ClientID)
+						useCases.FileProxy.Configuration.Auth.ClientSecret = types.StringValue(useCasesItem.FileProxyUseCase.Configuration.Auth.ClientSecret)
+						useCases.FileProxy.Configuration.Auth.Scope = types.StringPointerValue(useCasesItem.FileProxyUseCase.Configuration.Auth.Scope)
+						useCases.FileProxy.Configuration.Auth.TokenURL = types.StringValue(useCasesItem.FileProxyUseCase.Configuration.Auth.TokenURL)
+						useCases.FileProxy.Configuration.Auth.Type = types.StringValue(string(useCasesItem.FileProxyUseCase.Configuration.Auth.Type))
+					}
+					useCases.FileProxy.Configuration.Params = []tfTypes.FileProxyParam{}
+
+					for _, paramsItem := range useCasesItem.FileProxyUseCase.Configuration.Params {
+						var params tfTypes.FileProxyParam
+
+						params.Description = types.StringPointerValue(paramsItem.Description)
+						params.Name = types.StringValue(paramsItem.Name)
+						params.Required = types.BoolValue(paramsItem.Required)
+
+						useCases.FileProxy.Configuration.Params = append(useCases.FileProxy.Configuration.Params, params)
+					}
+					useCases.FileProxy.Configuration.RequiresVpc = types.BoolPointerValue(useCasesItem.FileProxyUseCase.Configuration.RequiresVpc)
+					useCases.FileProxy.Configuration.Response = &tfTypes.FileProxyResponseConfig{}
+					useCases.FileProxy.Configuration.Response.Body = types.StringValue(useCasesItem.FileProxyUseCase.Configuration.Response.Body)
+					useCases.FileProxy.Configuration.Response.ContentType = types.StringPointerValue(useCasesItem.FileProxyUseCase.Configuration.Response.ContentType)
+					useCases.FileProxy.Configuration.Response.Encoding = types.StringValue(string(useCasesItem.FileProxyUseCase.Configuration.Response.Encoding))
+					useCases.FileProxy.Configuration.Response.Filename = types.StringPointerValue(useCasesItem.FileProxyUseCase.Configuration.Response.Filename)
+					useCases.FileProxy.Configuration.Steps = []tfTypes.FileProxyStep{}
+
+					for _, stepsItem := range useCasesItem.FileProxyUseCase.Configuration.Steps {
+						var steps tfTypes.FileProxyStep
+
+						steps.Body = types.StringPointerValue(stepsItem.Body)
+						if len(stepsItem.Headers) > 0 {
+							steps.Headers = make(map[string]types.String, len(stepsItem.Headers))
+							for key, value := range stepsItem.Headers {
+								steps.Headers[key] = types.StringValue(value)
+							}
+						}
+						steps.Method = types.StringValue(string(stepsItem.Method))
+						steps.ResponseType = types.StringValue(string(stepsItem.ResponseType))
+						steps.URL = types.StringValue(stepsItem.URL)
+
+						useCases.FileProxy.Configuration.Steps = append(useCases.FileProxy.Configuration.Steps, steps)
+					}
+				}
+				useCases.FileProxy.CreatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.FileProxyUseCase.CreatedAt))
+				useCases.FileProxy.Enabled = types.BoolValue(useCasesItem.FileProxyUseCase.Enabled)
+				useCases.FileProxy.ID = types.StringValue(useCasesItem.FileProxyUseCase.ID)
+				useCases.FileProxy.IntegrationID = types.StringValue(useCasesItem.FileProxyUseCase.IntegrationID)
+				useCases.FileProxy.Name = types.StringValue(useCasesItem.FileProxyUseCase.Name)
+				useCases.FileProxy.Type = types.StringValue(string(useCasesItem.FileProxyUseCase.Type))
+				useCases.FileProxy.UpdatedAt = types.StringValue(typeconvert.TimeToString(useCasesItem.FileProxyUseCase.UpdatedAt))
+			}
 			if useCasesItem.InboundUseCase != nil {
 				useCases.Inbound = &tfTypes.InboundUseCase1{}
 				useCases.Inbound.ChangeDescription = types.StringPointerValue(useCasesItem.InboundUseCase.ChangeDescription)

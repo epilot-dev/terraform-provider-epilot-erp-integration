@@ -28,6 +28,19 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 		r.ID = types.StringValue(resp.ID)
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)
+		if resp.Settings == nil {
+			r.Settings = nil
+		} else {
+			r.Settings = &tfTypes.IntegrationSettings{}
+			if resp.Settings.AutoRefresh == nil {
+				r.Settings.AutoRefresh = nil
+			} else {
+				r.Settings.AutoRefresh = &tfTypes.AutoRefreshSettings{}
+				r.Settings.AutoRefresh.Enabled = types.BoolPointerValue(resp.Settings.AutoRefresh.Enabled)
+				r.Settings.AutoRefresh.FreshnessThresholdMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.FreshnessThresholdMinutes)
+				r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes)
+			}
+		}
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
 		r.UseCases = []tfTypes.UseCase{}
 
@@ -565,6 +578,38 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 	for accessTokenIdsIndex := range r.AccessTokenIds {
 		accessTokenIds = append(accessTokenIds, r.AccessTokenIds[accessTokenIdsIndex].ValueString())
 	}
+	var settings *shared.IntegrationSettings
+	if r.Settings != nil {
+		var autoRefresh *shared.AutoRefreshSettings
+		if r.Settings.AutoRefresh != nil {
+			enabled := new(bool)
+			if !r.Settings.AutoRefresh.Enabled.IsUnknown() && !r.Settings.AutoRefresh.Enabled.IsNull() {
+				*enabled = r.Settings.AutoRefresh.Enabled.ValueBool()
+			} else {
+				enabled = nil
+			}
+			freshnessThresholdMinutes := new(int64)
+			if !r.Settings.AutoRefresh.FreshnessThresholdMinutes.IsUnknown() && !r.Settings.AutoRefresh.FreshnessThresholdMinutes.IsNull() {
+				*freshnessThresholdMinutes = r.Settings.AutoRefresh.FreshnessThresholdMinutes.ValueInt64()
+			} else {
+				freshnessThresholdMinutes = nil
+			}
+			minIntervalBetweenSyncsMinutes := new(int64)
+			if !r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes.IsUnknown() && !r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes.IsNull() {
+				*minIntervalBetweenSyncsMinutes = r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes.ValueInt64()
+			} else {
+				minIntervalBetweenSyncsMinutes = nil
+			}
+			autoRefresh = &shared.AutoRefreshSettings{
+				Enabled:                        enabled,
+				FreshnessThresholdMinutes:      freshnessThresholdMinutes,
+				MinIntervalBetweenSyncsMinutes: minIntervalBetweenSyncsMinutes,
+			}
+		}
+		settings = &shared.IntegrationSettings{
+			AutoRefresh: autoRefresh,
+		}
+	}
 	useCases := make([]shared.EmbeddedUseCaseRequest, 0, len(r.UseCases))
 	for useCasesItem := range r.UseCases {
 		if r.UseCases[useCasesItem].Inbound != nil {
@@ -577,8 +622,8 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			var name1 string
 			name1 = r.UseCases[useCasesItem].Inbound.Name.ValueString()
 
-			var enabled bool
-			enabled = r.UseCases[useCasesItem].Inbound.Enabled.ValueBool()
+			var enabled1 bool
+			enabled1 = r.UseCases[useCasesItem].Inbound.Enabled.ValueBool()
 
 			changeDescription := new(string)
 			if !r.UseCases[useCasesItem].Inbound.ChangeDescription.IsUnknown() && !r.UseCases[useCasesItem].Inbound.ChangeDescription.IsNull() {
@@ -604,7 +649,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 					} else {
 						jsonataExpression = nil
 					}
-					var enabled1 *shared.Enabled
+					var enabled2 *shared.Enabled
 					if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled != nil {
 						boolean := new(bool)
 						if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Boolean.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Enabled.Boolean.IsNull() {
@@ -613,7 +658,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 							boolean = nil
 						}
 						if boolean != nil {
-							enabled1 = &shared.Enabled{
+							enabled2 = &shared.Enabled{
 								Boolean: boolean,
 							}
 						}
@@ -624,7 +669,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 							str = nil
 						}
 						if str != nil {
-							enabled1 = &shared.Enabled{
+							enabled2 = &shared.Enabled{
 								Str: str,
 							}
 						}
@@ -748,7 +793,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 						} else {
 							type3 = nil
 						}
-						var enabled2 *shared.IntegrationEntityFieldEnabled
+						var enabled3 *shared.IntegrationEntityFieldEnabled
 						if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled != nil {
 							boolean1 := new(bool)
 							if !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Boolean.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].Enabled.Boolean.IsNull() {
@@ -757,7 +802,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 								boolean1 = nil
 							}
 							if boolean1 != nil {
-								enabled2 = &shared.IntegrationEntityFieldEnabled{
+								enabled3 = &shared.IntegrationEntityFieldEnabled{
 									Boolean: boolean1,
 								}
 							}
@@ -768,7 +813,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 								str1 = nil
 							}
 							if str1 != nil {
-								enabled2 = &shared.IntegrationEntityFieldEnabled{
+								enabled3 = &shared.IntegrationEntityFieldEnabled{
 									Str: str1,
 								}
 							}
@@ -941,7 +986,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 							JsonataExpression: jsonataExpression3,
 							Constant:          constant2,
 							Type:              type3,
-							Enabled:           enabled2,
+							Enabled:           enabled3,
 							Relations:         relations,
 							RelationRefs:      relationRefs,
 						})
@@ -950,7 +995,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 						EntitySchema:      entitySchema,
 						UniqueIds:         uniqueIds,
 						JsonataExpression: jsonataExpression,
-						Enabled:           enabled1,
+						Enabled:           enabled2,
 						Mode:              mode,
 						Scope:             scope,
 						Fields:            fields,
@@ -1094,7 +1139,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 						} else {
 							type8 = nil
 						}
-						var enabled3 *shared.IntegrationEntityFieldEnabled
+						var enabled4 *shared.IntegrationEntityFieldEnabled
 						if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled != nil {
 							boolean2 := new(bool)
 							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Boolean.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Enabled.Boolean.IsNull() {
@@ -1103,7 +1148,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 								boolean2 = nil
 							}
 							if boolean2 != nil {
-								enabled3 = &shared.IntegrationEntityFieldEnabled{
+								enabled4 = &shared.IntegrationEntityFieldEnabled{
 									Boolean: boolean2,
 								}
 							}
@@ -1114,7 +1159,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 								str2 = nil
 							}
 							if str2 != nil {
-								enabled3 = &shared.IntegrationEntityFieldEnabled{
+								enabled4 = &shared.IntegrationEntityFieldEnabled{
 									Str: str2,
 								}
 							}
@@ -1287,7 +1332,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 							JsonataExpression: jsonataExpression12,
 							Constant:          constant8,
 							Type:              type8,
-							Enabled:           enabled3,
+							Enabled:           enabled4,
 							Relations:         relations1,
 							RelationRefs:      relationRefs1,
 						})
@@ -1310,7 +1355,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			embeddedInboundUseCaseRequest := shared.EmbeddedInboundUseCaseRequest{
 				ID:                id,
 				Name:              name1,
-				Enabled:           enabled,
+				Enabled:           enabled1,
 				ChangeDescription: changeDescription,
 				Type:              typeVar,
 				Configuration:     configuration,
@@ -1329,8 +1374,8 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			var name2 string
 			name2 = r.UseCases[useCasesItem].Outbound.Name.ValueString()
 
-			var enabled4 bool
-			enabled4 = r.UseCases[useCasesItem].Outbound.Enabled.ValueBool()
+			var enabled5 bool
+			enabled5 = r.UseCases[useCasesItem].Outbound.Enabled.ValueBool()
 
 			changeDescription1 := new(string)
 			if !r.UseCases[useCasesItem].Outbound.ChangeDescription.IsUnknown() && !r.UseCases[useCasesItem].Outbound.ChangeDescription.IsNull() {
@@ -1355,11 +1400,11 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 					var jsonataExpression18 string
 					jsonataExpression18 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].JsonataExpression.ValueString()
 
-					enabled5 := new(bool)
+					enabled6 := new(bool)
 					if !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.IsUnknown() && !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.IsNull() {
-						*enabled5 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.ValueBool()
+						*enabled6 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.ValueBool()
 					} else {
-						enabled5 = nil
+						enabled6 = nil
 					}
 					typeVar2 := shared.DeliveryConfigType(r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.Type.ValueString())
 					var webhookID string
@@ -1399,7 +1444,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 						ID:                id2,
 						Name:              name3,
 						JsonataExpression: jsonataExpression18,
-						Enabled:           enabled5,
+						Enabled:           enabled6,
 						Delivery:          delivery,
 						CreatedAt:         createdAt,
 						UpdatedAt:         updatedAt,
@@ -1413,7 +1458,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			embeddedOutboundUseCaseRequest := shared.EmbeddedOutboundUseCaseRequest{
 				ID:                id1,
 				Name:              name2,
-				Enabled:           enabled4,
+				Enabled:           enabled5,
 				ChangeDescription: changeDescription1,
 				Type:              typeVar1,
 				Configuration:     configuration1,
@@ -1427,6 +1472,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 		Name:           name,
 		Description:    description,
 		AccessTokenIds: accessTokenIds,
+		Settings:       settings,
 		UseCases:       useCases,
 	}
 

@@ -13,6 +13,8 @@ type UpdateIntegrationRequest struct {
 	AppIds []string `json:"app_ids,omitempty"`
 	// Configuration defining environment variables needed by this integration
 	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
+	// Settings for the integration
+	Settings *IntegrationSettings `json:"settings,omitempty"`
 }
 
 func (u *UpdateIntegrationRequest) GetName() *string {
@@ -48,4 +50,11 @@ func (u *UpdateIntegrationRequest) GetEnvironmentConfig() []EnvironmentFieldConf
 		return nil
 	}
 	return u.EnvironmentConfig
+}
+
+func (u *UpdateIntegrationRequest) GetSettings() *IntegrationSettings {
+	if u == nil {
+		return nil
+	}
+	return u.Settings
 }
