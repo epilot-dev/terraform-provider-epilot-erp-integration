@@ -12,13 +12,15 @@ import (
 type CreateUseCaseRequestType string
 
 const (
-	CreateUseCaseRequestTypeInbound  CreateUseCaseRequestType = "inbound"
-	CreateUseCaseRequestTypeOutbound CreateUseCaseRequestType = "outbound"
+	CreateUseCaseRequestTypeInbound   CreateUseCaseRequestType = "inbound"
+	CreateUseCaseRequestTypeOutbound  CreateUseCaseRequestType = "outbound"
+	CreateUseCaseRequestTypeFileProxy CreateUseCaseRequestType = "file_proxy"
 )
 
 type CreateUseCaseRequest struct {
-	CreateInboundUseCaseRequest  *CreateInboundUseCaseRequest  `queryParam:"inline" union:"member"`
-	CreateOutboundUseCaseRequest *CreateOutboundUseCaseRequest `queryParam:"inline" union:"member"`
+	CreateInboundUseCaseRequest   *CreateInboundUseCaseRequest   `queryParam:"inline" union:"member"`
+	CreateOutboundUseCaseRequest  *CreateOutboundUseCaseRequest  `queryParam:"inline" union:"member"`
+	CreateFileProxyUseCaseRequest *CreateFileProxyUseCaseRequest `queryParam:"inline" union:"member"`
 
 	Type CreateUseCaseRequestType
 }
@@ -44,6 +46,18 @@ func CreateCreateUseCaseRequestOutbound(outbound CreateOutboundUseCaseRequest) C
 	return CreateUseCaseRequest{
 		CreateOutboundUseCaseRequest: &outbound,
 		Type:                         typ,
+	}
+}
+
+func CreateCreateUseCaseRequestFileProxy(fileProxy CreateFileProxyUseCaseRequest) CreateUseCaseRequest {
+	typ := CreateUseCaseRequestTypeFileProxy
+
+	typStr := CreateFileProxyUseCaseRequestType(typ)
+	fileProxy.Type = typStr
+
+	return CreateUseCaseRequest{
+		CreateFileProxyUseCaseRequest: &fileProxy,
+		Type:                          typ,
 	}
 }
 
@@ -77,6 +91,15 @@ func (u *CreateUseCaseRequest) UnmarshalJSON(data []byte) error {
 		u.CreateOutboundUseCaseRequest = createOutboundUseCaseRequest
 		u.Type = CreateUseCaseRequestTypeOutbound
 		return nil
+	case "file_proxy":
+		createFileProxyUseCaseRequest := new(CreateFileProxyUseCaseRequest)
+		if err := utils.UnmarshalJSON(data, &createFileProxyUseCaseRequest, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == file_proxy) type CreateFileProxyUseCaseRequest within CreateUseCaseRequest: %w", string(data), err)
+		}
+
+		u.CreateFileProxyUseCaseRequest = createFileProxyUseCaseRequest
+		u.Type = CreateUseCaseRequestTypeFileProxy
+		return nil
 	}
 
 	return fmt.Errorf("could not unmarshal `%s` into any supported union types for CreateUseCaseRequest", string(data))
@@ -89,6 +112,10 @@ func (u CreateUseCaseRequest) MarshalJSON() ([]byte, error) {
 
 	if u.CreateOutboundUseCaseRequest != nil {
 		return utils.MarshalJSON(u.CreateOutboundUseCaseRequest, "", true)
+	}
+
+	if u.CreateFileProxyUseCaseRequest != nil {
+		return utils.MarshalJSON(u.CreateFileProxyUseCaseRequest, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type CreateUseCaseRequest: all fields are null")

@@ -22,6 +22,8 @@ type Integration struct {
 	AppIds []string `json:"app_ids,omitempty"`
 	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
 	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
+	// Settings for the integration
+	Settings *IntegrationSettings `json:"settings,omitempty"`
 	// ISO-8601 timestamp when the integration was created
 	CreatedAt time.Time `json:"created_at"`
 	// ISO-8601 timestamp when the integration was last updated
@@ -86,6 +88,13 @@ func (i *Integration) GetEnvironmentConfig() []EnvironmentFieldConfig {
 		return nil
 	}
 	return i.EnvironmentConfig
+}
+
+func (i *Integration) GetSettings() *IntegrationSettings {
+	if i == nil {
+		return nil
+	}
+	return i.Settings
 }
 
 func (i *Integration) GetCreatedAt() time.Time {

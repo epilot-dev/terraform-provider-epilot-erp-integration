@@ -9,23 +9,23 @@ import (
 	"time"
 )
 
-// Method - Filter by HTTP method
-type Method string
+// QueryAccessLogsRequestMethod - Filter by HTTP method
+type QueryAccessLogsRequestMethod string
 
 const (
-	MethodGet     Method = "GET"
-	MethodPost    Method = "POST"
-	MethodPut     Method = "PUT"
-	MethodPatch   Method = "PATCH"
-	MethodDelete  Method = "DELETE"
-	MethodOptions Method = "OPTIONS"
-	MethodHead    Method = "HEAD"
+	QueryAccessLogsRequestMethodGet     QueryAccessLogsRequestMethod = "GET"
+	QueryAccessLogsRequestMethodPost    QueryAccessLogsRequestMethod = "POST"
+	QueryAccessLogsRequestMethodPut     QueryAccessLogsRequestMethod = "PUT"
+	QueryAccessLogsRequestMethodPatch   QueryAccessLogsRequestMethod = "PATCH"
+	QueryAccessLogsRequestMethodDelete  QueryAccessLogsRequestMethod = "DELETE"
+	QueryAccessLogsRequestMethodOptions QueryAccessLogsRequestMethod = "OPTIONS"
+	QueryAccessLogsRequestMethodHead    QueryAccessLogsRequestMethod = "HEAD"
 )
 
-func (e Method) ToPointer() *Method {
+func (e QueryAccessLogsRequestMethod) ToPointer() *QueryAccessLogsRequestMethod {
 	return &e
 }
-func (e *Method) UnmarshalJSON(data []byte) error {
+func (e *QueryAccessLogsRequestMethod) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -44,10 +44,10 @@ func (e *Method) UnmarshalJSON(data []byte) error {
 	case "OPTIONS":
 		fallthrough
 	case "HEAD":
-		*e = Method(v)
+		*e = QueryAccessLogsRequestMethod(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for Method: %v", v)
+		return fmt.Errorf("invalid value for QueryAccessLogsRequestMethod: %v", v)
 	}
 }
 
@@ -93,7 +93,7 @@ type QueryAccessLogsRequest struct {
 	// Filter by service name (e.g., 'entity', 'metering', 'submission-api')
 	Service *string `json:"service,omitempty"`
 	// Filter by HTTP method
-	Method *Method `json:"method,omitempty"`
+	Method *QueryAccessLogsRequestMethod `json:"method,omitempty"`
 	// Filter by request path (partial match)
 	Path *string `json:"path,omitempty"`
 	// Filter by HTTP status code
@@ -133,7 +133,7 @@ func (q *QueryAccessLogsRequest) GetService() *string {
 	return q.Service
 }
 
-func (q *QueryAccessLogsRequest) GetMethod() *Method {
+func (q *QueryAccessLogsRequest) GetMethod() *QueryAccessLogsRequestMethod {
 	if q == nil {
 		return nil
 	}

@@ -3,6 +3,7 @@
 package types
 
 type UseCase1 struct {
-	Inbound  *InboundUseCase1  `queryParam:"inline" tfsdk:"inbound"`
-	Outbound *OutboundUseCase1 `queryParam:"inline" tfsdk:"outbound"`
+	FileProxy *FileProxyUseCase `queryParam:"inline" tfsdk:"file_proxy"`
+	Inbound   *InboundUseCase1  `queryParam:"inline" tfsdk:"inbound"`
+	Outbound  *OutboundUseCase1 `queryParam:"inline" tfsdk:"outbound"`
 }

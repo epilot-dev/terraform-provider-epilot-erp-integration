@@ -19,33 +19,208 @@ resource "epilot-erp-integration_integration" "my_integration" {
   ]
   description = "...my_description..."
   name        = "...my_name..."
+  settings = {
+    auto_refresh = {
+      enabled                            = true
+      freshness_threshold_minutes        = 1
+      min_interval_between_syncs_minutes = 4
+    }
+  }
   use_cases = [
     {
-      outbound = {
+      inbound = {
         change_description = "...my_change_description..."
         configuration = {
-          event_catalog_event = "contract.created"
-          mappings = [
+          entities = [
             {
-              created_at = "2022-06-02T04:05:14.534Z"
-              delivery = {
-                type         = "webhook"
-                webhook_id   = "...my_webhook_id..."
-                webhook_name = "...my_webhook_name..."
-                webhook_url  = "...my_webhook_url..."
+              enabled = {
+                str = "...my_str..."
               }
-              enabled            = false
-              id                 = "bfd4bcb8-1d02-4b3b-a2a9-0fee857c42f2"
-              jsonata_expression = "{ \"id\": entity._id, \"customer\": entity.customer_name }"
-              name               = "ERP Contract Sync"
-              updated_at         = "2022-02-21T23:55:34.826Z"
+              entity_schema = "...my_entity_schema..."
+              fields = [
+                {
+                  attribute = "...my_attribute..."
+                  constant  = "{ \"see\": \"documentation\" }"
+                  enabled = {
+                    boolean = false
+                  }
+                  field              = "...my_field..."
+                  jsonata_expression = "...my_jsonata_expression..."
+                  relation_refs = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        path          = "...my_path..."
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "phone"
+                          }
+                        ]
+                        value = {
+                          attribute          = "...my_attribute..."
+                          constant           = "{ \"see\": \"documentation\" }"
+                          field              = "...my_field..."
+                          jsonata_expression = "...my_jsonata_expression..."
+                          operation          = "_append_all"
+                        }
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_append_all"
+                  }
+                  relations = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        tags = [
+                          "..."
+                        ]
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "email"
+                          }
+                        ]
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_set"
+                  }
+                  type = "phone"
+                }
+              ]
+              jsonata_expression = "...my_jsonata_expression..."
+              mode               = "delete"
+              scope = {
+                query = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "phone"
+                  }
+                ]
+                schema     = "...my_schema..."
+                scope_mode = "query"
+                unique_ids = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "email"
+                  }
+                ]
+              }
+              unique_ids = [
+                "..."
+              ]
+            }
+          ]
+          meter_readings = [
+            {
+              fields = [
+                {
+                  attribute = "...my_attribute..."
+                  constant  = "{ \"see\": \"documentation\" }"
+                  enabled = {
+                    boolean = true
+                  }
+                  field              = "...my_field..."
+                  jsonata_expression = "...my_jsonata_expression..."
+                  relation_refs = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        path          = "...my_path..."
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "phone"
+                          }
+                        ]
+                        value = {
+                          attribute          = "...my_attribute..."
+                          constant           = "{ \"see\": \"documentation\" }"
+                          field              = "...my_field..."
+                          jsonata_expression = "...my_jsonata_expression..."
+                          operation          = "_append"
+                        }
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_append_all"
+                  }
+                  relations = {
+                    items = [
+                      {
+                        entity_schema = "...my_entity_schema..."
+                        tags = [
+                          "..."
+                        ]
+                        unique_ids = [
+                          {
+                            attribute          = "...my_attribute..."
+                            constant           = "{ \"see\": \"documentation\" }"
+                            field              = "...my_field..."
+                            jsonata_expression = "...my_jsonata_expression..."
+                            type               = "phone"
+                          }
+                        ]
+                      }
+                    ]
+                    jsonata_expression = "...my_jsonata_expression..."
+                    operation          = "_append_all"
+                  }
+                  type = "email"
+                }
+              ]
+              jsonata_expression = "...my_jsonata_expression..."
+              meter = {
+                unique_ids = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "email"
+                  }
+                ]
+              }
+              meter_counter = {
+                unique_ids = [
+                  {
+                    attribute          = "...my_attribute..."
+                    constant           = "{ \"see\": \"documentation\" }"
+                    field              = "...my_field..."
+                    jsonata_expression = "...my_jsonata_expression..."
+                    type               = "phone"
+                  }
+                ]
+              }
+              mode             = "upsert"
+              reading_matching = "strict-date"
+              scope = {
+                source = "...my_source..."
+              }
             }
           ]
         }
         enabled = true
-        id      = "eb4ac4d2-540e-4705-aba9-48085a4461e0"
+        id      = "f21f5505-531e-48a5-bb28-64853db4e487"
         name    = "...my_name..."
-        type    = "outbound"
+        type    = "inbound"
       }
     }
   ]
@@ -63,6 +238,7 @@ resource "epilot-erp-integration_integration" "my_integration" {
 
 - `access_token_ids` (List of String) List of access token IDs to associate with this integration
 - `description` (String) Optional description of the integration
+- `settings` (Attributes) Settings for the integration (see [below for nested schema](#nestedatt--settings))
 - `use_cases` (Attributes List) Full list of use cases (declarative). This replaces ALL existing use cases.
 - Use cases with an `id` field matching an existing use case will be updated
 - Use cases without an `id` or with a non-matching `id` will be created
@@ -75,13 +251,109 @@ resource "epilot-erp-integration_integration" "my_integration" {
 - `org_id` (String) Organization ID
 - `updated_at` (String) ISO-8601 timestamp when the integration was last updated
 
+<a id="nestedatt--settings"></a>
+### Nested Schema for `settings`
+
+Optional:
+
+- `auto_refresh` (Attributes) Auto-refresh settings for keeping integration data fresh (see [below for nested schema](#nestedatt--settings--auto_refresh))
+
+<a id="nestedatt--settings--auto_refresh"></a>
+### Nested Schema for `settings.auto_refresh`
+
+Optional:
+
+- `enabled` (Boolean) Whether auto-refresh is enabled. Default: false
+- `freshness_threshold_minutes` (Number) Maximum age (in minutes) of data before it is considered stale and eligible for refresh
+- `min_interval_between_syncs_minutes` (Number) Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls
+
+
+
 <a id="nestedatt--use_cases"></a>
 ### Nested Schema for `use_cases`
 
 Optional:
 
+- `file_proxy_use_case` (Attributes) (see [below for nested schema](#nestedatt--use_cases--file_proxy_use_case))
 - `inbound` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound))
 - `outbound` (Attributes) (see [below for nested schema](#nestedatt--use_cases--outbound))
+
+<a id="nestedatt--use_cases--file_proxy_use_case"></a>
+### Nested Schema for `use_cases.file_proxy_use_case`
+
+Optional:
+
+- `change_description` (String) Description of the last change made to this use case
+- `configuration` (Attributes) Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
+
+The file proxy download URL always requires `orgId`, `integrationId`, and `useCaseId` as query parameters.
+The `orgId` is included in the signed URL to establish organization context without requiring authentication.
+Additional use-case-specific parameters are declared in the `params` array. (see [below for nested schema](#nestedatt--use_cases--file_proxy_use_case--configuration))
+- `created_at` (String) ISO-8601 timestamp when the use case was created. Not Null
+- `enabled` (Boolean) Not Null
+- `id` (String) Unique identifier for the use case. Not Null
+- `integration_id` (String) Parent integration ID. Not Null
+- `name` (String) Use case name. Not Null
+- `type` (String) Use case type. Not Null; must be "file_proxy"
+- `updated_at` (String) ISO-8601 timestamp when the use case was last updated. Not Null
+
+<a id="nestedatt--use_cases--file_proxy_use_case--configuration"></a>
+### Nested Schema for `use_cases.file_proxy_use_case.configuration`
+
+Optional:
+
+- `auth` (Attributes) (see [below for nested schema](#nestedatt--use_cases--file_proxy_use_case--configuration--auth))
+- `params` (Attributes List) Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, useCaseId) (see [below for nested schema](#nestedatt--use_cases--file_proxy_use_case--configuration--params))
+- `requires_vpc` (Boolean) Whether requests require VPC routing for IP allowlisting. Default: false
+- `response` (Attributes) Not Null (see [below for nested schema](#nestedatt--use_cases--file_proxy_use_case--configuration--response))
+- `steps` (Attributes List) Ordered list of HTTP steps to execute to retrieve the file. Not Null (see [below for nested schema](#nestedatt--use_cases--file_proxy_use_case--configuration--steps))
+
+<a id="nestedatt--use_cases--file_proxy_use_case--configuration--auth"></a>
+### Nested Schema for `use_cases.file_proxy_use_case.configuration.auth`
+
+Optional:
+
+- `client_id` (String) Handlebars template for the OAuth2 client ID. Not Null
+- `client_secret` (String) Handlebars template for the OAuth2 client secret. Not Null
+- `scope` (String) Optional OAuth2 scope
+- `token_url` (String) Handlebars template for the OAuth2 token endpoint URL. Not Null
+- `type` (String) Authentication type. Not Null; must be "oauth2_client_credentials"
+
+
+<a id="nestedatt--use_cases--file_proxy_use_case--configuration--params"></a>
+### Nested Schema for `use_cases.file_proxy_use_case.configuration.params`
+
+Optional:
+
+- `description` (String) Human-readable description of the parameter
+- `name` (String) Parameter name as it appears in the query string. Not Null
+- `required` (Boolean) Whether this parameter is required. Not Null
+
+
+<a id="nestedatt--use_cases--file_proxy_use_case--configuration--response"></a>
+### Nested Schema for `use_cases.file_proxy_use_case.configuration.response`
+
+Optional:
+
+- `body` (String) JSONata expression to extract file content from step results. Not Null
+- `content_type` (String) JSONata expression to extract the content type
+- `encoding` (String) Encoding of the extracted body. Not Null; must be one of ["base64", "binary"]
+- `filename` (String) JSONata expression to extract the filename
+
+
+<a id="nestedatt--use_cases--file_proxy_use_case--configuration--steps"></a>
+### Nested Schema for `use_cases.file_proxy_use_case.configuration.steps`
+
+Optional:
+
+- `body` (String) Handlebars template for the request body (POST only)
+- `headers` (Map of String) Handlebars templates for request headers
+- `method` (String) HTTP method. Not Null; must be one of ["GET", "POST"]
+- `response_type` (String) Expected response type. Not Null; must be one of ["json", "binary"]
+- `url` (String) Handlebars template for the request URL. Not Null
+
+
+
 
 <a id="nestedatt--use_cases--inbound"></a>
 ### Nested Schema for `use_cases.inbound`

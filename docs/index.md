@@ -16,7 +16,7 @@ terraform {
   required_providers {
     epilot-erp-integration = {
       source  = "epilot-dev/epilot-erp-integration"
-      version = "0.18.1"
+      version = "0.19.0"
     }
   }
 }
