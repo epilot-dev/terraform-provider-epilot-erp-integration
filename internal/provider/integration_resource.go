@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -44,15 +45,17 @@ type IntegrationResource struct {
 
 // IntegrationResourceModel describes the resource data model.
 type IntegrationResourceModel struct {
-	AccessTokenIds []types.String               `tfsdk:"access_token_ids"`
-	CreatedAt      types.String                 `tfsdk:"created_at"`
-	Description    types.String                 `tfsdk:"description"`
-	ID             types.String                 `tfsdk:"id"`
-	Name           types.String                 `tfsdk:"name"`
-	OrgID          types.String                 `tfsdk:"org_id"`
-	Settings       *tfTypes.IntegrationSettings `tfsdk:"settings"`
-	UpdatedAt      types.String                 `tfsdk:"updated_at"`
-	UseCases       []tfTypes.UseCase            `tfsdk:"use_cases"`
+	AccessTokenIds    []types.String                   `tfsdk:"access_token_ids"`
+	AppIds            []types.String                   `tfsdk:"app_ids"`
+	CreatedAt         types.String                     `tfsdk:"created_at"`
+	Description       types.String                     `tfsdk:"description"`
+	EnvironmentConfig []tfTypes.EnvironmentFieldConfig `tfsdk:"environment_config"`
+	ID                types.String                     `tfsdk:"id"`
+	Name              types.String                     `tfsdk:"name"`
+	OrgID             types.String                     `tfsdk:"org_id"`
+	Settings          *tfTypes.IntegrationSettings     `tfsdk:"settings"`
+	UpdatedAt         types.String                     `tfsdk:"updated_at"`
+	UseCases          []tfTypes.UseCase                `tfsdk:"use_cases"`
 }
 
 func (r *IntegrationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -67,7 +70,13 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed:    true,
 				Optional:    true,
 				ElementType: types.StringType,
-				Description: `List of access token IDs to associate with this integration`,
+				Description: `List of access token IDs associated with this integration`,
+			},
+			"app_ids": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `List of app IDs associated with this integration`,
 			},
 			"created_at": schema.StringAttribute{
 				Computed:    true,
@@ -80,6 +89,67 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(1000),
 				},
+			},
+			"environment_config": schema.ListNestedAttribute{
+				Computed: true,
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
+					Attributes: map[string]schema.Attribute{
+						"description": schema.StringAttribute{
+							Computed:    true,
+							Optional:    true,
+							Description: `Help text shown below the field`,
+							Validators: []validator.String{
+								stringvalidator.UTF8LengthAtMost(1000),
+							},
+						},
+						"key": schema.StringAttribute{
+							Computed:    true,
+							Optional:    true,
+							Description: `Environment variable key, used to look up the value in the Environments API. Not Null`,
+							Validators: []validator.String{
+								speakeasy_stringvalidators.NotNull(),
+								stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9][a-z0-9_.\-]{0,127}$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9][a-z0-9_.\-]{0,127}$`).String()),
+							},
+						},
+						"label": schema.StringAttribute{
+							Computed:    true,
+							Optional:    true,
+							Description: `Display label for the field in the UI. Not Null`,
+							Validators: []validator.String{
+								speakeasy_stringvalidators.NotNull(),
+								stringvalidator.UTF8LengthBetween(1, 255),
+							},
+						},
+						"order": schema.Int64Attribute{
+							Computed:    true,
+							Optional:    true,
+							Description: `Sort order for display and drag-to-reorder`,
+						},
+						"required": schema.BoolAttribute{
+							Computed:    true,
+							Optional:    true,
+							Default:     booldefault.StaticBool(false),
+							Description: `Whether this field must be filled before the integration can be used. Default: false`,
+						},
+						"type": schema.StringAttribute{
+							Computed:    true,
+							Optional:    true,
+							Description: `Whether the value is a plain string or an encrypted secret. Not Null; must be one of ["String", "SecretString"]`,
+							Validators: []validator.String{
+								speakeasy_stringvalidators.NotNull(),
+								stringvalidator.OneOf(
+									"String",
+									"SecretString",
+								),
+							},
+						},
+					},
+				},
+				Description: `Configuration defining environment variables needed by this integration. Values are stored in the Environments API.`,
 			},
 			"id": schema.StringAttribute{
 				Computed:    true,

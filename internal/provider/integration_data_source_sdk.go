@@ -22,8 +22,26 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 		for _, v := range resp.AccessTokenIds {
 			r.AccessTokenIds = append(r.AccessTokenIds, types.StringValue(v))
 		}
+		r.AppIds = make([]types.String, 0, len(resp.AppIds))
+		for _, v := range resp.AppIds {
+			r.AppIds = append(r.AppIds, types.StringValue(v))
+		}
 		r.CreatedAt = types.StringValue(typeconvert.TimeToString(resp.CreatedAt))
 		r.Description = types.StringPointerValue(resp.Description)
+		r.EnvironmentConfig = []tfTypes.EnvironmentFieldConfig{}
+
+		for _, environmentConfigItem := range resp.EnvironmentConfig {
+			var environmentConfig tfTypes.EnvironmentFieldConfig
+
+			environmentConfig.Description = types.StringPointerValue(environmentConfigItem.Description)
+			environmentConfig.Key = types.StringValue(environmentConfigItem.Key)
+			environmentConfig.Label = types.StringValue(environmentConfigItem.Label)
+			environmentConfig.Order = types.Int64PointerValue(environmentConfigItem.Order)
+			environmentConfig.Required = types.BoolPointerValue(environmentConfigItem.Required)
+			environmentConfig.Type = types.StringValue(string(environmentConfigItem.Type))
+
+			r.EnvironmentConfig = append(r.EnvironmentConfig, environmentConfig)
+		}
 		r.ID = types.StringValue(resp.ID)
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)

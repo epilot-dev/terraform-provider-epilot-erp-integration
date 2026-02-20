@@ -12,6 +12,10 @@ type Integration struct {
 	ID string `json:"id"`
 	// Organization ID
 	OrgID string `json:"orgId"`
+	// ISO-8601 timestamp when the integration was created
+	CreatedAt time.Time `json:"created_at"`
+	// ISO-8601 timestamp when the integration was last updated
+	UpdatedAt time.Time `json:"updated_at"`
 	// Integration name
 	Name string `json:"name"`
 	// Optional description of the integration
@@ -24,10 +28,6 @@ type Integration struct {
 	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
 	Settings *IntegrationSettings `json:"settings,omitempty"`
-	// ISO-8601 timestamp when the integration was created
-	CreatedAt time.Time `json:"created_at"`
-	// ISO-8601 timestamp when the integration was last updated
-	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (i Integration) MarshalJSON() ([]byte, error) {
@@ -53,6 +53,20 @@ func (i *Integration) GetOrgID() string {
 		return ""
 	}
 	return i.OrgID
+}
+
+func (i *Integration) GetCreatedAt() time.Time {
+	if i == nil {
+		return time.Time{}
+	}
+	return i.CreatedAt
+}
+
+func (i *Integration) GetUpdatedAt() time.Time {
+	if i == nil {
+		return time.Time{}
+	}
+	return i.UpdatedAt
 }
 
 func (i *Integration) GetName() string {
@@ -95,18 +109,4 @@ func (i *Integration) GetSettings() *IntegrationSettings {
 		return nil
 	}
 	return i.Settings
-}
-
-func (i *Integration) GetCreatedAt() time.Time {
-	if i == nil {
-		return time.Time{}
-	}
-	return i.CreatedAt
-}
-
-func (i *Integration) GetUpdatedAt() time.Time {
-	if i == nil {
-		return time.Time{}
-	}
-	return i.UpdatedAt
 }

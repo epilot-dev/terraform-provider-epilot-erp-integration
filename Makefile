@@ -1,7 +1,7 @@
 # .PHONY: all docs
 # all: speakeasy docs
 
-# original.yaml: 
+# original.yaml:
 # 	cp openapi.yaml original.yaml
 #curl https://docs.api.epilot.io/erp-integration.yaml > original.yaml
 
@@ -25,4 +25,5 @@ speakeasy:
 	speakeasy generate sdk --lang terraform -o . -s $(TMP)/final.yaml
 
 docs:
+	go mod tidy
 	go generate ./...

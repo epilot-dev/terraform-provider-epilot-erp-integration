@@ -28,13 +28,28 @@ data "epilot-erp-integration_integration" "my_integration" {
 ### Read-Only
 
 - `access_token_ids` (List of String) List of access token IDs associated with this integration
+- `app_ids` (List of String) List of app IDs associated with this integration
 - `created_at` (String) ISO-8601 timestamp when the integration was created
 - `description` (String) Optional description of the integration
+- `environment_config` (Attributes List) Configuration defining environment variables needed by this integration. Values are stored in the Environments API. (see [below for nested schema](#nestedatt--environment_config))
 - `name` (String) Integration name
 - `org_id` (String) Organization ID
 - `settings` (Attributes) Settings for the integration (see [below for nested schema](#nestedatt--settings))
 - `updated_at` (String) ISO-8601 timestamp when the integration was last updated
 - `use_cases` (Attributes List) All use cases belonging to this integration (see [below for nested schema](#nestedatt--use_cases))
+
+<a id="nestedatt--environment_config"></a>
+### Nested Schema for `environment_config`
+
+Read-Only:
+
+- `description` (String) Help text shown below the field
+- `key` (String) Environment variable key, used to look up the value in the Environments API.
+- `label` (String) Display label for the field in the UI
+- `order` (Number) Sort order for display and drag-to-reorder
+- `required` (Boolean) Whether this field must be filled before the integration can be used
+- `type` (String) Whether the value is a plain string or an encrypted secret
+
 
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`

@@ -13,20 +13,24 @@ type IntegrationWithUseCases struct {
 	ID string `json:"id"`
 	// Organization ID
 	OrgID string `json:"orgId"`
+	// ISO-8601 timestamp when the integration was created
+	CreatedAt time.Time `json:"created_at"`
+	// ISO-8601 timestamp when the integration was last updated
+	UpdatedAt time.Time `json:"updated_at"`
 	// Integration name
 	Name string `json:"name"`
 	// Optional description of the integration
 	Description *string `json:"description,omitempty"`
 	// List of access token IDs associated with this integration
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
+	// List of app IDs associated with this integration
+	AppIds []string `json:"app_ids,omitempty"`
+	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
+	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
 	Settings *IntegrationSettings `json:"settings,omitempty"`
 	// All use cases belonging to this integration
 	UseCases []UseCase `json:"use_cases"`
-	// ISO-8601 timestamp when the integration was created
-	CreatedAt time.Time `json:"created_at"`
-	// ISO-8601 timestamp when the integration was last updated
-	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (i IntegrationWithUseCases) MarshalJSON() ([]byte, error) {
@@ -54,6 +58,20 @@ func (i *IntegrationWithUseCases) GetOrgID() string {
 	return i.OrgID
 }
 
+func (i *IntegrationWithUseCases) GetCreatedAt() time.Time {
+	if i == nil {
+		return time.Time{}
+	}
+	return i.CreatedAt
+}
+
+func (i *IntegrationWithUseCases) GetUpdatedAt() time.Time {
+	if i == nil {
+		return time.Time{}
+	}
+	return i.UpdatedAt
+}
+
 func (i *IntegrationWithUseCases) GetName() string {
 	if i == nil {
 		return ""
@@ -75,6 +93,20 @@ func (i *IntegrationWithUseCases) GetAccessTokenIds() []string {
 	return i.AccessTokenIds
 }
 
+func (i *IntegrationWithUseCases) GetAppIds() []string {
+	if i == nil {
+		return nil
+	}
+	return i.AppIds
+}
+
+func (i *IntegrationWithUseCases) GetEnvironmentConfig() []EnvironmentFieldConfig {
+	if i == nil {
+		return nil
+	}
+	return i.EnvironmentConfig
+}
+
 func (i *IntegrationWithUseCases) GetSettings() *IntegrationSettings {
 	if i == nil {
 		return nil
@@ -87,18 +119,4 @@ func (i *IntegrationWithUseCases) GetUseCases() []UseCase {
 		return []UseCase{}
 	}
 	return i.UseCases
-}
-
-func (i *IntegrationWithUseCases) GetCreatedAt() time.Time {
-	if i == nil {
-		return time.Time{}
-	}
-	return i.CreatedAt
-}
-
-func (i *IntegrationWithUseCases) GetUpdatedAt() time.Time {
-	if i == nil {
-		return time.Time{}
-	}
-	return i.UpdatedAt
 }

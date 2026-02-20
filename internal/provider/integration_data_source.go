@@ -30,15 +30,17 @@ type IntegrationDataSource struct {
 
 // IntegrationDataSourceModel describes the data model.
 type IntegrationDataSourceModel struct {
-	AccessTokenIds []types.String               `tfsdk:"access_token_ids"`
-	CreatedAt      types.String                 `tfsdk:"created_at"`
-	Description    types.String                 `tfsdk:"description"`
-	ID             types.String                 `tfsdk:"id"`
-	Name           types.String                 `tfsdk:"name"`
-	OrgID          types.String                 `tfsdk:"org_id"`
-	Settings       *tfTypes.IntegrationSettings `tfsdk:"settings"`
-	UpdatedAt      types.String                 `tfsdk:"updated_at"`
-	UseCases       []tfTypes.UseCase1           `tfsdk:"use_cases"`
+	AccessTokenIds    []types.String                   `tfsdk:"access_token_ids"`
+	AppIds            []types.String                   `tfsdk:"app_ids"`
+	CreatedAt         types.String                     `tfsdk:"created_at"`
+	Description       types.String                     `tfsdk:"description"`
+	EnvironmentConfig []tfTypes.EnvironmentFieldConfig `tfsdk:"environment_config"`
+	ID                types.String                     `tfsdk:"id"`
+	Name              types.String                     `tfsdk:"name"`
+	OrgID             types.String                     `tfsdk:"org_id"`
+	Settings          *tfTypes.IntegrationSettings     `tfsdk:"settings"`
+	UpdatedAt         types.String                     `tfsdk:"updated_at"`
+	UseCases          []tfTypes.UseCase1               `tfsdk:"use_cases"`
 }
 
 // Metadata returns the data source type name.
@@ -57,6 +59,11 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 				ElementType: types.StringType,
 				Description: `List of access token IDs associated with this integration`,
 			},
+			"app_ids": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: `List of app IDs associated with this integration`,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was created`,
@@ -64,6 +71,38 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 			"description": schema.StringAttribute{
 				Computed:    true,
 				Description: `Optional description of the integration`,
+			},
+			"environment_config": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"description": schema.StringAttribute{
+							Computed:    true,
+							Description: `Help text shown below the field`,
+						},
+						"key": schema.StringAttribute{
+							Computed:    true,
+							Description: `Environment variable key, used to look up the value in the Environments API.`,
+						},
+						"label": schema.StringAttribute{
+							Computed:    true,
+							Description: `Display label for the field in the UI`,
+						},
+						"order": schema.Int64Attribute{
+							Computed:    true,
+							Description: `Sort order for display and drag-to-reorder`,
+						},
+						"required": schema.BoolAttribute{
+							Computed:    true,
+							Description: `Whether this field must be filled before the integration can be used`,
+						},
+						"type": schema.StringAttribute{
+							Computed:    true,
+							Description: `Whether the value is a plain string or an encrypted secret`,
+						},
+					},
+				},
+				Description: `Configuration defining environment variables needed by this integration. Values are stored in the Environments API.`,
 			},
 			"id": schema.StringAttribute{
 				Required:    true,

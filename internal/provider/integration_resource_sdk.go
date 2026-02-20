@@ -23,8 +23,26 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 		for _, v := range resp.AccessTokenIds {
 			r.AccessTokenIds = append(r.AccessTokenIds, types.StringValue(v))
 		}
+		r.AppIds = make([]types.String, 0, len(resp.AppIds))
+		for _, v := range resp.AppIds {
+			r.AppIds = append(r.AppIds, types.StringValue(v))
+		}
 		r.CreatedAt = types.StringValue(typeconvert.TimeToString(resp.CreatedAt))
 		r.Description = types.StringPointerValue(resp.Description)
+		r.EnvironmentConfig = []tfTypes.EnvironmentFieldConfig{}
+
+		for _, environmentConfigItem := range resp.EnvironmentConfig {
+			var environmentConfig tfTypes.EnvironmentFieldConfig
+
+			environmentConfig.Description = types.StringPointerValue(environmentConfigItem.Description)
+			environmentConfig.Key = types.StringValue(environmentConfigItem.Key)
+			environmentConfig.Label = types.StringValue(environmentConfigItem.Label)
+			environmentConfig.Order = types.Int64PointerValue(environmentConfigItem.Order)
+			environmentConfig.Required = types.BoolPointerValue(environmentConfigItem.Required)
+			environmentConfig.Type = types.StringValue(string(environmentConfigItem.Type))
+
+			r.EnvironmentConfig = append(r.EnvironmentConfig, environmentConfig)
+		}
 		r.ID = types.StringValue(resp.ID)
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)
@@ -578,6 +596,46 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 	for accessTokenIdsIndex := range r.AccessTokenIds {
 		accessTokenIds = append(accessTokenIds, r.AccessTokenIds[accessTokenIdsIndex].ValueString())
 	}
+	appIds := make([]string, 0, len(r.AppIds))
+	for appIdsIndex := range r.AppIds {
+		appIds = append(appIds, r.AppIds[appIdsIndex].ValueString())
+	}
+	environmentConfig := make([]shared.EnvironmentFieldConfig, 0, len(r.EnvironmentConfig))
+	for environmentConfigIndex := range r.EnvironmentConfig {
+		var key string
+		key = r.EnvironmentConfig[environmentConfigIndex].Key.ValueString()
+
+		var label string
+		label = r.EnvironmentConfig[environmentConfigIndex].Label.ValueString()
+
+		typeVar := shared.Type(r.EnvironmentConfig[environmentConfigIndex].Type.ValueString())
+		description1 := new(string)
+		if !r.EnvironmentConfig[environmentConfigIndex].Description.IsUnknown() && !r.EnvironmentConfig[environmentConfigIndex].Description.IsNull() {
+			*description1 = r.EnvironmentConfig[environmentConfigIndex].Description.ValueString()
+		} else {
+			description1 = nil
+		}
+		required := new(bool)
+		if !r.EnvironmentConfig[environmentConfigIndex].Required.IsUnknown() && !r.EnvironmentConfig[environmentConfigIndex].Required.IsNull() {
+			*required = r.EnvironmentConfig[environmentConfigIndex].Required.ValueBool()
+		} else {
+			required = nil
+		}
+		order := new(int64)
+		if !r.EnvironmentConfig[environmentConfigIndex].Order.IsUnknown() && !r.EnvironmentConfig[environmentConfigIndex].Order.IsNull() {
+			*order = r.EnvironmentConfig[environmentConfigIndex].Order.ValueInt64()
+		} else {
+			order = nil
+		}
+		environmentConfig = append(environmentConfig, shared.EnvironmentFieldConfig{
+			Key:         key,
+			Label:       label,
+			Type:        typeVar,
+			Description: description1,
+			Required:    required,
+			Order:       order,
+		})
+	}
 	var settings *shared.IntegrationSettings
 	if r.Settings != nil {
 		var autoRefresh *shared.AutoRefreshSettings
@@ -631,7 +689,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			} else {
 				changeDescription = nil
 			}
-			typeVar := shared.EmbeddedInboundUseCaseRequestType(r.UseCases[useCasesItem].Inbound.Type.ValueString())
+			typeVar1 := shared.EmbeddedInboundUseCaseRequestType(r.UseCases[useCasesItem].Inbound.Type.ValueString())
 			var configuration *shared.InboundIntegrationEventConfiguration
 			if r.UseCases[useCasesItem].Inbound.Configuration != nil {
 				entities := make([]shared.IntegrationEntity, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.Entities))
@@ -1357,7 +1415,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 				Name:              name1,
 				Enabled:           enabled1,
 				ChangeDescription: changeDescription,
-				Type:              typeVar,
+				Type:              typeVar1,
 				Configuration:     configuration,
 			}
 			useCases = append(useCases, shared.EmbeddedUseCaseRequest{
@@ -1383,7 +1441,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			} else {
 				changeDescription1 = nil
 			}
-			typeVar1 := shared.EmbeddedOutboundUseCaseRequestType(r.UseCases[useCasesItem].Outbound.Type.ValueString())
+			typeVar2 := shared.EmbeddedOutboundUseCaseRequestType(r.UseCases[useCasesItem].Outbound.Type.ValueString())
 			var configuration1 *shared.OutboundIntegrationEventConfiguration
 			if r.UseCases[useCasesItem].Outbound.Configuration != nil {
 				var eventCatalogEvent string
@@ -1406,7 +1464,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 					} else {
 						enabled6 = nil
 					}
-					typeVar2 := shared.DeliveryConfigType(r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.Type.ValueString())
+					typeVar3 := shared.DeliveryConfigType(r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.Type.ValueString())
 					var webhookID string
 					webhookID = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Delivery.WebhookID.ValueString()
 
@@ -1423,7 +1481,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 						webhookURL = nil
 					}
 					delivery := shared.DeliveryConfig{
-						Type:        typeVar2,
+						Type:        typeVar3,
 						WebhookID:   webhookID,
 						WebhookName: webhookName,
 						WebhookURL:  webhookURL,
@@ -1460,7 +1518,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 				Name:              name2,
 				Enabled:           enabled5,
 				ChangeDescription: changeDescription1,
-				Type:              typeVar1,
+				Type:              typeVar2,
 				Configuration:     configuration1,
 			}
 			useCases = append(useCases, shared.EmbeddedUseCaseRequest{
@@ -1469,11 +1527,13 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 		}
 	}
 	out := shared.UpsertIntegrationWithUseCasesRequest{
-		Name:           name,
-		Description:    description,
-		AccessTokenIds: accessTokenIds,
-		Settings:       settings,
-		UseCases:       useCases,
+		Name:              name,
+		Description:       description,
+		AccessTokenIds:    accessTokenIds,
+		AppIds:            appIds,
+		EnvironmentConfig: environmentConfig,
+		Settings:          settings,
+		UseCases:          useCases,
 	}
 
 	return &out, diags

@@ -2,8 +2,21 @@ resource "epilot-erp-integration_integration" "my_integration" {
   access_token_ids = [
     "..."
   ]
+  app_ids = [
+    "..."
+  ]
   description = "...my_description..."
-  name        = "...my_name..."
+  environment_config = [
+    {
+      description = "...my_description..."
+      key         = "...my_key..."
+      label       = "...my_label..."
+      order       = 1
+      required    = true
+      type        = "SecretString"
+    }
+  ]
+  name = "...my_name..."
   settings = {
     auto_refresh = {
       enabled                            = true

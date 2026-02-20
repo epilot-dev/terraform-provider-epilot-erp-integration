@@ -17,8 +17,21 @@ resource "epilot-erp-integration_integration" "my_integration" {
   access_token_ids = [
     "..."
   ]
+  app_ids = [
+    "..."
+  ]
   description = "...my_description..."
-  name        = "...my_name..."
+  environment_config = [
+    {
+      description = "...my_description..."
+      key         = "...my_key..."
+      label       = "...my_label..."
+      order       = 1
+      required    = true
+      type        = "SecretString"
+    }
+  ]
+  name = "...my_name..."
   settings = {
     auto_refresh = {
       enabled                            = true
@@ -236,8 +249,10 @@ resource "epilot-erp-integration_integration" "my_integration" {
 
 ### Optional
 
-- `access_token_ids` (List of String) List of access token IDs to associate with this integration
+- `access_token_ids` (List of String) List of access token IDs associated with this integration
+- `app_ids` (List of String) List of app IDs associated with this integration
 - `description` (String) Optional description of the integration
+- `environment_config` (Attributes List) Configuration defining environment variables needed by this integration. Values are stored in the Environments API. (see [below for nested schema](#nestedatt--environment_config))
 - `settings` (Attributes) Settings for the integration (see [below for nested schema](#nestedatt--settings))
 - `use_cases` (Attributes List) Full list of use cases (declarative). This replaces ALL existing use cases.
 - Use cases with an `id` field matching an existing use case will be updated
@@ -250,6 +265,19 @@ resource "epilot-erp-integration_integration" "my_integration" {
 - `id` (String) Unique identifier for the integration
 - `org_id` (String) Organization ID
 - `updated_at` (String) ISO-8601 timestamp when the integration was last updated
+
+<a id="nestedatt--environment_config"></a>
+### Nested Schema for `environment_config`
+
+Optional:
+
+- `description` (String) Help text shown below the field
+- `key` (String) Environment variable key, used to look up the value in the Environments API. Not Null
+- `label` (String) Display label for the field in the UI. Not Null
+- `order` (Number) Sort order for display and drag-to-reorder
+- `required` (Boolean) Whether this field must be filled before the integration can be used. Default: false
+- `type` (String) Whether the value is a plain string or an encrypted secret. Not Null; must be one of ["String", "SecretString"]
+
 
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`

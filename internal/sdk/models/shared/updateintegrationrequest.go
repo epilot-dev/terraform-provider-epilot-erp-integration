@@ -7,11 +7,11 @@ type UpdateIntegrationRequest struct {
 	Name *string `json:"name,omitempty"`
 	// Optional description of the integration
 	Description *string `json:"description,omitempty"`
-	// List of access token IDs to associate with this integration
+	// List of access token IDs associated with this integration
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
-	// List of app IDs to associate with this integration
+	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
-	// Configuration defining environment variables needed by this integration
+	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
 	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
 	Settings *IntegrationSettings `json:"settings,omitempty"`

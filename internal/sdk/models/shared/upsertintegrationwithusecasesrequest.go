@@ -9,8 +9,12 @@ type UpsertIntegrationWithUseCasesRequest struct {
 	Name string `json:"name"`
 	// Optional description of the integration
 	Description *string `json:"description,omitempty"`
-	// List of access token IDs to associate with this integration
+	// List of access token IDs associated with this integration
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
+	// List of app IDs associated with this integration
+	AppIds []string `json:"app_ids,omitempty"`
+	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
+	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
 	Settings *IntegrationSettings `json:"settings,omitempty"`
 	// Full list of use cases (declarative). This replaces ALL existing use cases.
@@ -40,6 +44,20 @@ func (u *UpsertIntegrationWithUseCasesRequest) GetAccessTokenIds() []string {
 		return nil
 	}
 	return u.AccessTokenIds
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetAppIds() []string {
+	if u == nil {
+		return nil
+	}
+	return u.AppIds
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetEnvironmentConfig() []EnvironmentFieldConfig {
+	if u == nil {
+		return nil
+	}
+	return u.EnvironmentConfig
 }
 
 func (u *UpsertIntegrationWithUseCasesRequest) GetSettings() *IntegrationSettings {
