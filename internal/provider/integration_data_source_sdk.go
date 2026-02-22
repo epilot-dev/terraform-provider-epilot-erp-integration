@@ -55,7 +55,6 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 				r.Settings.AutoRefresh = &tfTypes.AutoRefreshSettings{}
 				r.Settings.AutoRefresh.Enabled = types.BoolPointerValue(resp.Settings.AutoRefresh.Enabled)
 				r.Settings.AutoRefresh.FreshnessThresholdMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.FreshnessThresholdMinutes)
-				r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes)
 			}
 		}
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
@@ -174,6 +173,33 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 								}
 							}
 							fields.Field = types.StringPointerValue(fieldsItem.Field)
+							if fieldsItem.FileProxyURL == nil {
+								fields.FileProxyURL = nil
+							} else {
+								fields.FileProxyURL = &tfTypes.FileProxyURLConfig{}
+								if len(fieldsItem.FileProxyURL.Params) > 0 {
+									fields.FileProxyURL.Params = make(map[string]tfTypes.FileProxyURLParam, len(fieldsItem.FileProxyURL.Params))
+									for fileProxyURLParamKey, fileProxyURLParamValue := range fieldsItem.FileProxyURL.Params {
+										var fileProxyURLParamResult tfTypes.FileProxyURLParam
+										if fileProxyURLParamValue.One != nil {
+											fileProxyURLParamResult.One = &tfTypes.One{}
+											fileProxyURLParamResult.One.Field = types.StringValue(fileProxyURLParamValue.One.Field)
+										}
+										if fileProxyURLParamValue.Two != nil {
+											fileProxyURLParamResult.Two = &tfTypes.Two{}
+											constantResult1, _ := json.Marshal(fileProxyURLParamValue.Two.Constant)
+											fileProxyURLParamResult.Two.Constant = jsontypes.NewNormalizedValue(string(constantResult1))
+										}
+										if fileProxyURLParamValue.Three != nil {
+											fileProxyURLParamResult.Three = &tfTypes.Three{}
+											fileProxyURLParamResult.Three.JsonataExpression = types.StringValue(fileProxyURLParamValue.Three.JsonataExpression)
+										}
+
+										fields.FileProxyURL.Params[fileProxyURLParamKey] = fileProxyURLParamResult
+									}
+								}
+								fields.FileProxyURL.UseCaseID = types.StringValue(fieldsItem.FileProxyURL.UseCaseID)
+							}
 							fields.JsonataExpression = types.StringPointerValue(fieldsItem.JsonataExpression)
 							if fieldsItem.RelationRefs == nil {
 								fields.RelationRefs = nil
@@ -200,8 +226,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 										if uniqueIdsItem.Constant == nil {
 											uniqueIds.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult1, _ := json.Marshal(uniqueIdsItem.Constant)
-											uniqueIds.Constant = jsontypes.NewNormalizedValue(string(constantResult1))
+											constantResult2, _ := json.Marshal(uniqueIdsItem.Constant)
+											uniqueIds.Constant = jsontypes.NewNormalizedValue(string(constantResult2))
 										}
 										uniqueIds.Field = types.StringPointerValue(uniqueIdsItem.Field)
 										uniqueIds.JsonataExpression = types.StringPointerValue(uniqueIdsItem.JsonataExpression)
@@ -213,8 +239,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 									if itemsItem.Value.Constant == nil {
 										items.Value.Constant = jsontypes.NewNormalizedNull()
 									} else {
-										constantResult2, _ := json.Marshal(itemsItem.Value.Constant)
-										items.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult2))
+										constantResult3, _ := json.Marshal(itemsItem.Value.Constant)
+										items.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult3))
 									}
 									items.Value.Field = types.StringPointerValue(itemsItem.Value.Field)
 									items.Value.JsonataExpression = types.StringPointerValue(itemsItem.Value.JsonataExpression)
@@ -257,8 +283,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 										if uniqueIdsItem1.Constant == nil {
 											uniqueIds1.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult3, _ := json.Marshal(uniqueIdsItem1.Constant)
-											uniqueIds1.Constant = jsontypes.NewNormalizedValue(string(constantResult3))
+											constantResult4, _ := json.Marshal(uniqueIdsItem1.Constant)
+											uniqueIds1.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
 										}
 										uniqueIds1.Field = types.StringPointerValue(uniqueIdsItem1.Field)
 										uniqueIds1.JsonataExpression = types.StringPointerValue(uniqueIdsItem1.JsonataExpression)
@@ -298,8 +324,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 								if queryItem.Constant == nil {
 									query.Constant = jsontypes.NewNormalizedNull()
 								} else {
-									constantResult4, _ := json.Marshal(queryItem.Constant)
-									query.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
+									constantResult5, _ := json.Marshal(queryItem.Constant)
+									query.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
 								}
 								query.Field = types.StringPointerValue(queryItem.Field)
 								query.JsonataExpression = types.StringPointerValue(queryItem.JsonataExpression)
@@ -322,8 +348,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 								if uniqueIdsItem2.Constant == nil {
 									uniqueIds2.Constant = jsontypes.NewNormalizedNull()
 								} else {
-									constantResult5, _ := json.Marshal(uniqueIdsItem2.Constant)
-									uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
+									constantResult6, _ := json.Marshal(uniqueIdsItem2.Constant)
+									uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
 								}
 								uniqueIds2.Field = types.StringPointerValue(uniqueIdsItem2.Field)
 								uniqueIds2.JsonataExpression = types.StringPointerValue(uniqueIdsItem2.JsonataExpression)
@@ -357,8 +383,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 							if fieldsItem1.Constant == nil {
 								fields1.Constant = jsontypes.NewNormalizedNull()
 							} else {
-								constantResult6, _ := json.Marshal(fieldsItem1.Constant)
-								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
+								constantResult7, _ := json.Marshal(fieldsItem1.Constant)
+								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
 							}
 							if fieldsItem1.Enabled != nil {
 								fields1.Enabled = &tfTypes.Enabled{}
@@ -370,6 +396,33 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 								}
 							}
 							fields1.Field = types.StringPointerValue(fieldsItem1.Field)
+							if fieldsItem1.FileProxyURL == nil {
+								fields1.FileProxyURL = nil
+							} else {
+								fields1.FileProxyURL = &tfTypes.FileProxyURLConfig{}
+								if len(fieldsItem1.FileProxyURL.Params) > 0 {
+									fields1.FileProxyURL.Params = make(map[string]tfTypes.FileProxyURLParam, len(fieldsItem1.FileProxyURL.Params))
+									for fileProxyURLParamKey1, fileProxyURLParamValue1 := range fieldsItem1.FileProxyURL.Params {
+										var fileProxyURLParamResult1 tfTypes.FileProxyURLParam
+										if fileProxyURLParamValue1.One != nil {
+											fileProxyURLParamResult1.One = &tfTypes.One{}
+											fileProxyURLParamResult1.One.Field = types.StringValue(fileProxyURLParamValue1.One.Field)
+										}
+										if fileProxyURLParamValue1.Two != nil {
+											fileProxyURLParamResult1.Two = &tfTypes.Two{}
+											constantResult8, _ := json.Marshal(fileProxyURLParamValue1.Two.Constant)
+											fileProxyURLParamResult1.Two.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
+										}
+										if fileProxyURLParamValue1.Three != nil {
+											fileProxyURLParamResult1.Three = &tfTypes.Three{}
+											fileProxyURLParamResult1.Three.JsonataExpression = types.StringValue(fileProxyURLParamValue1.Three.JsonataExpression)
+										}
+
+										fields1.FileProxyURL.Params[fileProxyURLParamKey1] = fileProxyURLParamResult1
+									}
+								}
+								fields1.FileProxyURL.UseCaseID = types.StringValue(fieldsItem1.FileProxyURL.UseCaseID)
+							}
 							fields1.JsonataExpression = types.StringPointerValue(fieldsItem1.JsonataExpression)
 							if fieldsItem1.RelationRefs == nil {
 								fields1.RelationRefs = nil
@@ -396,8 +449,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 										if uniqueIdsItem3.Constant == nil {
 											uniqueIds3.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult7, _ := json.Marshal(uniqueIdsItem3.Constant)
-											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
+											constantResult9, _ := json.Marshal(uniqueIdsItem3.Constant)
+											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
 										}
 										uniqueIds3.Field = types.StringPointerValue(uniqueIdsItem3.Field)
 										uniqueIds3.JsonataExpression = types.StringPointerValue(uniqueIdsItem3.JsonataExpression)
@@ -409,8 +462,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 									if itemsItem2.Value.Constant == nil {
 										items2.Value.Constant = jsontypes.NewNormalizedNull()
 									} else {
-										constantResult8, _ := json.Marshal(itemsItem2.Value.Constant)
-										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
+										constantResult10, _ := json.Marshal(itemsItem2.Value.Constant)
+										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult10))
 									}
 									items2.Value.Field = types.StringPointerValue(itemsItem2.Value.Field)
 									items2.Value.JsonataExpression = types.StringPointerValue(itemsItem2.Value.JsonataExpression)
@@ -453,8 +506,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 										if uniqueIdsItem4.Constant == nil {
 											uniqueIds4.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult9, _ := json.Marshal(uniqueIdsItem4.Constant)
-											uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
+											constantResult11, _ := json.Marshal(uniqueIdsItem4.Constant)
+											uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult11))
 										}
 										uniqueIds4.Field = types.StringPointerValue(uniqueIdsItem4.Field)
 										uniqueIds4.JsonataExpression = types.StringPointerValue(uniqueIdsItem4.JsonataExpression)
@@ -486,8 +539,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 							if uniqueIdsItem5.Constant == nil {
 								uniqueIds5.Constant = jsontypes.NewNormalizedNull()
 							} else {
-								constantResult10, _ := json.Marshal(uniqueIdsItem5.Constant)
-								uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult10))
+								constantResult12, _ := json.Marshal(uniqueIdsItem5.Constant)
+								uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult12))
 							}
 							uniqueIds5.Field = types.StringPointerValue(uniqueIdsItem5.Field)
 							uniqueIds5.JsonataExpression = types.StringPointerValue(uniqueIdsItem5.JsonataExpression)
@@ -512,8 +565,8 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 								if uniqueIdsItem6.Constant == nil {
 									uniqueIds6.Constant = jsontypes.NewNormalizedNull()
 								} else {
-									constantResult11, _ := json.Marshal(uniqueIdsItem6.Constant)
-									uniqueIds6.Constant = jsontypes.NewNormalizedValue(string(constantResult11))
+									constantResult13, _ := json.Marshal(uniqueIdsItem6.Constant)
+									uniqueIds6.Constant = jsontypes.NewNormalizedValue(string(constantResult13))
 								}
 								uniqueIds6.Field = types.StringPointerValue(uniqueIdsItem6.Field)
 								uniqueIds6.JsonataExpression = types.StringPointerValue(uniqueIdsItem6.JsonataExpression)

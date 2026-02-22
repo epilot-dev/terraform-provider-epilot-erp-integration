@@ -7,7 +7,6 @@ import (
 )
 
 type AutoRefreshSettings struct {
-	Enabled                        types.Bool  `tfsdk:"enabled"`
-	FreshnessThresholdMinutes      types.Int64 `tfsdk:"freshness_threshold_minutes"`
-	MinIntervalBetweenSyncsMinutes types.Int64 `tfsdk:"min_interval_between_syncs_minutes"`
+	Enabled                   types.Bool  `tfsdk:"enabled"`
+	FreshnessThresholdMinutes types.Int64 `tfsdk:"freshness_threshold_minutes"`
 }

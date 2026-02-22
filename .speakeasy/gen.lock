@@ -1,23 +1,23 @@
 lockVersion: 2.0.0
 id: 15fc1ae3-2912-47ad-8b62-703c6db72e27
 management:
-  docChecksum: 575f2b00b7ad957d36f5cdb5b468b6cb
-  docVersion: 0.40.0
-  speakeasyVersion: 1.722.2
-  generationVersion: 2.832.2
-  releaseVersion: 0.19.1
-  configChecksum: 060e5b3b2bec9f9201d12779c1afd573
+  docChecksum: 9b4d302b89ed2a7fe62678e61ff2bf96
+  docVersion: 0.41.0
+  speakeasyVersion: 1.723.0
+  generationVersion: 2.835.2
+  releaseVersion: 0.20.0
+  configChecksum: 067d216a461ef4026ce5b4801826b350
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-erp-integration.git
 persistentEdits:
-  generation_id: 6f164ea1-0195-4a88-b16f-0681b49b0238
-  pristine_commit_hash: 40ac5f9fe1f5ff5ac92762df78aec4f8ba3ba037
-  pristine_tree_hash: 2d259422839cf274429a23baef6e7a77cafa1fd1
+  generation_id: cd6c2001-d716-486c-b2ca-01b8fa72151a
+  pristine_commit_hash: 07b8ae653a43493cda8249c9987264cf7ab00946
+  pristine_tree_hash: 0d81063a84673cc95be9465b8bbaf34d5973ddd4
 features:
   terraform:
     additionalDependencies: 0.1.0
     additionalProperties: 0.1.4
     constsAndDefaults: 0.3.1
-    core: 3.46.39
+    core: 3.46.40
     deprecations: 2.82.0
     globalSecurity: 2.82.2
     globalServerURLs: 2.83.1
@@ -39,8 +39,8 @@ trackedFiles:
     pristine_git_object: bb02e077500de84a623de57ffe46448bc951cc58
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:420049ee7c23b69c97542e8b52457de42a2dbb48
-    pristine_git_object: fdacc2f626840eab96b3430e6ff61f1f9d362058
+    last_write_checksum: sha1:1934c23f50bc0ae4887900921a33288dbd42c59e
+    pristine_git_object: 485eeb5abbe11c80e7866ee919123611cb2c4812
   examples/resources/epilot-erp-integration_integration/import-by-string-id.tf:
     id: 4183e30b18a7
     last_write_checksum: sha1:7b6c3500f63071e0e923f524c8e7d71fb8bf087c
@@ -51,12 +51,12 @@ trackedFiles:
     pristine_git_object: 372438441446dabba0cac1e5c2b59020eba687a8
   examples/resources/epilot-erp-integration_integration/resource.tf:
     id: 3228be0a094f
-    last_write_checksum: sha1:d08ff3ccadbd6f3deb33491ddc9d5549ab22fa5f
-    pristine_git_object: dbc87a1c416faeac9ba045ef91c08f9ac87b8e74
+    last_write_checksum: sha1:90add59046404d69c0dd42758c798963965f0f6a
+    pristine_git_object: a213e3a20d5645d0acb2a9d76795e41d09c3f722
   go.mod:
     id: c47645c391ad
-    last_write_checksum: sha1:53c6dba7f502467b7ddacb8294edfa184c0039d2
-    pristine_git_object: 2b687da6459a27d6a0d48dc806831582261c0d62
+    last_write_checksum: sha1:c3771d25c64f378fb24b721000710d2f638645ce
+    pristine_git_object: 428880b8e1673629cad3ba8c2ff21eac7ca49ab9
   internal/planmodifiers/boolplanmodifier/suppress_diff.go:
     id: 3cf85b98963e
     last_write_checksum: sha1:56a62808eef897f96e6bb10c4a31dcf1c5e43d3e
@@ -199,20 +199,20 @@ trackedFiles:
     pristine_git_object: 0ea64fbeb1fd7709d7241a8e06d34bfe9d0323d3
   internal/provider/integration_data_source.go:
     id: f026f177808f
-    last_write_checksum: sha1:864939d170e0d68baac44373573f115229fd8fbe
-    pristine_git_object: e4354f824ba0db602250746169a6ccaea62588ff
+    last_write_checksum: sha1:b24ba665b185f2a9020ab5e3c150fa898fa4fcdd
+    pristine_git_object: c72eea1a204da96c59b20141718f2190991e0e71
   internal/provider/integration_data_source_sdk.go:
     id: 75489811680d
-    last_write_checksum: sha1:5f1960530f05a46683bc30a3262bfbf703c8993b
-    pristine_git_object: 9fb4feec50bf6131afddd0883c49012837815879
+    last_write_checksum: sha1:1d6320e757925bf4dfed4d2a923532edd29aaef6
+    pristine_git_object: 349be0ea648169d28638f6a8b224e2469a2452f4
   internal/provider/integration_resource.go:
     id: dd44cea2c7a5
-    last_write_checksum: sha1:f87957fc061917f152cab29cc17ab2313a283b34
-    pristine_git_object: f2aa81c4a77e28a52d4eedf0ac23d6d8ec66bdfd
+    last_write_checksum: sha1:841e065d60805079a953c7b3002ff7110e2c0592
+    pristine_git_object: b2ce75f890648f375de26d01ab0d0de9cd339ecf
   internal/provider/integration_resource_sdk.go:
     id: efdeab83331c
-    last_write_checksum: sha1:ecaa9305f9e819e394557147ad50966d36f90ff9
-    pristine_git_object: e35b7005e7351e89ed5bbf3426aa509444188a43
+    last_write_checksum: sha1:9793d037279c594b6c3e060733682f749fbe14b8
+    pristine_git_object: 92b03433a108566f3c85fd88f4f03a4c7db70be1
   internal/provider/provider.go:
     id: 1e7e86841cf3
     last_write_checksum: sha1:2b38fa332c10b869d935208336402676b55bf354
@@ -287,8 +287,8 @@ trackedFiles:
     pristine_git_object: 54763e7a7555fae6d8bf51c4590220ff610202aa
   internal/provider/types/auto_refresh_settings.go:
     id: 1c5b7234d7a7
-    last_write_checksum: sha1:f53bc9c7d04e502d6a4577c23e07327760076539
-    pristine_git_object: 78450229841289a130aa77ab62c7434ae452f8bd
+    last_write_checksum: sha1:68b11da805d1eddb69473035d1803d8995c76cd4
+    pristine_git_object: fba0166e9d8768e43107610f4748b79817144c1a
   internal/provider/types/delivery_config.go:
     id: 93a5b20f7e1e
     last_write_checksum: sha1:91e3d700c81057cd9f889c7c3a49bc41294ccbfe
@@ -317,6 +317,14 @@ trackedFiles:
     id: 482faf4cd180
     last_write_checksum: sha1:32d081aa4c4e0b67dd996da7b43ef78c85e9fd77
     pristine_git_object: ab3bdbc36c0471cacbbcd201063f6f2010e92881
+  internal/provider/types/file_proxy_url_config.go:
+    id: 4946253c3ea8
+    last_write_checksum: sha1:39890fcf512c7374e60121efa0b1ce1758904239
+    pristine_git_object: 3fddb366193f4c4839209ba17e6c66ecf9a3d415
+  internal/provider/types/file_proxy_url_param.go:
+    id: 95b27ba2f642
+    last_write_checksum: sha1:60180dfa343cdce4eb9d6420bde8612c97ca0f57
+    pristine_git_object: b69f493593801693857723617a5a7d47540f3e69
   internal/provider/types/file_proxy_use_case.go:
     id: 79e234f90932
     last_write_checksum: sha1:e05642d7310b134892df3f1d5779bf66a2cca5d7
@@ -343,8 +351,8 @@ trackedFiles:
     pristine_git_object: 84704408bf5713ece9d640f419d44cde4612317b
   internal/provider/types/integration_entity_field.go:
     id: b28fb7d5df3b
-    last_write_checksum: sha1:6055d40ce9abb5457007361fdfe25ebaf890bb00
-    pristine_git_object: f511118c30e154b05f18625b52a130b940803308
+    last_write_checksum: sha1:fd228a45b1a16a814de9eeda5b77d9fcfdeffe01
+    pristine_git_object: 4c95553c87c39b16b649c670756a425934949b56
   internal/provider/types/integration_meter_reading.go:
     id: 1d0525162c87
     last_write_checksum: sha1:1673ad9957924d9ed37d37d4c2ac0df69f73d4f4
@@ -361,6 +369,10 @@ trackedFiles:
     id: 2f3d7d65473d
     last_write_checksum: sha1:b6b8255652c0505102a161fcb5e6f3ddd40c83ed
     pristine_git_object: 411e3bb7a2a70e52deae8551ad9b53ee5c716f8f
+  internal/provider/types/one.go:
+    id: c06b12d32cce
+    last_write_checksum: sha1:0a5bd462a0cc5f833dacc5c8f173880135318491
+    pristine_git_object: 87f2228496ed247d864d405d4e718246b7d8dc9b
   internal/provider/types/outbound_integration_event_configuration.go:
     id: e6e6266ae69a
     last_write_checksum: sha1:d0c688e4ab5e0f2f032994b4c7df246c19598b57
@@ -405,6 +417,14 @@ trackedFiles:
     id: 1e5bfae356a7
     last_write_checksum: sha1:4258bbd27dfe819d84035bafed7593834eaa68f4
     pristine_git_object: 57d9a7bbcc1af3c0b0a43017dcd973ae28aaec6f
+  internal/provider/types/three.go:
+    id: 8efd1e03419d
+    last_write_checksum: sha1:9bf532b94d2fcae0212dc214b807766561baa16a
+    pristine_git_object: a192edd1976e173608446a07e6473d234a49d4bd
+  internal/provider/types/two.go:
+    id: 2bb75d850add
+    last_write_checksum: sha1:cc20270f5997c1f4b5d7ef0bf4214892a52cb5b8
+    pristine_git_object: 93018669f0f0495a109d42eb8fb71b6ad94c32c9
   internal/provider/types/use_case.go:
     id: 135ddd7d8ec6
     last_write_checksum: sha1:8f8f94f858be90a4a0398e0af7fbf69075c7fd5a
@@ -427,12 +447,12 @@ trackedFiles:
     pristine_git_object: 35d8a1e2ad48a64702c6a654ac8880dabec053b0
   internal/sdk/erp.go:
     id: bad1b4863449
-    last_write_checksum: sha1:dca9628bb09d3d21769a3b98300cb6f56491ca2a
-    pristine_git_object: 2fa8e7df3e4d25a829aef0c76c9e6ab6eebf427f
+    last_write_checksum: sha1:458be92945af4ad9655ffdd464b06105ecf17ce8
+    pristine_git_object: f60e59a8fa3f41fb1ce77fa7c62af0fe5cc1f736
   internal/sdk/integrations.go:
     id: d17298644af8
-    last_write_checksum: sha1:2d8a21dfea6b3826579bf5d73e0c8999e7566a5d
-    pristine_git_object: e88d1db992b1f094709f7e3882cce908e8ec4857
+    last_write_checksum: sha1:f2a3b1b41f5117f9dd1a30216d1138926e00ba50
+    pristine_git_object: 4541f35d4b76ad8ec342dfcd71daccf8880000bf
   internal/sdk/internal/config/sdkconfiguration.go:
     id: 6af0bc8635d9
     last_write_checksum: sha1:135c367329099bd7954f803b510752cb8e16d992
@@ -491,8 +511,8 @@ trackedFiles:
     pristine_git_object: f66814c73ace94d8e71d785fd6161fb405745754
   internal/sdk/internal/utils/utils.go:
     id: feefcdf75dbd
-    last_write_checksum: sha1:d88d96cc244301d137581432095043f27a3e17b0
-    pristine_git_object: 0415b536598baa76c5d1a8fc32816ed1b83f9137
+    last_write_checksum: sha1:22e28614144c04201e6cf662643d96a0416f7d8c
+    pristine_git_object: 4f35c6b5ed8d47d0ac4a904f540a24b524cf2312
   internal/sdk/models/errors/sdkerror.go:
     id: 19b5a8d3586b
     last_write_checksum: sha1:5d65fce5049df7c5113e11c9ccb1e4c46b91901c
@@ -639,8 +659,8 @@ trackedFiles:
     pristine_git_object: eb4a8e1e6a15045b4d2fc5b15c22f5d6b2fed368
   internal/sdk/models/shared/autorefreshsettings.go:
     id: 816421bd3d5b
-    last_write_checksum: sha1:fd88168aaadc3d7bc1eed2f4c224e0127bb4c8ed
-    pristine_git_object: d39e79fd426bcfca99e33c500296af182e5d1bc5
+    last_write_checksum: sha1:36c9001935b757595ae3b742520bf2a0c57cfc88
+    pristine_git_object: cd012aa98b347c54f27234d584296c5c9e5f60d2
   internal/sdk/models/shared/createfileproxyusecaserequest.go:
     id: 49678c721b7f
     last_write_checksum: sha1:93e8f022310549aa39fb7f6a46a619cd5a7f948a
@@ -725,6 +745,14 @@ trackedFiles:
     id: db4b6c9118c8
     last_write_checksum: sha1:3f02b9d66ef4cad9122ca27f815d38dc8cd95f14
     pristine_git_object: 6d6117a7c52876d0bc265f0c43366617a0bfe5aa
+  internal/sdk/models/shared/fileproxyurlconfig.go:
+    id: f64d95ddad4a
+    last_write_checksum: sha1:4c51039ec37b6f743fc77d4a011098604cef0ee7
+    pristine_git_object: 457be8387f6e00f192654932f543b8266378ee34
+  internal/sdk/models/shared/fileproxyurlparam.go:
+    id: 796a19fdb5cd
+    last_write_checksum: sha1:bac411e321f09a70d2dbc98bed37bd52b6719e06
+    pristine_git_object: 2a0611a9fc0786fa376fdb7947ecf25123a5d5ed
   internal/sdk/models/shared/fileproxyusecase.go:
     id: 97a9d28fd23a
     last_write_checksum: sha1:036ed53bb669fc8d368dc8d2868dc4f55ac5e478
@@ -783,8 +811,8 @@ trackedFiles:
     pristine_git_object: e0d01ccd9ff8103b721c1001d491bbf72b910b03
   internal/sdk/models/shared/integrationentityfield.go:
     id: 360df253c868
-    last_write_checksum: sha1:9360746390ba887722437a7a18d7afd5ae0889e7
-    pristine_git_object: 504ab0f72eb8a29fa4a53d7da00bc53653b4fd9f
+    last_write_checksum: sha1:dc80a1f1e2fa99ef3085e74eb46559e62182da10
+    pristine_git_object: d4165b6250dce58c0a06c36b0a39c407bdd817af
   internal/sdk/models/shared/integrationfieldv1.go:
     id: 5484fed1340e
     last_write_checksum: sha1:ebc5637af0bac774c136ab0d23c77a5b0df7a831
@@ -991,12 +1019,12 @@ trackedFiles:
     pristine_git_object: aa809fccb3445b1e2530a979dad620512f50e70f
   internal/sdk/sdk.go:
     id: 02d7190ee502
-    last_write_checksum: sha1:0d5fa9981d4481260a1f2fa4c6ef70b6f9672d98
-    pristine_git_object: 699746da09e17ce0b0c5e9454f904c71b68273b5
+    last_write_checksum: sha1:4c2972781d95e20ad70a21a938016992541edfe7
+    pristine_git_object: 8d5671730c79c95c4b23c80ad383bc56a00b62ec
   internal/sdk/trigger.go:
     id: 8bbb8a8ac0b5
-    last_write_checksum: sha1:be342c10fed9c2e2b6d479f8d0b666fb641bceb6
-    pristine_git_object: bc2b69baf3f52c79dd16332d0918420666d19f14
+    last_write_checksum: sha1:4cb285b85543eb4d29cd9e667b9ba9631428c883
+    pristine_git_object: 1d1b69b59a7c954d7767b87106b977b67873fda2
   internal/sdk/types/bigint.go:
     id: fc530b70337e
     last_write_checksum: sha1:49b004005d0461fb04b846eca062b070b0360b31
@@ -1843,6 +1871,7 @@ examples:
         "500":
           application/json: {}
 examplesVersion: 1.0.2
+releaseNotes: "## Terraform SDK Changes:\n* `SDK.integrations.listIntegrationsV2()`:  `response.integrations[]` **Changed** (Breaking ⚠️)\n* `SDK.integrations.updateIntegrationV2()`: \n  *  `request.UpsertIntegrationWithUseCasesRequest` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.listIntegrations()`:  `response.integrations[].settings.autoRefresh.minIntervalBetweenSyncsMinutes` **Removed** (Breaking ⚠️)\n* `SDK.integrations.createIntegration()`: \n  *  `request.settings.autoRefresh.minIntervalBetweenSyncsMinutes` **Removed** (Breaking ⚠️)\n  *  `response.settings.autoRefresh.minIntervalBetweenSyncsMinutes` **Removed** (Breaking ⚠️)\n* `SDK.integrations.getIntegration()`:  `response.settings.autoRefresh.minIntervalBetweenSyncsMinutes` **Removed** (Breaking ⚠️)\n* `SDK.integrations.updateIntegration()`: \n  *  `request.UpdateIntegrationRequest.settings.autoRefresh.minIntervalBetweenSyncsMinutes` **Removed** (Breaking ⚠️)\n  *  `response.settings.autoRefresh.minIntervalBetweenSyncsMinutes` **Removed** (Breaking ⚠️)\n* `SDK.integrations.getIntegrationV2()`:  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.createIntegrationV2()`: \n  *  `request` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.listUseCases()`:  `response.use_cases[].union(inbound).configuration.entities[].fields[].file_proxy_url` **Added**\n* `SDK.integrations.updateUseCase()`: \n  *  `request.UpdateUseCaseRequest.union(inbound).configuration.entities[].fields[].file_proxy_url` **Added**\n  *  `response.union(inbound).configuration.entities[].fields[].file_proxy_url` **Added**\n* `SDK.integrations.listUseCaseHistory()`:  `response.history[].union(inbound).configuration.entities[].fields[].file_proxy_url` **Added**\n* `SDK.integrations.getUseCase()`:  `response.union(inbound).configuration.entities[].fields[].file_proxy_url` **Added**\n* `SDK.integrations.createUseCase()`: \n  *  `request.CreateUseCaseRequest.union(inbound).configuration.entities[].fields[].file_proxy_url` **Added**\n  *  `response.union(inbound).configuration.entities[].fields[].file_proxy_url` **Added**\n* `SDK.erp.simulateMappingV2()`: \n  *  `request.event_configuration.entities[].fields[].file_proxy_url` **Added**\n* `SDK.erp.simulateMapping()`: \n  *  `request.mapping_configuration.union(IntegrationConfigurationV2).mapping.events.Map<InboundIntegrationEventConfiguration>.entities[].fields[].file_proxy_url` **Added**\n"
 generatedFiles:
   - .gitattributes
   - USAGE.md
