@@ -188,14 +188,6 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 									int64validator.AtLeast(1),
 								},
 							},
-							"min_interval_between_syncs_minutes": schema.Int64Attribute{
-								Computed:    true,
-								Optional:    true,
-								Description: `Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls`,
-								Validators: []validator.Int64{
-									int64validator.AtLeast(1),
-								},
-							},
 						},
 						Description: `Auto-refresh settings for keeping integration data fresh`,
 					},
@@ -592,6 +584,91 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																	Computed:    true,
 																	Optional:    true,
 																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"file_proxy_url": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"params": schema.MapNestedAttribute{
+																			Computed: true,
+																			Optional: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
+																				},
+																				Attributes: map[string]schema.Attribute{
+																					"one": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Source field name or JSONPath expression (if starts with $). Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																						},
+																						Validators: []validator.Object{
+																							objectvalidator.ConflictsWith(path.Expressions{
+																								path.MatchRelative().AtParent().AtName("two"),
+																								path.MatchRelative().AtParent().AtName("three"),
+																							}...),
+																						},
+																					},
+																					"three": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `JSONata expression for transformation. Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																						},
+																						Validators: []validator.Object{
+																							objectvalidator.ConflictsWith(path.Expressions{
+																								path.MatchRelative().AtParent().AtName("one"),
+																								path.MatchRelative().AtParent().AtName("two"),
+																							}...),
+																						},
+																					},
+																					"two": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Constant value (any type, stringified for URL). Not Null; Parsed as JSON.`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																						},
+																						Validators: []validator.Object{
+																							objectvalidator.ConflictsWith(path.Expressions{
+																								path.MatchRelative().AtParent().AtName("one"),
+																								path.MatchRelative().AtParent().AtName("three"),
+																							}...),
+																						},
+																					},
+																				},
+																			},
+																			Description: `Custom query parameters. Keys become URL param names, values resolved from payload.`,
+																		},
+																		"use_case_id": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `UUID of the file_proxy use case. Maps to useCaseId query parameter. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
+																	},
+																	Description: `Auto-constructs a file proxy download URL. orgId and integrationId are injected from context.`,
 																},
 																"jsonata_expression": schema.StringAttribute{
 																	Computed:    true,
@@ -1114,6 +1191,91 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 																	Computed:    true,
 																	Optional:    true,
 																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"file_proxy_url": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"params": schema.MapNestedAttribute{
+																			Computed: true,
+																			Optional: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
+																				},
+																				Attributes: map[string]schema.Attribute{
+																					"one": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Source field name or JSONPath expression (if starts with $). Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																						},
+																						Validators: []validator.Object{
+																							objectvalidator.ConflictsWith(path.Expressions{
+																								path.MatchRelative().AtParent().AtName("two"),
+																								path.MatchRelative().AtParent().AtName("three"),
+																							}...),
+																						},
+																					},
+																					"three": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `JSONata expression for transformation. Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																						},
+																						Validators: []validator.Object{
+																							objectvalidator.ConflictsWith(path.Expressions{
+																								path.MatchRelative().AtParent().AtName("one"),
+																								path.MatchRelative().AtParent().AtName("two"),
+																							}...),
+																						},
+																					},
+																					"two": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Optional:    true,
+																								Description: `Constant value (any type, stringified for URL). Not Null; Parsed as JSON.`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																						},
+																						Validators: []validator.Object{
+																							objectvalidator.ConflictsWith(path.Expressions{
+																								path.MatchRelative().AtParent().AtName("one"),
+																								path.MatchRelative().AtParent().AtName("three"),
+																							}...),
+																						},
+																					},
+																				},
+																			},
+																			Description: `Custom query parameters. Keys become URL param names, values resolved from payload.`,
+																		},
+																		"use_case_id": schema.StringAttribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Description: `UUID of the file_proxy use case. Maps to useCaseId query parameter. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
+																	},
+																	Description: `Auto-constructs a file proxy download URL. orgId and integrationId are injected from context.`,
 																},
 																"jsonata_expression": schema.StringAttribute{
 																	Computed:    true,
