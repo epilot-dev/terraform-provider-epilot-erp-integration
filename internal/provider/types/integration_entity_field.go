@@ -13,6 +13,7 @@ type IntegrationEntityField struct {
 	Constant          jsontypes.Normalized `tfsdk:"constant"`
 	Enabled           *Enabled             `tfsdk:"enabled"`
 	Field             types.String         `tfsdk:"field"`
+	FileProxyURL      *FileProxyURLConfig  `tfsdk:"file_proxy_url"`
 	JsonataExpression types.String         `tfsdk:"jsonata_expression"`
 	RelationRefs      *RelationRefsConfig  `tfsdk:"relation_refs"`
 	Relations         *RelationConfig      `tfsdk:"relations"`

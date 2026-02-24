@@ -39,3 +39,13 @@ Based on:
 - [terraform v0.19.0] .
 ### Releases
 - [Terraform v0.19.0] https://registry.terraform.io/providers/epilot-dev/epilot-erp-integration/0.19.0 - .
+
+## 2026-02-24 00:14:57
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.725.0 (2.836.5) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [terraform v0.20.0] .
+### Releases
+- [Terraform v0.20.0] https://registry.terraform.io/providers/epilot-dev/epilot-erp-integration/0.20.0 - .

@@ -12,8 +12,6 @@ type AutoRefreshSettings struct {
 	Enabled *bool `default:"false" json:"enabled"`
 	// Maximum age (in minutes) of data before it is considered stale and eligible for refresh
 	FreshnessThresholdMinutes *int64 `json:"freshnessThresholdMinutes,omitempty"`
-	// Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls
-	MinIntervalBetweenSyncsMinutes *int64 `json:"minIntervalBetweenSyncsMinutes,omitempty"`
 }
 
 func (a AutoRefreshSettings) MarshalJSON() ([]byte, error) {
@@ -39,11 +37,4 @@ func (a *AutoRefreshSettings) GetFreshnessThresholdMinutes() *int64 {
 		return nil
 	}
 	return a.FreshnessThresholdMinutes
-}
-
-func (a *AutoRefreshSettings) GetMinIntervalBetweenSyncsMinutes() *int64 {
-	if a == nil {
-		return nil
-	}
-	return a.MinIntervalBetweenSyncsMinutes
 }

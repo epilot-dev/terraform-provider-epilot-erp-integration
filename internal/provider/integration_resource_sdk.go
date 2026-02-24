@@ -56,7 +56,6 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 				r.Settings.AutoRefresh = &tfTypes.AutoRefreshSettings{}
 				r.Settings.AutoRefresh.Enabled = types.BoolPointerValue(resp.Settings.AutoRefresh.Enabled)
 				r.Settings.AutoRefresh.FreshnessThresholdMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.FreshnessThresholdMinutes)
-				r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes)
 			}
 		}
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
@@ -114,6 +113,33 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 								}
 							}
 							fields.Field = types.StringPointerValue(fieldsItem.Field)
+							if fieldsItem.FileProxyURL == nil {
+								fields.FileProxyURL = nil
+							} else {
+								fields.FileProxyURL = &tfTypes.FileProxyURLConfig{}
+								if len(fieldsItem.FileProxyURL.Params) > 0 {
+									fields.FileProxyURL.Params = make(map[string]tfTypes.FileProxyURLParam, len(fieldsItem.FileProxyURL.Params))
+									for fileProxyURLParamKey, fileProxyURLParamValue := range fieldsItem.FileProxyURL.Params {
+										var fileProxyURLParamResult tfTypes.FileProxyURLParam
+										if fileProxyURLParamValue.One != nil {
+											fileProxyURLParamResult.One = &tfTypes.One{}
+											fileProxyURLParamResult.One.Field = types.StringValue(fileProxyURLParamValue.One.Field)
+										}
+										if fileProxyURLParamValue.Two != nil {
+											fileProxyURLParamResult.Two = &tfTypes.Two{}
+											constantResult1, _ := json.Marshal(fileProxyURLParamValue.Two.Constant)
+											fileProxyURLParamResult.Two.Constant = jsontypes.NewNormalizedValue(string(constantResult1))
+										}
+										if fileProxyURLParamValue.Three != nil {
+											fileProxyURLParamResult.Three = &tfTypes.Three{}
+											fileProxyURLParamResult.Three.JsonataExpression = types.StringValue(fileProxyURLParamValue.Three.JsonataExpression)
+										}
+
+										fields.FileProxyURL.Params[fileProxyURLParamKey] = fileProxyURLParamResult
+									}
+								}
+								fields.FileProxyURL.UseCaseID = types.StringValue(fieldsItem.FileProxyURL.UseCaseID)
+							}
 							fields.JsonataExpression = types.StringPointerValue(fieldsItem.JsonataExpression)
 							if fieldsItem.RelationRefs == nil {
 								fields.RelationRefs = nil
@@ -140,8 +166,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 										if uniqueIdsItem.Constant == nil {
 											uniqueIds.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult1, _ := json.Marshal(uniqueIdsItem.Constant)
-											uniqueIds.Constant = jsontypes.NewNormalizedValue(string(constantResult1))
+											constantResult2, _ := json.Marshal(uniqueIdsItem.Constant)
+											uniqueIds.Constant = jsontypes.NewNormalizedValue(string(constantResult2))
 										}
 										uniqueIds.Field = types.StringPointerValue(uniqueIdsItem.Field)
 										uniqueIds.JsonataExpression = types.StringPointerValue(uniqueIdsItem.JsonataExpression)
@@ -153,8 +179,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 									if itemsItem.Value.Constant == nil {
 										items.Value.Constant = jsontypes.NewNormalizedNull()
 									} else {
-										constantResult2, _ := json.Marshal(itemsItem.Value.Constant)
-										items.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult2))
+										constantResult3, _ := json.Marshal(itemsItem.Value.Constant)
+										items.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult3))
 									}
 									items.Value.Field = types.StringPointerValue(itemsItem.Value.Field)
 									items.Value.JsonataExpression = types.StringPointerValue(itemsItem.Value.JsonataExpression)
@@ -197,8 +223,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 										if uniqueIdsItem1.Constant == nil {
 											uniqueIds1.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult3, _ := json.Marshal(uniqueIdsItem1.Constant)
-											uniqueIds1.Constant = jsontypes.NewNormalizedValue(string(constantResult3))
+											constantResult4, _ := json.Marshal(uniqueIdsItem1.Constant)
+											uniqueIds1.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
 										}
 										uniqueIds1.Field = types.StringPointerValue(uniqueIdsItem1.Field)
 										uniqueIds1.JsonataExpression = types.StringPointerValue(uniqueIdsItem1.JsonataExpression)
@@ -238,8 +264,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 								if queryItem.Constant == nil {
 									query.Constant = jsontypes.NewNormalizedNull()
 								} else {
-									constantResult4, _ := json.Marshal(queryItem.Constant)
-									query.Constant = jsontypes.NewNormalizedValue(string(constantResult4))
+									constantResult5, _ := json.Marshal(queryItem.Constant)
+									query.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
 								}
 								query.Field = types.StringPointerValue(queryItem.Field)
 								query.JsonataExpression = types.StringPointerValue(queryItem.JsonataExpression)
@@ -262,8 +288,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 								if uniqueIdsItem2.Constant == nil {
 									uniqueIds2.Constant = jsontypes.NewNormalizedNull()
 								} else {
-									constantResult5, _ := json.Marshal(uniqueIdsItem2.Constant)
-									uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult5))
+									constantResult6, _ := json.Marshal(uniqueIdsItem2.Constant)
+									uniqueIds2.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
 								}
 								uniqueIds2.Field = types.StringPointerValue(uniqueIdsItem2.Field)
 								uniqueIds2.JsonataExpression = types.StringPointerValue(uniqueIdsItem2.JsonataExpression)
@@ -297,8 +323,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 							if fieldsItem1.Constant == nil {
 								fields1.Constant = jsontypes.NewNormalizedNull()
 							} else {
-								constantResult6, _ := json.Marshal(fieldsItem1.Constant)
-								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult6))
+								constantResult7, _ := json.Marshal(fieldsItem1.Constant)
+								fields1.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
 							}
 							if fieldsItem1.Enabled != nil {
 								fields1.Enabled = &tfTypes.Enabled{}
@@ -310,6 +336,33 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 								}
 							}
 							fields1.Field = types.StringPointerValue(fieldsItem1.Field)
+							if fieldsItem1.FileProxyURL == nil {
+								fields1.FileProxyURL = nil
+							} else {
+								fields1.FileProxyURL = &tfTypes.FileProxyURLConfig{}
+								if len(fieldsItem1.FileProxyURL.Params) > 0 {
+									fields1.FileProxyURL.Params = make(map[string]tfTypes.FileProxyURLParam, len(fieldsItem1.FileProxyURL.Params))
+									for fileProxyURLParamKey1, fileProxyURLParamValue1 := range fieldsItem1.FileProxyURL.Params {
+										var fileProxyURLParamResult1 tfTypes.FileProxyURLParam
+										if fileProxyURLParamValue1.One != nil {
+											fileProxyURLParamResult1.One = &tfTypes.One{}
+											fileProxyURLParamResult1.One.Field = types.StringValue(fileProxyURLParamValue1.One.Field)
+										}
+										if fileProxyURLParamValue1.Two != nil {
+											fileProxyURLParamResult1.Two = &tfTypes.Two{}
+											constantResult8, _ := json.Marshal(fileProxyURLParamValue1.Two.Constant)
+											fileProxyURLParamResult1.Two.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
+										}
+										if fileProxyURLParamValue1.Three != nil {
+											fileProxyURLParamResult1.Three = &tfTypes.Three{}
+											fileProxyURLParamResult1.Three.JsonataExpression = types.StringValue(fileProxyURLParamValue1.Three.JsonataExpression)
+										}
+
+										fields1.FileProxyURL.Params[fileProxyURLParamKey1] = fileProxyURLParamResult1
+									}
+								}
+								fields1.FileProxyURL.UseCaseID = types.StringValue(fieldsItem1.FileProxyURL.UseCaseID)
+							}
 							fields1.JsonataExpression = types.StringPointerValue(fieldsItem1.JsonataExpression)
 							if fieldsItem1.RelationRefs == nil {
 								fields1.RelationRefs = nil
@@ -336,8 +389,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 										if uniqueIdsItem3.Constant == nil {
 											uniqueIds3.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult7, _ := json.Marshal(uniqueIdsItem3.Constant)
-											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult7))
+											constantResult9, _ := json.Marshal(uniqueIdsItem3.Constant)
+											uniqueIds3.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
 										}
 										uniqueIds3.Field = types.StringPointerValue(uniqueIdsItem3.Field)
 										uniqueIds3.JsonataExpression = types.StringPointerValue(uniqueIdsItem3.JsonataExpression)
@@ -349,8 +402,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 									if itemsItem2.Value.Constant == nil {
 										items2.Value.Constant = jsontypes.NewNormalizedNull()
 									} else {
-										constantResult8, _ := json.Marshal(itemsItem2.Value.Constant)
-										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult8))
+										constantResult10, _ := json.Marshal(itemsItem2.Value.Constant)
+										items2.Value.Constant = jsontypes.NewNormalizedValue(string(constantResult10))
 									}
 									items2.Value.Field = types.StringPointerValue(itemsItem2.Value.Field)
 									items2.Value.JsonataExpression = types.StringPointerValue(itemsItem2.Value.JsonataExpression)
@@ -393,8 +446,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 										if uniqueIdsItem4.Constant == nil {
 											uniqueIds4.Constant = jsontypes.NewNormalizedNull()
 										} else {
-											constantResult9, _ := json.Marshal(uniqueIdsItem4.Constant)
-											uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult9))
+											constantResult11, _ := json.Marshal(uniqueIdsItem4.Constant)
+											uniqueIds4.Constant = jsontypes.NewNormalizedValue(string(constantResult11))
 										}
 										uniqueIds4.Field = types.StringPointerValue(uniqueIdsItem4.Field)
 										uniqueIds4.JsonataExpression = types.StringPointerValue(uniqueIdsItem4.JsonataExpression)
@@ -426,8 +479,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 							if uniqueIdsItem5.Constant == nil {
 								uniqueIds5.Constant = jsontypes.NewNormalizedNull()
 							} else {
-								constantResult10, _ := json.Marshal(uniqueIdsItem5.Constant)
-								uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult10))
+								constantResult12, _ := json.Marshal(uniqueIdsItem5.Constant)
+								uniqueIds5.Constant = jsontypes.NewNormalizedValue(string(constantResult12))
 							}
 							uniqueIds5.Field = types.StringPointerValue(uniqueIdsItem5.Field)
 							uniqueIds5.JsonataExpression = types.StringPointerValue(uniqueIdsItem5.JsonataExpression)
@@ -452,8 +505,8 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 								if uniqueIdsItem6.Constant == nil {
 									uniqueIds6.Constant = jsontypes.NewNormalizedNull()
 								} else {
-									constantResult11, _ := json.Marshal(uniqueIdsItem6.Constant)
-									uniqueIds6.Constant = jsontypes.NewNormalizedValue(string(constantResult11))
+									constantResult13, _ := json.Marshal(uniqueIdsItem6.Constant)
+									uniqueIds6.Constant = jsontypes.NewNormalizedValue(string(constantResult13))
 								}
 								uniqueIds6.Field = types.StringPointerValue(uniqueIdsItem6.Field)
 								uniqueIds6.JsonataExpression = types.StringPointerValue(uniqueIdsItem6.JsonataExpression)
@@ -652,16 +705,9 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			} else {
 				freshnessThresholdMinutes = nil
 			}
-			minIntervalBetweenSyncsMinutes := new(int64)
-			if !r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes.IsUnknown() && !r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes.IsNull() {
-				*minIntervalBetweenSyncsMinutes = r.Settings.AutoRefresh.MinIntervalBetweenSyncsMinutes.ValueInt64()
-			} else {
-				minIntervalBetweenSyncsMinutes = nil
-			}
 			autoRefresh = &shared.AutoRefreshSettings{
-				Enabled:                        enabled,
-				FreshnessThresholdMinutes:      freshnessThresholdMinutes,
-				MinIntervalBetweenSyncsMinutes: minIntervalBetweenSyncsMinutes,
+				Enabled:                   enabled,
+				FreshnessThresholdMinutes: freshnessThresholdMinutes,
 			}
 		}
 		settings = &shared.IntegrationSettings{
@@ -1038,6 +1084,62 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 								JsonataExpression: jsonataExpression8,
 							}
 						}
+						var fileProxyURL *shared.FileProxyURLConfig
+						if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL != nil {
+							var useCaseID string
+							useCaseID = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.UseCaseID.ValueString()
+
+							params := make(map[string]shared.FileProxyURLParam)
+							for paramsKey := range r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.Params {
+								var paramsInst shared.FileProxyURLParam
+								var one *shared.One
+								if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.Params[paramsKey].One != nil {
+									var field6 string
+									field6 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.Params[paramsKey].One.Field.ValueString()
+
+									one = &shared.One{
+										Field: field6,
+									}
+								}
+								if one != nil {
+									paramsInst = shared.FileProxyURLParam{
+										One: one,
+									}
+								}
+								var two *shared.Two
+								if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.Params[paramsKey].Two != nil {
+									var constant6 interface{}
+									_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.Params[paramsKey].Two.Constant.ValueString()), &constant6)
+									two = &shared.Two{
+										Constant: constant6,
+									}
+								}
+								if two != nil {
+									paramsInst = shared.FileProxyURLParam{
+										Two: two,
+									}
+								}
+								var three *shared.Three
+								if r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.Params[paramsKey].Three != nil {
+									var jsonataExpression9 string
+									jsonataExpression9 = r.UseCases[useCasesItem].Inbound.Configuration.Entities[entitiesIndex].Fields[fieldsIndex].FileProxyURL.Params[paramsKey].Three.JsonataExpression.ValueString()
+
+									three = &shared.Three{
+										JsonataExpression: jsonataExpression9,
+									}
+								}
+								if three != nil {
+									paramsInst = shared.FileProxyURLParam{
+										Three: three,
+									}
+								}
+								params[paramsKey] = paramsInst
+							}
+							fileProxyURL = &shared.FileProxyURLConfig{
+								UseCaseID: useCaseID,
+								Params:    params,
+							}
+						}
 						fields = append(fields, shared.IntegrationEntityField{
 							Attribute:         attribute2,
 							Field:             field2,
@@ -1047,6 +1149,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 							Enabled:           enabled3,
 							Relations:         relations,
 							RelationRefs:      relationRefs,
+							FileProxyURL:      fileProxyURL,
 						})
 					}
 					entities = append(entities, shared.IntegrationEntity{
@@ -1061,11 +1164,11 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 				}
 				meterReadings := make([]shared.IntegrationMeterReading, 0, len(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings))
 				for meterReadingsIndex := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings {
-					jsonataExpression9 := new(string)
+					jsonataExpression10 := new(string)
 					if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].JsonataExpression.IsNull() {
-						*jsonataExpression9 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].JsonataExpression.ValueString()
+						*jsonataExpression10 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].JsonataExpression.ValueString()
 					} else {
-						jsonataExpression9 = nil
+						jsonataExpression10 = nil
 					}
 					readingMatching := new(shared.ReadingMatching)
 					if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].ReadingMatching.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].ReadingMatching.IsNull() {
@@ -1102,28 +1205,28 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 						} else {
 							type6 = nil
 						}
-						field6 := new(string)
+						field7 := new(string)
 						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Field.IsNull() {
-							*field6 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Field.ValueString()
+							*field7 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Field.ValueString()
 						} else {
-							field6 = nil
+							field7 = nil
 						}
-						jsonataExpression10 := new(string)
+						jsonataExpression11 := new(string)
 						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].JsonataExpression.IsNull() {
-							*jsonataExpression10 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].JsonataExpression.ValueString()
+							*jsonataExpression11 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].JsonataExpression.ValueString()
 						} else {
-							jsonataExpression10 = nil
+							jsonataExpression11 = nil
 						}
-						var constant6 interface{}
+						var constant7 interface{}
 						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Constant.IsNull() {
-							_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Constant.ValueString()), &constant6)
+							_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Meter.UniqueIds[uniqueIdsIndex4].Constant.ValueString()), &constant7)
 						}
 						uniqueIds4 = append(uniqueIds4, shared.RelationUniqueIDField{
 							Attribute:         attribute6,
 							Type:              type6,
-							Field:             field6,
-							JsonataExpression: jsonataExpression10,
-							Constant:          constant6,
+							Field:             field7,
+							JsonataExpression: jsonataExpression11,
+							Constant:          constant7,
 						})
 					}
 					meter := shared.MeterUniqueIdsConfig{
@@ -1142,28 +1245,28 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 							} else {
 								type7 = nil
 							}
-							field7 := new(string)
+							field8 := new(string)
 							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Field.IsNull() {
-								*field7 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Field.ValueString()
+								*field8 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Field.ValueString()
 							} else {
-								field7 = nil
+								field8 = nil
 							}
-							jsonataExpression11 := new(string)
+							jsonataExpression12 := new(string)
 							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].JsonataExpression.IsNull() {
-								*jsonataExpression11 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].JsonataExpression.ValueString()
+								*jsonataExpression12 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].JsonataExpression.ValueString()
 							} else {
-								jsonataExpression11 = nil
+								jsonataExpression12 = nil
 							}
-							var constant7 interface{}
+							var constant8 interface{}
 							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Constant.IsNull() {
-								_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Constant.ValueString()), &constant7)
+								_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].MeterCounter.UniqueIds[uniqueIdsIndex5].Constant.ValueString()), &constant8)
 							}
 							uniqueIds5 = append(uniqueIds5, shared.RelationUniqueIDField{
 								Attribute:         attribute7,
 								Type:              type7,
-								Field:             field7,
-								JsonataExpression: jsonataExpression11,
-								Constant:          constant7,
+								Field:             field8,
+								JsonataExpression: jsonataExpression12,
+								Constant:          constant8,
 							})
 						}
 						meterCounter = &shared.MeterUniqueIdsConfig{
@@ -1175,21 +1278,21 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 						var attribute8 string
 						attribute8 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Attribute.ValueString()
 
-						field8 := new(string)
+						field9 := new(string)
 						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Field.IsNull() {
-							*field8 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Field.ValueString()
+							*field9 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Field.ValueString()
 						} else {
-							field8 = nil
+							field9 = nil
 						}
-						jsonataExpression12 := new(string)
+						jsonataExpression13 := new(string)
 						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].JsonataExpression.IsNull() {
-							*jsonataExpression12 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].JsonataExpression.ValueString()
+							*jsonataExpression13 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].JsonataExpression.ValueString()
 						} else {
-							jsonataExpression12 = nil
+							jsonataExpression13 = nil
 						}
-						var constant8 interface{}
+						var constant9 interface{}
 						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Constant.IsNull() {
-							_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Constant.ValueString()), &constant8)
+							_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Constant.ValueString()), &constant9)
 						}
 						type8 := new(shared.RepeatableFieldType)
 						if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Type.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Type.IsNull() {
@@ -1245,28 +1348,28 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 									} else {
 										type9 = nil
 									}
-									field9 := new(string)
+									field10 := new(string)
 									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Field.IsNull() {
-										*field9 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Field.ValueString()
+										*field10 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Field.ValueString()
 									} else {
-										field9 = nil
+										field10 = nil
 									}
-									jsonataExpression13 := new(string)
+									jsonataExpression14 := new(string)
 									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].JsonataExpression.IsNull() {
-										*jsonataExpression13 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].JsonataExpression.ValueString()
+										*jsonataExpression14 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].JsonataExpression.ValueString()
 									} else {
-										jsonataExpression13 = nil
+										jsonataExpression14 = nil
 									}
-									var constant9 interface{}
+									var constant10 interface{}
 									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Constant.IsNull() {
-										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Constant.ValueString()), &constant9)
+										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.Items[itemsIndex2].UniqueIds[uniqueIdsIndex6].Constant.ValueString()), &constant10)
 									}
 									uniqueIds6 = append(uniqueIds6, shared.RelationUniqueIDField{
 										Attribute:         attribute9,
 										Type:              type9,
-										Field:             field9,
-										JsonataExpression: jsonataExpression13,
-										Constant:          constant9,
+										Field:             field10,
+										JsonataExpression: jsonataExpression14,
+										Constant:          constant10,
 									})
 								}
 								items2 = append(items2, shared.RelationItemConfig{
@@ -1275,16 +1378,16 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 									UniqueIds:    uniqueIds6,
 								})
 							}
-							jsonataExpression14 := new(string)
+							jsonataExpression15 := new(string)
 							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.JsonataExpression.IsNull() {
-								*jsonataExpression14 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.JsonataExpression.ValueString()
+								*jsonataExpression15 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].Relations.JsonataExpression.ValueString()
 							} else {
-								jsonataExpression14 = nil
+								jsonataExpression15 = nil
 							}
 							relations1 = &shared.RelationConfig{
 								Operation:         operation3,
 								Items:             items2,
-								JsonataExpression: jsonataExpression14,
+								JsonataExpression: jsonataExpression15,
 							}
 						}
 						var relationRefs1 *shared.RelationRefsConfig
@@ -1306,28 +1409,28 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 									} else {
 										type10 = nil
 									}
-									field10 := new(string)
+									field11 := new(string)
 									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Field.IsNull() {
-										*field10 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Field.ValueString()
+										*field11 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Field.ValueString()
 									} else {
-										field10 = nil
+										field11 = nil
 									}
-									jsonataExpression15 := new(string)
+									jsonataExpression16 := new(string)
 									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].JsonataExpression.IsNull() {
-										*jsonataExpression15 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].JsonataExpression.ValueString()
+										*jsonataExpression16 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].JsonataExpression.ValueString()
 									} else {
-										jsonataExpression15 = nil
+										jsonataExpression16 = nil
 									}
-									var constant10 interface{}
+									var constant11 interface{}
 									if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Constant.IsNull() {
-										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Constant.ValueString()), &constant10)
+										_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].UniqueIds[uniqueIdsIndex7].Constant.ValueString()), &constant11)
 									}
 									uniqueIds7 = append(uniqueIds7, shared.RelationUniqueIDField{
 										Attribute:         attribute10,
 										Type:              type10,
-										Field:             field10,
-										JsonataExpression: jsonataExpression15,
-										Constant:          constant10,
+										Field:             field11,
+										JsonataExpression: jsonataExpression16,
+										Constant:          constant11,
 									})
 								}
 								var path1 string
@@ -1342,28 +1445,28 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 								} else {
 									operation5 = nil
 								}
-								field11 := new(string)
+								field12 := new(string)
 								if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Field.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Field.IsNull() {
-									*field11 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Field.ValueString()
+									*field12 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Field.ValueString()
 								} else {
-									field11 = nil
+									field12 = nil
 								}
-								jsonataExpression16 := new(string)
+								jsonataExpression17 := new(string)
 								if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.JsonataExpression.IsNull() {
-									*jsonataExpression16 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.JsonataExpression.ValueString()
+									*jsonataExpression17 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.JsonataExpression.ValueString()
 								} else {
-									jsonataExpression16 = nil
+									jsonataExpression17 = nil
 								}
-								var constant11 interface{}
+								var constant12 interface{}
 								if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Constant.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Constant.IsNull() {
-									_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Constant.ValueString()), &constant11)
+									_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.Items[itemsIndex3].Value.Constant.ValueString()), &constant12)
 								}
 								value1 := shared.RelationRefValueConfig{
 									Attribute:         attribute11,
 									Operation:         operation5,
-									Field:             field11,
-									JsonataExpression: jsonataExpression16,
-									Constant:          constant11,
+									Field:             field12,
+									JsonataExpression: jsonataExpression17,
+									Constant:          constant12,
 								}
 								items3 = append(items3, shared.RelationRefItemConfig{
 									EntitySchema: entitySchema4,
@@ -1372,31 +1475,88 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 									Value:        value1,
 								})
 							}
-							jsonataExpression17 := new(string)
+							jsonataExpression18 := new(string)
 							if !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.JsonataExpression.IsUnknown() && !r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.JsonataExpression.IsNull() {
-								*jsonataExpression17 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.JsonataExpression.ValueString()
+								*jsonataExpression18 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].RelationRefs.JsonataExpression.ValueString()
 							} else {
-								jsonataExpression17 = nil
+								jsonataExpression18 = nil
 							}
 							relationRefs1 = &shared.RelationRefsConfig{
 								Operation:         operation4,
 								Items:             items3,
-								JsonataExpression: jsonataExpression17,
+								JsonataExpression: jsonataExpression18,
+							}
+						}
+						var fileProxyUrl1 *shared.FileProxyURLConfig
+						if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL != nil {
+							var useCaseId1 string
+							useCaseId1 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.UseCaseID.ValueString()
+
+							params1 := make(map[string]shared.FileProxyURLParam)
+							for paramsKey1 := range r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.Params {
+								var paramsInst1 shared.FileProxyURLParam
+								var eleven *shared.One
+								if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.Params[paramsKey1].One != nil {
+									var field13 string
+									field13 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.Params[paramsKey1].One.Field.ValueString()
+
+									eleven = &shared.One{
+										Field: field13,
+									}
+								}
+								if eleven != nil {
+									paramsInst1 = shared.FileProxyURLParam{
+										One: eleven,
+									}
+								}
+								var twentyOne *shared.Two
+								if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.Params[paramsKey1].Two != nil {
+									var constant13 interface{}
+									_ = json.Unmarshal([]byte(r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.Params[paramsKey1].Two.Constant.ValueString()), &constant13)
+									twentyOne = &shared.Two{
+										Constant: constant13,
+									}
+								}
+								if twentyOne != nil {
+									paramsInst1 = shared.FileProxyURLParam{
+										Two: twentyOne,
+									}
+								}
+								var thirtyOne *shared.Three
+								if r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.Params[paramsKey1].Three != nil {
+									var jsonataExpression19 string
+									jsonataExpression19 = r.UseCases[useCasesItem].Inbound.Configuration.MeterReadings[meterReadingsIndex].Fields[fieldsIndex1].FileProxyURL.Params[paramsKey1].Three.JsonataExpression.ValueString()
+
+									thirtyOne = &shared.Three{
+										JsonataExpression: jsonataExpression19,
+									}
+								}
+								if thirtyOne != nil {
+									paramsInst1 = shared.FileProxyURLParam{
+										Three: thirtyOne,
+									}
+								}
+								params1[paramsKey1] = paramsInst1
+							}
+							fileProxyUrl1 = &shared.FileProxyURLConfig{
+								UseCaseID: useCaseId1,
+								Params:    params1,
 							}
 						}
 						fields1 = append(fields1, shared.IntegrationEntityField{
 							Attribute:         attribute8,
-							Field:             field8,
-							JsonataExpression: jsonataExpression12,
-							Constant:          constant8,
+							Field:             field9,
+							JsonataExpression: jsonataExpression13,
+							Constant:          constant9,
 							Type:              type8,
 							Enabled:           enabled4,
 							Relations:         relations1,
 							RelationRefs:      relationRefs1,
+							FileProxyURL:      fileProxyUrl1,
 						})
 					}
 					meterReadings = append(meterReadings, shared.IntegrationMeterReading{
-						JsonataExpression: jsonataExpression9,
+						JsonataExpression: jsonataExpression10,
 						ReadingMatching:   readingMatching,
 						Mode:              mode1,
 						Scope:             scope1,
@@ -1455,8 +1615,8 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 					var name3 string
 					name3 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Name.ValueString()
 
-					var jsonataExpression18 string
-					jsonataExpression18 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].JsonataExpression.ValueString()
+					var jsonataExpression20 string
+					jsonataExpression20 = r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].JsonataExpression.ValueString()
 
 					enabled6 := new(bool)
 					if !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.IsUnknown() && !r.UseCases[useCasesItem].Outbound.Configuration.Mappings[mappingsIndex].Enabled.IsNull() {
@@ -1501,7 +1661,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 					mappings = append(mappings, shared.OutboundMapping{
 						ID:                id2,
 						Name:              name3,
-						JsonataExpression: jsonataExpression18,
+						JsonataExpression: jsonataExpression20,
 						Enabled:           enabled6,
 						Delivery:          delivery,
 						CreatedAt:         createdAt,
