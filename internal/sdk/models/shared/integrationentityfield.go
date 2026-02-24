@@ -119,6 +119,8 @@ type IntegrationEntityField struct {
 	// Common use case: referencing a specific address within a contact's address list.
 	//
 	RelationRefs *RelationRefsConfig `json:"relation_refs,omitempty"`
+	// Auto-constructs a file proxy download URL. orgId and integrationId are injected from context.
+	FileProxyURL *FileProxyURLConfig `json:"file_proxy_url,omitempty"`
 }
 
 func (i IntegrationEntityField) MarshalJSON() ([]byte, error) {
@@ -186,4 +188,11 @@ func (i *IntegrationEntityField) GetRelationRefs() *RelationRefsConfig {
 		return nil
 	}
 	return i.RelationRefs
+}
+
+func (i *IntegrationEntityField) GetFileProxyURL() *FileProxyURLConfig {
+	if i == nil {
+		return nil
+	}
+	return i.FileProxyURL
 }

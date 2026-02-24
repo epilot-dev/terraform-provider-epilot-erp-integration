@@ -65,7 +65,6 @@ Read-Only:
 
 - `enabled` (Boolean) Whether auto-refresh is enabled
 - `freshness_threshold_minutes` (Number) Maximum age (in minutes) of data before it is considered stale and eligible for refresh
-- `min_interval_between_syncs_minutes` (Number) Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls
 
 
 
@@ -218,6 +217,7 @@ Read-Only:
 - `constant` (String) Constant value to assign (any type). Parsed as JSON.
 - `enabled` (Attributes) Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--enabled))
 - `field` (String) Source field name or JSONPath expression (if starts with $)
+- `file_proxy_url` (Attributes) Auto-constructs a file proxy download URL. orgId and integrationId are injected from context. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url))
 - `jsonata_expression` (String) JSONata expression for transformation
 - `relation_refs` (Attributes) Configuration for relation references ($relation_ref).
 Relation references link to a specific item within a repeatable attribute on a related entity.
@@ -233,6 +233,49 @@ Read-Only:
 
 - `boolean` (Boolean)
 - `str` (String)
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.file_proxy_url`
+
+Read-Only:
+
+- `params` (Attributes Map) Custom query parameters. Keys become URL param names, values resolved from payload. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params))
+- `use_case_id` (String) UUID of the file_proxy use case. Maps to useCaseId query parameter.
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.file_proxy_url.params`
+
+Read-Only:
+
+- `one` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params--one))
+- `three` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params--three))
+- `two` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params--two))
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params--one"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.file_proxy_url.params.one`
+
+Read-Only:
+
+- `field` (String) Source field name or JSONPath expression (if starts with $)
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params--three"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.file_proxy_url.params.three`
+
+Read-Only:
+
+- `jsonata_expression` (String) JSONata expression for transformation
+
+
+<a id="nestedatt--use_cases--inbound--configuration--entities--fields--file_proxy_url--params--two"></a>
+### Nested Schema for `use_cases.inbound.configuration.entities.fields.file_proxy_url.params.two`
+
+Read-Only:
+
+- `constant` (String) Constant value (any type, stringified for URL). Parsed as JSON.
+
+
 
 
 <a id="nestedatt--use_cases--inbound--configuration--entities--fields--relation_refs"></a>
@@ -398,6 +441,7 @@ Read-Only:
 - `constant` (String) Constant value to assign (any type). Parsed as JSON.
 - `enabled` (Attributes) Controls whether this field mapping should be processed. Can be a boolean or a JSONata expression (string) that evaluates to a boolean. Defaults to true if omitted. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--enabled))
 - `field` (String) Source field name or JSONPath expression (if starts with $)
+- `file_proxy_url` (Attributes) Auto-constructs a file proxy download URL. orgId and integrationId are injected from context. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url))
 - `jsonata_expression` (String) JSONata expression for transformation
 - `relation_refs` (Attributes) Configuration for relation references ($relation_ref).
 Relation references link to a specific item within a repeatable attribute on a related entity.
@@ -413,6 +457,49 @@ Read-Only:
 
 - `boolean` (Boolean)
 - `str` (String)
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.file_proxy_url`
+
+Read-Only:
+
+- `params` (Attributes Map) Custom query parameters. Keys become URL param names, values resolved from payload. (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params))
+- `use_case_id` (String) UUID of the file_proxy use case. Maps to useCaseId query parameter.
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.file_proxy_url.params`
+
+Read-Only:
+
+- `one` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params--one))
+- `three` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params--three))
+- `two` (Attributes) (see [below for nested schema](#nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params--two))
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params--one"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.file_proxy_url.params.one`
+
+Read-Only:
+
+- `field` (String) Source field name or JSONPath expression (if starts with $)
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params--three"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.file_proxy_url.params.three`
+
+Read-Only:
+
+- `jsonata_expression` (String) JSONata expression for transformation
+
+
+<a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--file_proxy_url--params--two"></a>
+### Nested Schema for `use_cases.inbound.configuration.meter_readings.fields.file_proxy_url.params.two`
+
+Read-Only:
+
+- `constant` (String) Constant value (any type, stringified for URL). Parsed as JSON.
+
+
 
 
 <a id="nestedatt--use_cases--inbound--configuration--meter_readings--fields--relation_refs"></a>

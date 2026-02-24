@@ -19,9 +19,8 @@ resource "epilot-erp-integration_integration" "my_integration" {
   name = "...my_name..."
   settings = {
     auto_refresh = {
-      enabled                            = true
-      freshness_threshold_minutes        = 1
-      min_interval_between_syncs_minutes = 4
+      enabled                     = true
+      freshness_threshold_minutes = 1
     }
   }
   use_cases = [
@@ -42,7 +41,23 @@ resource "epilot-erp-integration_integration" "my_integration" {
                   enabled = {
                     boolean = false
                   }
-                  field              = "...my_field..."
+                  field = "...my_field..."
+                  file_proxy_url = {
+                    params = {
+                      key = {
+                        one = {
+                          field = "...my_field..."
+                        }
+                        three = {
+                          jsonata_expression = "...my_jsonata_expression..."
+                        }
+                        two = {
+                          constant = "{ \"see\": \"documentation\" }"
+                        }
+                      }
+                    }
+                    use_case_id = "...my_use_case_id..."
+                  }
                   jsonata_expression = "...my_jsonata_expression..."
                   relation_refs = {
                     items = [
@@ -132,7 +147,23 @@ resource "epilot-erp-integration_integration" "my_integration" {
                   enabled = {
                     boolean = true
                   }
-                  field              = "...my_field..."
+                  field = "...my_field..."
+                  file_proxy_url = {
+                    params = {
+                      key = {
+                        one = {
+                          field = "...my_field..."
+                        }
+                        three = {
+                          jsonata_expression = "...my_jsonata_expression..."
+                        }
+                        two = {
+                          constant = "{ \"see\": \"documentation\" }"
+                        }
+                      }
+                    }
+                    use_case_id = "...my_use_case_id..."
+                  }
                   jsonata_expression = "...my_jsonata_expression..."
                   relation_refs = {
                     items = [

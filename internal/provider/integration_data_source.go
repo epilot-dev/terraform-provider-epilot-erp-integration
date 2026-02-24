@@ -130,10 +130,6 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 								Computed:    true,
 								Description: `Maximum age (in minutes) of data before it is considered stale and eligible for refresh`,
 							},
-							"min_interval_between_syncs_minutes": schema.Int64Attribute{
-								Computed:    true,
-								Description: `Minimum interval (in minutes) between consecutive sync operations to prevent excessive API calls`,
-							},
 						},
 						Description: `Auto-refresh settings for keeping integration data fresh`,
 					},
@@ -351,6 +347,52 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 																"field": schema.StringAttribute{
 																	Computed:    true,
 																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"file_proxy_url": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"params": schema.MapNestedAttribute{
+																			Computed: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Attributes: map[string]schema.Attribute{
+																					"one": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `Source field name or JSONPath expression (if starts with $)`,
+																							},
+																						},
+																					},
+																					"three": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `JSONata expression for transformation`,
+																							},
+																						},
+																					},
+																					"two": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Description: `Constant value (any type, stringified for URL). Parsed as JSON.`,
+																							},
+																						},
+																					},
+																				},
+																			},
+																			Description: `Custom query parameters. Keys become URL param names, values resolved from payload.`,
+																		},
+																		"use_case_id": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `UUID of the file_proxy use case. Maps to useCaseId query parameter.`,
+																		},
+																	},
+																	Description: `Auto-constructs a file proxy download URL. orgId and integrationId are injected from context.`,
 																},
 																"jsonata_expression": schema.StringAttribute{
 																	Computed:    true,
@@ -660,6 +702,52 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 																"field": schema.StringAttribute{
 																	Computed:    true,
 																	Description: `Source field name or JSONPath expression (if starts with $)`,
+																},
+																"file_proxy_url": schema.SingleNestedAttribute{
+																	Computed: true,
+																	Attributes: map[string]schema.Attribute{
+																		"params": schema.MapNestedAttribute{
+																			Computed: true,
+																			NestedObject: schema.NestedAttributeObject{
+																				Attributes: map[string]schema.Attribute{
+																					"one": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"field": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `Source field name or JSONPath expression (if starts with $)`,
+																							},
+																						},
+																					},
+																					"three": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"jsonata_expression": schema.StringAttribute{
+																								Computed:    true,
+																								Description: `JSONata expression for transformation`,
+																							},
+																						},
+																					},
+																					"two": schema.SingleNestedAttribute{
+																						Computed: true,
+																						Attributes: map[string]schema.Attribute{
+																							"constant": schema.StringAttribute{
+																								CustomType:  jsontypes.NormalizedType{},
+																								Computed:    true,
+																								Description: `Constant value (any type, stringified for URL). Parsed as JSON.`,
+																							},
+																						},
+																					},
+																				},
+																			},
+																			Description: `Custom query parameters. Keys become URL param names, values resolved from payload.`,
+																		},
+																		"use_case_id": schema.StringAttribute{
+																			Computed:    true,
+																			Description: `UUID of the file_proxy use case. Maps to useCaseId query parameter.`,
+																		},
+																	},
+																	Description: `Auto-constructs a file proxy download URL. orgId and integrationId are injected from context.`,
 																},
 																"jsonata_expression": schema.StringAttribute{
 																	Computed:    true,
