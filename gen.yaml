@@ -22,7 +22,6 @@ generation:
   schemas:
     allOfMergeStrategy: shallowMerge
   requestBodyFieldName: ""
-  versioningStrategy: automatic
   persistentEdits: {}
   tests:
     generateTests: true
@@ -30,8 +29,9 @@ generation:
     skipResponseBodyAssertions: false
   sdkFlattening: true
   telemetryEnabled: false
+  versioningStrategy: automatic
 terraform:
-  version: 0.20.0
+  version: 0.21.6
   additionalActions: []
   additionalDataSources: []
   additionalDependencies: {}

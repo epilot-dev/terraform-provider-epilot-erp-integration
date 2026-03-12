@@ -11,10 +11,9 @@ type UpdateIntegrationRequest struct {
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
-	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
-	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
-	Settings *IntegrationSettings `json:"settings,omitempty"`
+	Settings          *IntegrationSettings `json:"settings,omitempty"`
+	EnvironmentConfig any                  `json:"environment_config,omitempty"`
 }
 
 func (u *UpdateIntegrationRequest) GetName() *string {
@@ -45,16 +44,16 @@ func (u *UpdateIntegrationRequest) GetAppIds() []string {
 	return u.AppIds
 }
 
-func (u *UpdateIntegrationRequest) GetEnvironmentConfig() []EnvironmentFieldConfig {
-	if u == nil {
-		return nil
-	}
-	return u.EnvironmentConfig
-}
-
 func (u *UpdateIntegrationRequest) GetSettings() *IntegrationSettings {
 	if u == nil {
 		return nil
 	}
 	return u.Settings
+}
+
+func (u *UpdateIntegrationRequest) GetEnvironmentConfig() any {
+	if u == nil {
+		return nil
+	}
+	return u.EnvironmentConfig
 }

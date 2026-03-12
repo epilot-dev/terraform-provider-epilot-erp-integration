@@ -35,17 +35,20 @@ func (e *CreateFileProxyUseCaseRequestType) UnmarshalJSON(data []byte) error {
 type CreateFileProxyUseCaseRequest struct {
 	// Use case name
 	Name string `json:"name"`
+	// URL-safe identifier for the use case. Recommended for portable cross-environment referencing. Must be unique per integration. Immutable after creation. Lowercase alphanumeric, hyphens, and underscores only.
+	//
+	Slug *string `json:"slug,omitempty"`
 	// Whether the use case is enabled
 	Enabled bool `json:"enabled"`
 	// Use case type
 	Type CreateFileProxyUseCaseRequestType `json:"type"`
 	// Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
 	//
-	// The file proxy download URL always requires `orgId`, `integrationId`, and `useCaseId` as query parameters.
+	// The file proxy download URL always requires `orgId`, `integrationId`, and either `useCaseSlug` (recommended) or `useCaseId` (legacy UUID) as query parameters.
 	// The `orgId` is included in the signed URL to establish organization context without requiring authentication.
 	// Additional use-case-specific parameters are declared in the `params` array.
 	//
-	Configuration *FileProxyUseCaseConfiguration `json:"configuration,omitempty"`
+	Configuration *FileProxyUseCaseConfigurationInput `json:"configuration,omitempty"`
 }
 
 func (c CreateFileProxyUseCaseRequest) MarshalJSON() ([]byte, error) {
@@ -66,6 +69,13 @@ func (c *CreateFileProxyUseCaseRequest) GetName() string {
 	return c.Name
 }
 
+func (c *CreateFileProxyUseCaseRequest) GetSlug() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Slug
+}
+
 func (c *CreateFileProxyUseCaseRequest) GetEnabled() bool {
 	if c == nil {
 		return false
@@ -80,7 +90,7 @@ func (c *CreateFileProxyUseCaseRequest) GetType() CreateFileProxyUseCaseRequestT
 	return c.Type
 }
 
-func (c *CreateFileProxyUseCaseRequest) GetConfiguration() *FileProxyUseCaseConfiguration {
+func (c *CreateFileProxyUseCaseRequest) GetConfiguration() *FileProxyUseCaseConfigurationInput {
 	if c == nil {
 		return nil
 	}

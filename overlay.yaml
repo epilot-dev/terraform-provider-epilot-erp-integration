@@ -44,3 +44,19 @@ actions:
   - target: $["components"]["schemas"]["IntegrationWithUseCases"]
     update:
       x-speakeasy-entity: Integration
+
+  - target: $["components"]["schemas"]["UpsertIntegrationWithUseCasesRequest"]["allOf"][1]["properties"]["use_cases"]
+    remove: true
+  - target: $["components"]["schemas"]["UpsertIntegrationWithUseCasesRequest"]["allOf"][1]["properties"]
+    update:
+      use_cases: {}
+  - target: $["components"]["schemas"]["IntegrationWithUseCases"]["allOf"][1]["properties"]["use_cases"]
+    remove: true
+  - target: $["components"]["schemas"]["IntegrationWithUseCases"]["allOf"][1]["properties"]
+    update:
+      use_cases: {}
+  - target: $["components"]["schemas"]["IntegrationEditableFields"]["properties"]["environment_config"]
+    remove: true
+  - target: $["components"]["schemas"]["IntegrationEditableFields"]["properties"]
+    update:
+      environment_config: {}

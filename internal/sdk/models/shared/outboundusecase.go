@@ -40,6 +40,9 @@ type OutboundUseCase struct {
 	IntegrationID string `json:"integrationId"`
 	// Use case name
 	Name string `json:"name"`
+	// URL-safe identifier for the use case. Recommended for portable cross-environment referencing. Unique per integration. Immutable after creation. Lowercase alphanumeric, hyphens, and underscores only.
+	//
+	Slug *string `json:"slug,omitempty"`
 	// Use case type
 	Type    OutboundUseCaseType `json:"type"`
 	Enabled bool                `json:"enabled"`
@@ -83,6 +86,13 @@ func (o *OutboundUseCase) GetName() string {
 		return ""
 	}
 	return o.Name
+}
+
+func (o *OutboundUseCase) GetSlug() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Slug
 }
 
 func (o *OutboundUseCase) GetType() OutboundUseCaseType {

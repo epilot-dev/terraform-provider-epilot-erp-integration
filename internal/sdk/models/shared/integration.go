@@ -24,10 +24,9 @@ type Integration struct {
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
-	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
-	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
-	Settings *IntegrationSettings `json:"settings,omitempty"`
+	Settings          *IntegrationSettings `json:"settings,omitempty"`
+	EnvironmentConfig any                  `json:"environment_config,omitempty"`
 }
 
 func (i Integration) MarshalJSON() ([]byte, error) {
@@ -97,16 +96,16 @@ func (i *Integration) GetAppIds() []string {
 	return i.AppIds
 }
 
-func (i *Integration) GetEnvironmentConfig() []EnvironmentFieldConfig {
-	if i == nil {
-		return nil
-	}
-	return i.EnvironmentConfig
-}
-
 func (i *Integration) GetSettings() *IntegrationSettings {
 	if i == nil {
 		return nil
 	}
 	return i.Settings
+}
+
+func (i *Integration) GetEnvironmentConfig() any {
+	if i == nil {
+		return nil
+	}
+	return i.EnvironmentConfig
 }

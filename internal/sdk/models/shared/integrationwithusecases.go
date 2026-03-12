@@ -25,12 +25,10 @@ type IntegrationWithUseCases struct {
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
-	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
-	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
-	Settings *IntegrationSettings `json:"settings,omitempty"`
-	// All use cases belonging to this integration
-	UseCases []UseCase `json:"use_cases"`
+	Settings          *IntegrationSettings `json:"settings,omitempty"`
+	EnvironmentConfig any                  `json:"environment_config,omitempty"`
+	UseCases          any                  `json:"use_cases"`
 }
 
 func (i IntegrationWithUseCases) MarshalJSON() ([]byte, error) {
@@ -100,13 +98,6 @@ func (i *IntegrationWithUseCases) GetAppIds() []string {
 	return i.AppIds
 }
 
-func (i *IntegrationWithUseCases) GetEnvironmentConfig() []EnvironmentFieldConfig {
-	if i == nil {
-		return nil
-	}
-	return i.EnvironmentConfig
-}
-
 func (i *IntegrationWithUseCases) GetSettings() *IntegrationSettings {
 	if i == nil {
 		return nil
@@ -114,9 +105,16 @@ func (i *IntegrationWithUseCases) GetSettings() *IntegrationSettings {
 	return i.Settings
 }
 
-func (i *IntegrationWithUseCases) GetUseCases() []UseCase {
+func (i *IntegrationWithUseCases) GetEnvironmentConfig() any {
 	if i == nil {
-		return []UseCase{}
+		return nil
+	}
+	return i.EnvironmentConfig
+}
+
+func (i *IntegrationWithUseCases) GetUseCases() any {
+	if i == nil {
+		return nil
 	}
 	return i.UseCases
 }

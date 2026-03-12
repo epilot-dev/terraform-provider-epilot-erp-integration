@@ -13,6 +13,7 @@ type FileProxyAuthType string
 
 const (
 	FileProxyAuthTypeOauth2ClientCredentials FileProxyAuthType = "oauth2_client_credentials"
+	FileProxyAuthTypeOauth2Password          FileProxyAuthType = "oauth2_password"
 )
 
 func (e FileProxyAuthType) ToPointer() *FileProxyAuthType {
@@ -25,6 +26,8 @@ func (e *FileProxyAuthType) UnmarshalJSON(data []byte) error {
 	}
 	switch v {
 	case "oauth2_client_credentials":
+		fallthrough
+	case "oauth2_password":
 		*e = FileProxyAuthType(v)
 		return nil
 	default:
@@ -43,6 +46,20 @@ type FileProxyAuth struct {
 	ClientSecret string `json:"client_secret"`
 	// Optional OAuth2 scope
 	Scope *string `json:"scope,omitempty"`
+	// Handlebars template for the OAuth2 audience parameter
+	Audience *string `json:"audience,omitempty"`
+	// Handlebars template for the OAuth2 resource parameter
+	Resource *string `json:"resource,omitempty"`
+	// Handlebars template for the OAuth2 resource owner username. Required when type is oauth2_password.
+	Username *string `json:"username,omitempty"`
+	// Handlebars template for the OAuth2 resource owner password. Required when type is oauth2_password.
+	Password *string `json:"password,omitempty"`
+	// Additional key-value pairs to include in the token request body. Values support Handlebars templates.
+	BodyParams map[string]string `json:"body_params,omitempty"`
+	// Additional headers to include in the token request. Values support Handlebars templates.
+	Headers map[string]string `json:"headers,omitempty"`
+	// Additional query parameters to append to the token URL. Values support Handlebars templates.
+	QueryParams map[string]string `json:"query_params,omitempty"`
 }
 
 func (f FileProxyAuth) MarshalJSON() ([]byte, error) {
@@ -89,4 +106,53 @@ func (f *FileProxyAuth) GetScope() *string {
 		return nil
 	}
 	return f.Scope
+}
+
+func (f *FileProxyAuth) GetAudience() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Audience
+}
+
+func (f *FileProxyAuth) GetResource() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Resource
+}
+
+func (f *FileProxyAuth) GetUsername() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Username
+}
+
+func (f *FileProxyAuth) GetPassword() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Password
+}
+
+func (f *FileProxyAuth) GetBodyParams() map[string]string {
+	if f == nil {
+		return nil
+	}
+	return f.BodyParams
+}
+
+func (f *FileProxyAuth) GetHeaders() map[string]string {
+	if f == nil {
+		return nil
+	}
+	return f.Headers
+}
+
+func (f *FileProxyAuth) GetQueryParams() map[string]string {
+	if f == nil {
+		return nil
+	}
+	return f.QueryParams
 }

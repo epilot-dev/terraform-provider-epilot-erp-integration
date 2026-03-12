@@ -42,6 +42,8 @@ type FileProxyUseCaseHistoryEntry struct {
 	IntegrationID string `json:"integrationId"`
 	// Use case name at this point in history
 	Name string `json:"name"`
+	// Use case slug at this point in history
+	Slug *string `json:"slug,omitempty"`
 	// Whether the use case was enabled at this point in history
 	Enabled bool `json:"enabled"`
 	// Description of the change that was made at this point in history
@@ -56,7 +58,7 @@ type FileProxyUseCaseHistoryEntry struct {
 	Type FileProxyUseCaseHistoryEntryType `json:"type"`
 	// Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
 	//
-	// The file proxy download URL always requires `orgId`, `integrationId`, and `useCaseId` as query parameters.
+	// The file proxy download URL always requires `orgId`, `integrationId`, and either `useCaseSlug` (recommended) or `useCaseId` (legacy UUID) as query parameters.
 	// The `orgId` is included in the signed URL to establish organization context without requiring authentication.
 	// Additional use-case-specific parameters are declared in the `params` array.
 	//
@@ -100,6 +102,13 @@ func (f *FileProxyUseCaseHistoryEntry) GetName() string {
 		return ""
 	}
 	return f.Name
+}
+
+func (f *FileProxyUseCaseHistoryEntry) GetSlug() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Slug
 }
 
 func (f *FileProxyUseCaseHistoryEntry) GetEnabled() bool {

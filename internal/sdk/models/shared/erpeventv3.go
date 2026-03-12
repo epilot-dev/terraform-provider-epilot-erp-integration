@@ -10,6 +10,194 @@ import (
 	"time"
 )
 
+// ErpEventV3SchemasFormat - Format of the payload data
+type ErpEventV3SchemasFormat string
+
+const (
+	ErpEventV3SchemasFormatJSON ErpEventV3SchemasFormat = "json"
+	ErpEventV3SchemasFormatXML  ErpEventV3SchemasFormat = "xml"
+)
+
+func (e ErpEventV3SchemasFormat) ToPointer() *ErpEventV3SchemasFormat {
+	return &e
+}
+func (e *ErpEventV3SchemasFormat) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "json":
+		fallthrough
+	case "xml":
+		*e = ErpEventV3SchemasFormat(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ErpEventV3SchemasFormat: %v", v)
+	}
+}
+
+type ErpEventV3SchemasPayloadType string
+
+const (
+	ErpEventV3SchemasPayloadTypeStr      ErpEventV3SchemasPayloadType = "str"
+	ErpEventV3SchemasPayloadTypeMapOfAny ErpEventV3SchemasPayloadType = "mapOfAny"
+)
+
+// ErpEventV3SchemasPayload - The object data payload - can be either a serialized string or a direct JSON object
+type ErpEventV3SchemasPayload struct {
+	Str      *string        `queryParam:"inline" union:"member"`
+	MapOfAny map[string]any `queryParam:"inline" union:"member"`
+
+	Type ErpEventV3SchemasPayloadType
+}
+
+func CreateErpEventV3SchemasPayloadStr(str string) ErpEventV3SchemasPayload {
+	typ := ErpEventV3SchemasPayloadTypeStr
+
+	return ErpEventV3SchemasPayload{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func CreateErpEventV3SchemasPayloadMapOfAny(mapOfAny map[string]any) ErpEventV3SchemasPayload {
+	typ := ErpEventV3SchemasPayloadTypeMapOfAny
+
+	return ErpEventV3SchemasPayload{
+		MapOfAny: mapOfAny,
+		Type:     typ,
+	}
+}
+
+func (u *ErpEventV3SchemasPayload) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ErpEventV3SchemasPayloadTypeStr,
+			Value: &str,
+		})
+	}
+
+	var mapOfAny map[string]any = map[string]any{}
+	if err := utils.UnmarshalJSON(data, &mapOfAny, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ErpEventV3SchemasPayloadTypeMapOfAny,
+			Value: mapOfAny,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ErpEventV3SchemasPayload", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ErpEventV3SchemasPayload", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ErpEventV3SchemasPayloadType)
+	switch best.Type {
+	case ErpEventV3SchemasPayloadTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	case ErpEventV3SchemasPayloadTypeMapOfAny:
+		u.MapOfAny = best.Value.(map[string]any)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ErpEventV3SchemasPayload", string(data))
+}
+
+func (u ErpEventV3SchemasPayload) MarshalJSON() ([]byte, error) {
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	if u.MapOfAny != nil {
+		return utils.MarshalJSON(u.MapOfAny, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type ErpEventV3SchemasPayload: all fields are null")
+}
+
+type Two struct {
+	// Event name from integration mapping (e.g., business_partner, contract_account). Required when use_case_slug is not provided.
+	//
+	EventName *string `json:"event_name,omitempty"`
+	// Timestamp when the event occurred
+	Timestamp time.Time `json:"timestamp"`
+	// Format of the payload data
+	Format *ErpEventV3SchemasFormat `default:"json" json:"format"`
+	// The object data payload - can be either a serialized string or a direct JSON object
+	Payload ErpEventV3SchemasPayload `json:"payload"`
+	// Recommended. Use case slug for routing this event to the correct use case configuration. If provided, takes precedence over event_name for use case lookup. Preferred over event_name-based routing as slugs are portable across environments.
+	//
+	UseCaseSlug string `json:"use_case_slug"`
+	// Optional unique identifier for idempotency - prevents duplicate processing of the same event within 24 hours in context of the same integration. Must contain only alphanumeric characters, hyphens, and underscores.
+	//
+	DeduplicationID *string `json:"deduplication_id,omitempty"`
+}
+
+func (t Two) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(t, "", false)
+}
+
+func (t *Two) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *Two) GetEventName() *string {
+	if t == nil {
+		return nil
+	}
+	return t.EventName
+}
+
+func (t *Two) GetTimestamp() time.Time {
+	if t == nil {
+		return time.Time{}
+	}
+	return t.Timestamp
+}
+
+func (t *Two) GetFormat() *ErpEventV3SchemasFormat {
+	if t == nil {
+		return nil
+	}
+	return t.Format
+}
+
+func (t *Two) GetPayload() ErpEventV3SchemasPayload {
+	if t == nil {
+		return ErpEventV3SchemasPayload{}
+	}
+	return t.Payload
+}
+
+func (t *Two) GetUseCaseSlug() string {
+	if t == nil {
+		return ""
+	}
+	return t.UseCaseSlug
+}
+
+func (t *Two) GetDeduplicationID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.DeduplicationID
+}
+
 // ErpEventV3Format - Format of the payload data
 type ErpEventV3Format string
 
@@ -127,8 +315,9 @@ func (u ErpEventV3Payload) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type ErpEventV3Payload: all fields are null")
 }
 
-type ErpEventV3 struct {
-	// Name of the event (e.g., business_partner, contract_account). Corresponds to the "Event Name" from the integration UI. Replaces object_type from V2.
+type One struct {
+	// Event name from integration mapping (e.g., business_partner, contract_account). Required when use_case_slug is not provided.
+	//
 	EventName string `json:"event_name"`
 	// Timestamp when the event occurred
 	Timestamp time.Time `json:"timestamp"`
@@ -136,53 +325,152 @@ type ErpEventV3 struct {
 	Format *ErpEventV3Format `default:"json" json:"format"`
 	// The object data payload - can be either a serialized string or a direct JSON object
 	Payload ErpEventV3Payload `json:"payload"`
+	// Recommended. Use case slug for routing this event to the correct use case configuration. If provided, takes precedence over event_name for use case lookup. Preferred over event_name-based routing as slugs are portable across environments.
+	//
+	UseCaseSlug *string `json:"use_case_slug,omitempty"`
 	// Optional unique identifier for idempotency - prevents duplicate processing of the same event within 24 hours in context of the same integration. Must contain only alphanumeric characters, hyphens, and underscores.
 	//
 	DeduplicationID *string `json:"deduplication_id,omitempty"`
 }
 
-func (e ErpEventV3) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(e, "", false)
+func (o One) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
 }
 
-func (e *ErpEventV3) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+func (o *One) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (e *ErpEventV3) GetEventName() string {
-	if e == nil {
+func (o *One) GetEventName() string {
+	if o == nil {
 		return ""
 	}
-	return e.EventName
+	return o.EventName
 }
 
-func (e *ErpEventV3) GetTimestamp() time.Time {
-	if e == nil {
+func (o *One) GetTimestamp() time.Time {
+	if o == nil {
 		return time.Time{}
 	}
-	return e.Timestamp
+	return o.Timestamp
 }
 
-func (e *ErpEventV3) GetFormat() *ErpEventV3Format {
-	if e == nil {
+func (o *One) GetFormat() *ErpEventV3Format {
+	if o == nil {
 		return nil
 	}
-	return e.Format
+	return o.Format
 }
 
-func (e *ErpEventV3) GetPayload() ErpEventV3Payload {
-	if e == nil {
+func (o *One) GetPayload() ErpEventV3Payload {
+	if o == nil {
 		return ErpEventV3Payload{}
 	}
-	return e.Payload
+	return o.Payload
 }
 
-func (e *ErpEventV3) GetDeduplicationID() *string {
-	if e == nil {
+func (o *One) GetUseCaseSlug() *string {
+	if o == nil {
 		return nil
 	}
-	return e.DeduplicationID
+	return o.UseCaseSlug
+}
+
+func (o *One) GetDeduplicationID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.DeduplicationID
+}
+
+type ErpEventV3Type string
+
+const (
+	ErpEventV3TypeOne ErpEventV3Type = "1"
+	ErpEventV3TypeTwo ErpEventV3Type = "2"
+)
+
+type ErpEventV3 struct {
+	One *One `queryParam:"inline" union:"member"`
+	Two *Two `queryParam:"inline" union:"member"`
+
+	Type ErpEventV3Type
+}
+
+func CreateErpEventV3One(one One) ErpEventV3 {
+	typ := ErpEventV3TypeOne
+
+	return ErpEventV3{
+		One:  &one,
+		Type: typ,
+	}
+}
+
+func CreateErpEventV3Two(two Two) ErpEventV3 {
+	typ := ErpEventV3TypeTwo
+
+	return ErpEventV3{
+		Two:  &two,
+		Type: typ,
+	}
+}
+
+func (u *ErpEventV3) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var one One = One{}
+	if err := utils.UnmarshalJSON(data, &one, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ErpEventV3TypeOne,
+			Value: &one,
+		})
+	}
+
+	var two Two = Two{}
+	if err := utils.UnmarshalJSON(data, &two, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ErpEventV3TypeTwo,
+			Value: &two,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ErpEventV3", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ErpEventV3", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ErpEventV3Type)
+	switch best.Type {
+	case ErpEventV3TypeOne:
+		u.One = best.Value.(*One)
+		return nil
+	case ErpEventV3TypeTwo:
+		u.Two = best.Value.(*Two)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ErpEventV3", string(data))
+}
+
+func (u ErpEventV3) MarshalJSON() ([]byte, error) {
+	if u.One != nil {
+		return utils.MarshalJSON(u.One, "", true)
+	}
+
+	if u.Two != nil {
+		return utils.MarshalJSON(u.Two, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type ErpEventV3: all fields are null")
 }

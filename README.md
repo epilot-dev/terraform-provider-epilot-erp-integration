@@ -41,7 +41,7 @@ terraform {
   required_providers {
     epilot-erp-integration = {
       source  = "epilot-dev/epilot-erp-integration"
-      version = "0.20.0"
+      version = "0.21.6"
     }
   }
 }
@@ -68,10 +68,9 @@ Available configuration:
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
-### Managed Resources
+### Resources
 
 * [epilot-erp-integration_integration](docs/resources/integration.md)
-
 ### Data Sources
 
 * [epilot-erp-integration_integration](docs/data-sources/integration.md)

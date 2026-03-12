@@ -5,6 +5,8 @@ package shared
 type MappingSimulationResponse struct {
 	EntityUpdates        []EntityUpdate       `json:"entity_updates"`
 	MeterReadingsUpdates []MeterReadingUpdate `json:"meter_readings_updates,omitempty"`
+	// Validation warnings about the configuration (e.g., unique_ids referencing non-indexed fields)
+	Warnings []MappingSimulationWarning `json:"warnings,omitempty"`
 }
 
 func (m *MappingSimulationResponse) GetEntityUpdates() []EntityUpdate {
@@ -19,4 +21,11 @@ func (m *MappingSimulationResponse) GetMeterReadingsUpdates() []MeterReadingUpda
 		return nil
 	}
 	return m.MeterReadingsUpdates
+}
+
+func (m *MappingSimulationResponse) GetWarnings() []MappingSimulationWarning {
+	if m == nil {
+		return nil
+	}
+	return m.Warnings
 }

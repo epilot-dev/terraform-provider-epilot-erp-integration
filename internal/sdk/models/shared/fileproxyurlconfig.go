@@ -3,38 +3,163 @@
 package shared
 
 import (
+	"errors"
+	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
 )
 
-// FileProxyURLConfig - Auto-constructs a file proxy download URL. orgId and integrationId are injected from context.
-type FileProxyURLConfig struct {
-	// UUID of the file_proxy use case. Maps to useCaseId query parameter.
+type FileProxyURLConfig2 struct {
+	// Legacy. UUID of the file_proxy use case. Maps to useCaseId query parameter. Prefer use_case_slug for portable configuration.
+	//
 	UseCaseID string `json:"use_case_id"`
 	// Custom query parameters. Keys become URL param names, values resolved from payload.
 	Params map[string]FileProxyURLParam `json:"params,omitempty"`
 }
 
-func (f FileProxyURLConfig) MarshalJSON() ([]byte, error) {
+func (f FileProxyURLConfig2) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(f, "", false)
 }
 
-func (f *FileProxyURLConfig) UnmarshalJSON(data []byte) error {
+func (f *FileProxyURLConfig2) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (f *FileProxyURLConfig) GetUseCaseID() string {
+func (f *FileProxyURLConfig2) GetUseCaseID() string {
 	if f == nil {
 		return ""
 	}
 	return f.UseCaseID
 }
 
-func (f *FileProxyURLConfig) GetParams() map[string]FileProxyURLParam {
+func (f *FileProxyURLConfig2) GetParams() map[string]FileProxyURLParam {
 	if f == nil {
 		return nil
 	}
 	return f.Params
+}
+
+type FileProxyURLConfig1 struct {
+	// Recommended. Slug of the file_proxy use case. Maps to useCaseSlug query parameter. Portable across environments.
+	//
+	UseCaseSlug string `json:"use_case_slug"`
+	// Custom query parameters. Keys become URL param names, values resolved from payload.
+	Params map[string]FileProxyURLParam `json:"params,omitempty"`
+}
+
+func (f FileProxyURLConfig1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *FileProxyURLConfig1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (f *FileProxyURLConfig1) GetUseCaseSlug() string {
+	if f == nil {
+		return ""
+	}
+	return f.UseCaseSlug
+}
+
+func (f *FileProxyURLConfig1) GetParams() map[string]FileProxyURLParam {
+	if f == nil {
+		return nil
+	}
+	return f.Params
+}
+
+type FileProxyURLConfigType string
+
+const (
+	FileProxyURLConfigTypeFileProxyURLConfig1 FileProxyURLConfigType = "FileProxyUrlConfig_1"
+	FileProxyURLConfigTypeFileProxyURLConfig2 FileProxyURLConfigType = "FileProxyUrlConfig_2"
+)
+
+// FileProxyURLConfig - Auto-constructs a file proxy download URL. orgId and integrationId are injected from context. Exactly one of use_case_id or use_case_slug must be provided. Using use_case_slug is recommended as it is portable across environments.
+type FileProxyURLConfig struct {
+	FileProxyURLConfig1 *FileProxyURLConfig1 `queryParam:"inline" union:"member"`
+	FileProxyURLConfig2 *FileProxyURLConfig2 `queryParam:"inline" union:"member"`
+
+	Type FileProxyURLConfigType
+}
+
+func CreateFileProxyURLConfigFileProxyURLConfig1(fileProxyURLConfig1 FileProxyURLConfig1) FileProxyURLConfig {
+	typ := FileProxyURLConfigTypeFileProxyURLConfig1
+
+	return FileProxyURLConfig{
+		FileProxyURLConfig1: &fileProxyURLConfig1,
+		Type:                typ,
+	}
+}
+
+func CreateFileProxyURLConfigFileProxyURLConfig2(fileProxyURLConfig2 FileProxyURLConfig2) FileProxyURLConfig {
+	typ := FileProxyURLConfigTypeFileProxyURLConfig2
+
+	return FileProxyURLConfig{
+		FileProxyURLConfig2: &fileProxyURLConfig2,
+		Type:                typ,
+	}
+}
+
+func (u *FileProxyURLConfig) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var fileProxyURLConfig1 FileProxyURLConfig1 = FileProxyURLConfig1{}
+	if err := utils.UnmarshalJSON(data, &fileProxyURLConfig1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  FileProxyURLConfigTypeFileProxyURLConfig1,
+			Value: &fileProxyURLConfig1,
+		})
+	}
+
+	var fileProxyURLConfig2 FileProxyURLConfig2 = FileProxyURLConfig2{}
+	if err := utils.UnmarshalJSON(data, &fileProxyURLConfig2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  FileProxyURLConfigTypeFileProxyURLConfig2,
+			Value: &fileProxyURLConfig2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for FileProxyURLConfig", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for FileProxyURLConfig", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(FileProxyURLConfigType)
+	switch best.Type {
+	case FileProxyURLConfigTypeFileProxyURLConfig1:
+		u.FileProxyURLConfig1 = best.Value.(*FileProxyURLConfig1)
+		return nil
+	case FileProxyURLConfigTypeFileProxyURLConfig2:
+		u.FileProxyURLConfig2 = best.Value.(*FileProxyURLConfig2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for FileProxyURLConfig", string(data))
+}
+
+func (u FileProxyURLConfig) MarshalJSON() ([]byte, error) {
+	if u.FileProxyURLConfig1 != nil {
+		return utils.MarshalJSON(u.FileProxyURLConfig1, "", true)
+	}
+
+	if u.FileProxyURLConfig2 != nil {
+		return utils.MarshalJSON(u.FileProxyURLConfig2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type FileProxyURLConfig: all fields are null")
 }

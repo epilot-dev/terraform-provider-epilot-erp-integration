@@ -35,6 +35,9 @@ func (e *UpdateInboundUseCaseRequestType) UnmarshalJSON(data []byte) error {
 type UpdateInboundUseCaseRequest struct {
 	// Use case name
 	Name *string `json:"name,omitempty"`
+	// URL-safe identifier for the use case. Recommended for portable cross-environment referencing. Can only be set once on use cases that don't have a slug yet. Immutable after being set.
+	//
+	Slug *string `json:"slug,omitempty"`
 	// Whether the use case is enabled
 	Enabled *bool `json:"enabled,omitempty"`
 	// Optional description of this change (like a commit message)
@@ -61,6 +64,13 @@ func (u *UpdateInboundUseCaseRequest) GetName() *string {
 		return nil
 	}
 	return u.Name
+}
+
+func (u *UpdateInboundUseCaseRequest) GetSlug() *string {
+	if u == nil {
+		return nil
+	}
+	return u.Slug
 }
 
 func (u *UpdateInboundUseCaseRequest) GetEnabled() *bool {

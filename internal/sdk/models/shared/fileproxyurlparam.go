@@ -31,84 +31,84 @@ func (t *Three) GetJsonataExpression() string {
 	return t.JsonataExpression
 }
 
-type Two struct {
+type FileProxyURLParam2 struct {
 	// Constant value (any type, stringified for URL)
 	Constant any `json:"constant"`
 }
 
-func (t Two) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(t, "", false)
+func (f FileProxyURLParam2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
 }
 
-func (t *Two) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
+func (f *FileProxyURLParam2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (t *Two) GetConstant() any {
-	if t == nil {
+func (f *FileProxyURLParam2) GetConstant() any {
+	if f == nil {
 		return nil
 	}
-	return t.Constant
+	return f.Constant
 }
 
-type One struct {
+type FileProxyURLParam1 struct {
 	// Source field name or JSONPath expression (if starts with $)
 	Field string `json:"field"`
 }
 
-func (o One) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(o, "", false)
+func (f FileProxyURLParam1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
 }
 
-func (o *One) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+func (f *FileProxyURLParam1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *One) GetField() string {
-	if o == nil {
+func (f *FileProxyURLParam1) GetField() string {
+	if f == nil {
 		return ""
 	}
-	return o.Field
+	return f.Field
 }
 
 type FileProxyURLParamType string
 
 const (
-	FileProxyURLParamTypeOne   FileProxyURLParamType = "1"
-	FileProxyURLParamTypeTwo   FileProxyURLParamType = "2"
-	FileProxyURLParamTypeThree FileProxyURLParamType = "3"
+	FileProxyURLParamTypeFileProxyURLParam1 FileProxyURLParamType = "FileProxyUrlParam_1"
+	FileProxyURLParamTypeFileProxyURLParam2 FileProxyURLParamType = "FileProxyUrlParam_2"
+	FileProxyURLParamTypeThree              FileProxyURLParamType = "3"
 )
 
 // FileProxyURLParam - Parameter for file proxy URL. Exactly one of field, constant, or jsonataExpression must be set.
 type FileProxyURLParam struct {
-	One   *One   `queryParam:"inline" union:"member"`
-	Two   *Two   `queryParam:"inline" union:"member"`
-	Three *Three `queryParam:"inline" union:"member"`
+	FileProxyURLParam1 *FileProxyURLParam1 `queryParam:"inline" union:"member"`
+	FileProxyURLParam2 *FileProxyURLParam2 `queryParam:"inline" union:"member"`
+	Three              *Three              `queryParam:"inline" union:"member"`
 
 	Type FileProxyURLParamType
 }
 
-func CreateFileProxyURLParamOne(one One) FileProxyURLParam {
-	typ := FileProxyURLParamTypeOne
+func CreateFileProxyURLParamFileProxyURLParam1(fileProxyURLParam1 FileProxyURLParam1) FileProxyURLParam {
+	typ := FileProxyURLParamTypeFileProxyURLParam1
 
 	return FileProxyURLParam{
-		One:  &one,
-		Type: typ,
+		FileProxyURLParam1: &fileProxyURLParam1,
+		Type:               typ,
 	}
 }
 
-func CreateFileProxyURLParamTwo(two Two) FileProxyURLParam {
-	typ := FileProxyURLParamTypeTwo
+func CreateFileProxyURLParamFileProxyURLParam2(fileProxyURLParam2 FileProxyURLParam2) FileProxyURLParam {
+	typ := FileProxyURLParamTypeFileProxyURLParam2
 
 	return FileProxyURLParam{
-		Two:  &two,
-		Type: typ,
+		FileProxyURLParam2: &fileProxyURLParam2,
+		Type:               typ,
 	}
 }
 
@@ -126,19 +126,19 @@ func (u *FileProxyURLParam) UnmarshalJSON(data []byte) error {
 	var candidates []utils.UnionCandidate
 
 	// Collect all valid candidates
-	var one One = One{}
-	if err := utils.UnmarshalJSON(data, &one, "", true, nil); err == nil {
+	var fileProxyURLParam1 FileProxyURLParam1 = FileProxyURLParam1{}
+	if err := utils.UnmarshalJSON(data, &fileProxyURLParam1, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  FileProxyURLParamTypeOne,
-			Value: &one,
+			Type:  FileProxyURLParamTypeFileProxyURLParam1,
+			Value: &fileProxyURLParam1,
 		})
 	}
 
-	var two Two = Two{}
-	if err := utils.UnmarshalJSON(data, &two, "", true, nil); err == nil {
+	var fileProxyURLParam2 FileProxyURLParam2 = FileProxyURLParam2{}
+	if err := utils.UnmarshalJSON(data, &fileProxyURLParam2, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  FileProxyURLParamTypeTwo,
-			Value: &two,
+			Type:  FileProxyURLParamTypeFileProxyURLParam2,
+			Value: &fileProxyURLParam2,
 		})
 	}
 
@@ -163,11 +163,11 @@ func (u *FileProxyURLParam) UnmarshalJSON(data []byte) error {
 	// Set the union type and value based on the best candidate
 	u.Type = best.Type.(FileProxyURLParamType)
 	switch best.Type {
-	case FileProxyURLParamTypeOne:
-		u.One = best.Value.(*One)
+	case FileProxyURLParamTypeFileProxyURLParam1:
+		u.FileProxyURLParam1 = best.Value.(*FileProxyURLParam1)
 		return nil
-	case FileProxyURLParamTypeTwo:
-		u.Two = best.Value.(*Two)
+	case FileProxyURLParamTypeFileProxyURLParam2:
+		u.FileProxyURLParam2 = best.Value.(*FileProxyURLParam2)
 		return nil
 	case FileProxyURLParamTypeThree:
 		u.Three = best.Value.(*Three)
@@ -178,12 +178,12 @@ func (u *FileProxyURLParam) UnmarshalJSON(data []byte) error {
 }
 
 func (u FileProxyURLParam) MarshalJSON() ([]byte, error) {
-	if u.One != nil {
-		return utils.MarshalJSON(u.One, "", true)
+	if u.FileProxyURLParam1 != nil {
+		return utils.MarshalJSON(u.FileProxyURLParam1, "", true)
 	}
 
-	if u.Two != nil {
-		return utils.MarshalJSON(u.Two, "", true)
+	if u.FileProxyURLParam2 != nil {
+		return utils.MarshalJSON(u.FileProxyURLParam2, "", true)
 	}
 
 	if u.Three != nil {

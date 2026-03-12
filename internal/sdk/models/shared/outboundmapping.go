@@ -10,7 +10,7 @@ import (
 // OutboundMapping - A mapping that transforms an event and delivers it to a webhook
 type OutboundMapping struct {
 	// Unique identifier for this mapping
-	ID string `json:"id"`
+	ID *string `json:"id,omitempty"`
 	// Human-readable name for this mapping
 	Name string `json:"name"`
 	// JSONata expression to transform the event payload
@@ -36,9 +36,9 @@ func (o *OutboundMapping) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *OutboundMapping) GetID() string {
+func (o *OutboundMapping) GetID() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.ID
 }

@@ -40,6 +40,9 @@ type FileProxyUseCase struct {
 	IntegrationID string `json:"integrationId"`
 	// Use case name
 	Name string `json:"name"`
+	// URL-safe identifier for the use case. Recommended for portable cross-environment referencing. Unique per integration. Immutable after creation. Lowercase alphanumeric, hyphens, and underscores only.
+	//
+	Slug *string `json:"slug,omitempty"`
 	// Use case type
 	Type    FileProxyUseCaseType `json:"type"`
 	Enabled bool                 `json:"enabled"`
@@ -51,7 +54,7 @@ type FileProxyUseCase struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
 	//
-	// The file proxy download URL always requires `orgId`, `integrationId`, and `useCaseId` as query parameters.
+	// The file proxy download URL always requires `orgId`, `integrationId`, and either `useCaseSlug` (recommended) or `useCaseId` (legacy UUID) as query parameters.
 	// The `orgId` is included in the signed URL to establish organization context without requiring authentication.
 	// Additional use-case-specific parameters are declared in the `params` array.
 	//
@@ -88,6 +91,13 @@ func (f *FileProxyUseCase) GetName() string {
 		return ""
 	}
 	return f.Name
+}
+
+func (f *FileProxyUseCase) GetSlug() *string {
+	if f == nil {
+		return nil
+	}
+	return f.Slug
 }
 
 func (f *FileProxyUseCase) GetType() FileProxyUseCaseType {

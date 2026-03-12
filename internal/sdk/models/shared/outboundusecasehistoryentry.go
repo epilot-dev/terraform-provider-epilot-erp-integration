@@ -42,6 +42,8 @@ type OutboundUseCaseHistoryEntry struct {
 	IntegrationID string `json:"integrationId"`
 	// Use case name at this point in history
 	Name string `json:"name"`
+	// Use case slug at this point in history
+	Slug *string `json:"slug,omitempty"`
 	// Whether the use case was enabled at this point in history
 	Enabled bool `json:"enabled"`
 	// Description of the change that was made at this point in history
@@ -95,6 +97,13 @@ func (o *OutboundUseCaseHistoryEntry) GetName() string {
 		return ""
 	}
 	return o.Name
+}
+
+func (o *OutboundUseCaseHistoryEntry) GetSlug() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Slug
 }
 
 func (o *OutboundUseCaseHistoryEntry) GetEnabled() bool {

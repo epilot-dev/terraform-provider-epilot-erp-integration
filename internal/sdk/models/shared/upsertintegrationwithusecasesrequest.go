@@ -13,16 +13,10 @@ type UpsertIntegrationWithUseCasesRequest struct {
 	AccessTokenIds []string `json:"access_token_ids,omitempty"`
 	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
-	// Configuration defining environment variables needed by this integration. Values are stored in the Environments API.
-	EnvironmentConfig []EnvironmentFieldConfig `json:"environment_config,omitempty"`
 	// Settings for the integration
-	Settings *IntegrationSettings `json:"settings,omitempty"`
-	// Full list of use cases (declarative). This replaces ALL existing use cases.
-	// - Use cases with an `id` field matching an existing use case will be updated
-	// - Use cases without an `id` or with a non-matching `id` will be created
-	// - Existing use cases not in this list will be deleted
-	//
-	UseCases []EmbeddedUseCaseRequest `json:"use_cases,omitempty"`
+	Settings          *IntegrationSettings `json:"settings,omitempty"`
+	EnvironmentConfig any                  `json:"environment_config,omitempty"`
+	UseCases          any                  `json:"use_cases,omitempty"`
 }
 
 func (u *UpsertIntegrationWithUseCasesRequest) GetName() string {
@@ -53,13 +47,6 @@ func (u *UpsertIntegrationWithUseCasesRequest) GetAppIds() []string {
 	return u.AppIds
 }
 
-func (u *UpsertIntegrationWithUseCasesRequest) GetEnvironmentConfig() []EnvironmentFieldConfig {
-	if u == nil {
-		return nil
-	}
-	return u.EnvironmentConfig
-}
-
 func (u *UpsertIntegrationWithUseCasesRequest) GetSettings() *IntegrationSettings {
 	if u == nil {
 		return nil
@@ -67,7 +54,14 @@ func (u *UpsertIntegrationWithUseCasesRequest) GetSettings() *IntegrationSetting
 	return u.Settings
 }
 
-func (u *UpsertIntegrationWithUseCasesRequest) GetUseCases() []EmbeddedUseCaseRequest {
+func (u *UpsertIntegrationWithUseCasesRequest) GetEnvironmentConfig() any {
+	if u == nil {
+		return nil
+	}
+	return u.EnvironmentConfig
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetUseCases() any {
 	if u == nil {
 		return nil
 	}

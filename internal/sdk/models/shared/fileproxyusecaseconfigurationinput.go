@@ -6,15 +6,13 @@ import (
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
 )
 
-// FileProxyUseCaseConfiguration - Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
+// FileProxyUseCaseConfigurationInput - Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
 //
 // The file proxy download URL always requires `orgId`, `integrationId`, and either `useCaseSlug` (recommended) or `useCaseId` (legacy UUID) as query parameters.
 // The `orgId` is included in the signed URL to establish organization context without requiring authentication.
 // Additional use-case-specific parameters are declared in the `params` array.
-type FileProxyUseCaseConfiguration struct {
-	// Whether requests require VPC routing for IP allowlisting. Read-only after creation — can only be modified directly in DynamoDB.
-	RequiresVpc *bool          `default:"false" json:"requires_vpc"`
-	Auth        *FileProxyAuth `json:"auth,omitempty"`
+type FileProxyUseCaseConfigurationInput struct {
+	Auth *FileProxyAuth `json:"auth,omitempty"`
 	// Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, and useCaseSlug or useCaseId)
 	Params []FileProxyParam `json:"params,omitempty"`
 	// Ordered list of HTTP steps to execute to retrieve the file
@@ -22,46 +20,39 @@ type FileProxyUseCaseConfiguration struct {
 	Response FileProxyResponseConfig `json:"response"`
 }
 
-func (f FileProxyUseCaseConfiguration) MarshalJSON() ([]byte, error) {
+func (f FileProxyUseCaseConfigurationInput) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(f, "", false)
 }
 
-func (f *FileProxyUseCaseConfiguration) UnmarshalJSON(data []byte) error {
+func (f *FileProxyUseCaseConfigurationInput) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (f *FileProxyUseCaseConfiguration) GetRequiresVpc() *bool {
-	if f == nil {
-		return nil
-	}
-	return f.RequiresVpc
-}
-
-func (f *FileProxyUseCaseConfiguration) GetAuth() *FileProxyAuth {
+func (f *FileProxyUseCaseConfigurationInput) GetAuth() *FileProxyAuth {
 	if f == nil {
 		return nil
 	}
 	return f.Auth
 }
 
-func (f *FileProxyUseCaseConfiguration) GetParams() []FileProxyParam {
+func (f *FileProxyUseCaseConfigurationInput) GetParams() []FileProxyParam {
 	if f == nil {
 		return nil
 	}
 	return f.Params
 }
 
-func (f *FileProxyUseCaseConfiguration) GetSteps() []FileProxyStep {
+func (f *FileProxyUseCaseConfigurationInput) GetSteps() []FileProxyStep {
 	if f == nil {
 		return []FileProxyStep{}
 	}
 	return f.Steps
 }
 
-func (f *FileProxyUseCaseConfiguration) GetResponse() FileProxyResponseConfig {
+func (f *FileProxyUseCaseConfigurationInput) GetResponse() FileProxyResponseConfig {
 	if f == nil {
 		return FileProxyResponseConfig{}
 	}

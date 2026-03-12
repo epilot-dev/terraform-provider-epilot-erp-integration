@@ -9,27 +9,27 @@ import (
 	"time"
 )
 
-// InboundUseCaseType - Use case type
-type InboundUseCaseType string
+// Type - Use case type
+type Type string
 
 const (
-	InboundUseCaseTypeInbound InboundUseCaseType = "inbound"
+	TypeInbound Type = "inbound"
 )
 
-func (e InboundUseCaseType) ToPointer() *InboundUseCaseType {
+func (e Type) ToPointer() *Type {
 	return &e
 }
-func (e *InboundUseCaseType) UnmarshalJSON(data []byte) error {
+func (e *Type) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
 	case "inbound":
-		*e = InboundUseCaseType(v)
+		*e = Type(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for InboundUseCaseType: %v", v)
+		return fmt.Errorf("invalid value for Type: %v", v)
 	}
 }
 
@@ -40,9 +40,12 @@ type InboundUseCase struct {
 	IntegrationID string `json:"integrationId"`
 	// Use case name
 	Name string `json:"name"`
+	// URL-safe identifier for the use case. Recommended for portable cross-environment referencing. Unique per integration. Immutable after creation. Lowercase alphanumeric, hyphens, and underscores only.
+	//
+	Slug *string `json:"slug,omitempty"`
 	// Use case type
-	Type    InboundUseCaseType `json:"type"`
-	Enabled bool               `json:"enabled"`
+	Type    Type `json:"type"`
+	Enabled bool `json:"enabled"`
 	// Description of the last change made to this use case
 	ChangeDescription *string `json:"change_description,omitempty"`
 	// ISO-8601 timestamp when the use case was created
@@ -85,9 +88,16 @@ func (i *InboundUseCase) GetName() string {
 	return i.Name
 }
 
-func (i *InboundUseCase) GetType() InboundUseCaseType {
+func (i *InboundUseCase) GetSlug() *string {
 	if i == nil {
-		return InboundUseCaseType("")
+		return nil
+	}
+	return i.Slug
+}
+
+func (i *InboundUseCase) GetType() Type {
+	if i == nil {
+		return Type("")
 	}
 	return i.Type
 }

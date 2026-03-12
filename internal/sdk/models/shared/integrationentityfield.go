@@ -119,7 +119,8 @@ type IntegrationEntityField struct {
 	// Common use case: referencing a specific address within a contact's address list.
 	//
 	RelationRefs *RelationRefsConfig `json:"relation_refs,omitempty"`
-	// Auto-constructs a file proxy download URL. orgId and integrationId are injected from context.
+	// Auto-constructs a file proxy download URL. orgId and integrationId are injected from context. Exactly one of use_case_id or use_case_slug must be provided. Using use_case_slug is recommended as it is portable across environments.
+	//
 	FileProxyURL *FileProxyURLConfig `json:"file_proxy_url,omitempty"`
 }
 

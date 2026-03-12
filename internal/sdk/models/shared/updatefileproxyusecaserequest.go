@@ -35,6 +35,9 @@ func (e *UpdateFileProxyUseCaseRequestType) UnmarshalJSON(data []byte) error {
 type UpdateFileProxyUseCaseRequest struct {
 	// Use case name
 	Name *string `json:"name,omitempty"`
+	// URL-safe identifier for the use case. Recommended for portable cross-environment referencing. Can only be set once on use cases that don't have a slug yet. Immutable after being set.
+	//
+	Slug *string `json:"slug,omitempty"`
 	// Whether the use case is enabled
 	Enabled *bool `json:"enabled,omitempty"`
 	// Optional description of this change (like a commit message)
@@ -43,11 +46,11 @@ type UpdateFileProxyUseCaseRequest struct {
 	Type *UpdateFileProxyUseCaseRequestType `json:"type,omitempty"`
 	// Configuration for file_proxy use cases. Defines how to authenticate and fetch files from external document systems.
 	//
-	// The file proxy download URL always requires `orgId`, `integrationId`, and `useCaseId` as query parameters.
+	// The file proxy download URL always requires `orgId`, `integrationId`, and either `useCaseSlug` (recommended) or `useCaseId` (legacy UUID) as query parameters.
 	// The `orgId` is included in the signed URL to establish organization context without requiring authentication.
 	// Additional use-case-specific parameters are declared in the `params` array.
 	//
-	Configuration *FileProxyUseCaseConfiguration `json:"configuration,omitempty"`
+	Configuration *FileProxyUseCaseConfigurationInput `json:"configuration,omitempty"`
 }
 
 func (u UpdateFileProxyUseCaseRequest) MarshalJSON() ([]byte, error) {
@@ -66,6 +69,13 @@ func (u *UpdateFileProxyUseCaseRequest) GetName() *string {
 		return nil
 	}
 	return u.Name
+}
+
+func (u *UpdateFileProxyUseCaseRequest) GetSlug() *string {
+	if u == nil {
+		return nil
+	}
+	return u.Slug
 }
 
 func (u *UpdateFileProxyUseCaseRequest) GetEnabled() *bool {
@@ -89,7 +99,7 @@ func (u *UpdateFileProxyUseCaseRequest) GetType() *UpdateFileProxyUseCaseRequest
 	return u.Type
 }
 
-func (u *UpdateFileProxyUseCaseRequest) GetConfiguration() *FileProxyUseCaseConfiguration {
+func (u *UpdateFileProxyUseCaseRequest) GetConfiguration() *FileProxyUseCaseConfigurationInput {
 	if u == nil {
 		return nil
 	}
