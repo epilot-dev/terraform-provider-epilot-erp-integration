@@ -54,3 +54,6 @@ func (c *CreateIntegrationV2Response) GetErrorResponseBase() *shared.ErrorRespon
 	}
 	return c.ErrorResponseBase
 }
+
+// #region class-body-createintegrationv2response
+// #endregion class-body-createintegrationv2response

@@ -85,3 +85,6 @@ func (i *IntegrationConfigurationV1) GetMapping() Mapping {
 	}
 	return i.Mapping
 }
+
+// #region class-body-integrationconfigurationv1
+// #endregion class-body-integrationconfigurationv1

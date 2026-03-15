@@ -41,6 +41,9 @@ func (f *FileProxyURLConfig2) GetParams() map[string]FileProxyURLParam {
 	return f.Params
 }
 
+// #region class-body-fileproxyurlconfig2
+// #endregion class-body-fileproxyurlconfig2
+
 type FileProxyURLConfig1 struct {
 	// Recommended. Slug of the file_proxy use case. Maps to useCaseSlug query parameter. Portable across environments.
 	//
@@ -73,6 +76,9 @@ func (f *FileProxyURLConfig1) GetParams() map[string]FileProxyURLParam {
 	}
 	return f.Params
 }
+
+// #region class-body-fileproxyurlconfig1
+// #endregion class-body-fileproxyurlconfig1
 
 type FileProxyURLConfigType string
 

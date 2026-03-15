@@ -31,3 +31,6 @@ func (e *ErpUpdatesEventsV2Request) GetEvents() []ErpEvent {
 	}
 	return e.Events
 }
+
+// #region class-body-erpupdateseventsv2request
+// #endregion class-body-erpupdateseventsv2request

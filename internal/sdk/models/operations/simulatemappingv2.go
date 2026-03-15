@@ -54,3 +54,6 @@ func (s *SimulateMappingV2Response) GetErrorResponseBase() *shared.ErrorResponse
 	}
 	return s.ErrorResponseBase
 }
+
+// #region class-body-simulatemappingv2response
+// #endregion class-body-simulatemappingv2response

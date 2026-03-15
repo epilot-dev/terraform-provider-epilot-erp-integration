@@ -19,6 +19,9 @@ func (g *GetIntegrationV2Request) GetIntegrationID() string {
 	return g.IntegrationID
 }
 
+// #region class-body-getintegrationv2request
+// #endregion class-body-getintegrationv2request
+
 type GetIntegrationV2Response struct {
 	// HTTP response content type for this operation
 	ContentType string
@@ -66,3 +69,6 @@ func (g *GetIntegrationV2Response) GetErrorResponseBase() *shared.ErrorResponseB
 	}
 	return g.ErrorResponseBase
 }
+
+// #region class-body-getintegrationv2response
+// #endregion class-body-getintegrationv2response
