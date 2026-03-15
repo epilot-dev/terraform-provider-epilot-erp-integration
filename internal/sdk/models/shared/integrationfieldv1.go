@@ -55,3 +55,6 @@ func (i *IntegrationFieldV1) GetJsonataExpression() *string {
 	}
 	return i.JsonataExpression
 }
+
+// #region class-body-integrationfieldv1
+// #endregion class-body-integrationfieldv1

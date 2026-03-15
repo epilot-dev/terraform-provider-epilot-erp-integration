@@ -78,7 +78,7 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: `Parsed as JSON.`,
 			},
 			"id": schema.StringAttribute{
-				Computed:    true,
+				Required:    true,
 				Description: `Unique identifier for the integration`,
 			},
 			"name": schema.StringAttribute{

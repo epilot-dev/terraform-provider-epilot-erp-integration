@@ -71,6 +71,9 @@ func (p *ProcessErpUpdatesEventsV3Results) GetMessage() *string {
 	return p.Message
 }
 
+// #region class-body-processerpupdateseventsv3results
+// #endregion class-body-processerpupdateseventsv3results
+
 // ProcessErpUpdatesEventsV3ResponseBody - Some events failed to process
 type ProcessErpUpdatesEventsV3ResponseBody struct {
 	Results []ProcessErpUpdatesEventsV3Results `json:"results,omitempty"`
@@ -82,6 +85,9 @@ func (p *ProcessErpUpdatesEventsV3ResponseBody) GetResults() []ProcessErpUpdates
 	}
 	return p.Results
 }
+
+// #region class-body-processerpupdateseventsv3responsebody
+// #endregion class-body-processerpupdateseventsv3responsebody
 
 type ProcessErpUpdatesEventsV3Response struct {
 	// HTTP response content type for this operation
@@ -130,3 +136,6 @@ func (p *ProcessErpUpdatesEventsV3Response) GetErrorResponseBase() *shared.Error
 	}
 	return p.ErrorResponseBase
 }
+
+// #region class-body-processerpupdateseventsv3response
+// #endregion class-body-processerpupdateseventsv3response
