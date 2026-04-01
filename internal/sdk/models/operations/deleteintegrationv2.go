@@ -19,6 +19,9 @@ func (d *DeleteIntegrationV2Request) GetIntegrationID() string {
 	return d.IntegrationID
 }
 
+// #region class-body-deleteintegrationv2request
+// #endregion class-body-deleteintegrationv2request
+
 // DeleteIntegrationV2ResponseBody - Integration deleted successfully
 type DeleteIntegrationV2ResponseBody struct {
 	Message *string `json:"message,omitempty"`
@@ -30,6 +33,9 @@ func (d *DeleteIntegrationV2ResponseBody) GetMessage() *string {
 	}
 	return d.Message
 }
+
+// #region class-body-deleteintegrationv2responsebody
+// #endregion class-body-deleteintegrationv2responsebody
 
 type DeleteIntegrationV2Response struct {
 	// HTTP response content type for this operation
@@ -78,3 +84,6 @@ func (d *DeleteIntegrationV2Response) GetErrorResponseBase() *shared.ErrorRespon
 	}
 	return d.ErrorResponseBase
 }
+
+// #region class-body-deleteintegrationv2response
+// #endregion class-body-deleteintegrationv2response

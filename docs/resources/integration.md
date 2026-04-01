@@ -20,12 +20,52 @@ resource "epilot-erp-integration_integration" "my_integration" {
   app_ids = [
     "..."
   ]
+  connector_config = {
+    auth = {
+      api_key        = "...my_api_key..."
+      api_key_header = "...my_api_key_header..."
+      audience       = "...my_audience..."
+      body_params = {
+        key = "value"
+      }
+      client_id     = "...my_client_id..."
+      client_secret = "...my_client_secret..."
+      headers = {
+        key = "value"
+      }
+      query_params = {
+        key = "value"
+      }
+      resource  = "...my_resource..."
+      scope     = "...my_scope..."
+      token     = "...my_token..."
+      token_url = "...my_token_url..."
+      type      = "bearer"
+    }
+    base_url                  = "...my_base_url..."
+    latest_types_package_name = "...my_latest_types_package_name..."
+    latest_types_version      = "...my_latest_types_version..."
+    types_versions = [
+      {
+        generated_at = "2022-07-16T09:39:09.198Z"
+        generated_by = "...my_generated_by..."
+        package_name = "...my_package_name..."
+        status       = "deprecated"
+        version      = "...my_version..."
+      }
+    ]
+  }
   description        = "...my_description..."
   environment_config = "{ \"see\": \"documentation\" }"
-  name               = "...my_name..."
+  integration_type   = "erp"
+  manifest = [
+    "..."
+  ]
+  name      = "...my_name..."
+  protected = false
   settings = {
     auto_refresh = {
-      enabled                     = true
+      enabled                     = false
       freshness_threshold_minutes = 1
     }
   }
@@ -44,8 +84,12 @@ resource "epilot-erp-integration_integration" "my_integration" {
 
 - `access_token_ids` (List of String) List of access token IDs associated with this integration
 - `app_ids` (List of String) List of app IDs associated with this integration
+- `connector_config` (Attributes) Shared configuration for connector-type integrations (see [below for nested schema](#nestedatt--connector_config))
 - `description` (String) Optional description of the integration
 - `environment_config` (String) Parsed as JSON.
+- `integration_type` (String) Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs. Default: "erp"; must be one of ["erp", "connector"]
+- `manifest` (List of String) The manifest IDs associated with this integration
+- `protected` (Boolean) If true, integration is displayed in read-only mode in the UI to discourage changes
 - `settings` (Attributes) Settings for the integration (see [below for nested schema](#nestedatt--settings))
 - `use_cases` (String) Parsed as JSON.
 
@@ -55,6 +99,50 @@ resource "epilot-erp-integration_integration" "my_integration" {
 - `id` (String) Unique identifier for the integration
 - `org_id` (String) Organization ID
 - `updated_at` (String) ISO-8601 timestamp when the integration was last updated
+
+<a id="nestedatt--connector_config"></a>
+### Nested Schema for `connector_config`
+
+Optional:
+
+- `auth` (Attributes) Authentication configuration for managed call requests (see [below for nested schema](#nestedatt--connector_config--auth))
+- `base_url` (String) Base URL for the partner API
+- `latest_types_package_name` (String) Latest active types package name
+- `latest_types_version` (String) Latest active types package version
+- `types_versions` (Attributes List) History of generated type package versions (see [below for nested schema](#nestedatt--connector_config--types_versions))
+
+<a id="nestedatt--connector_config--auth"></a>
+### Nested Schema for `connector_config.auth`
+
+Optional:
+
+- `api_key` (String) API key value. Must be an {{env.key}} reference (secret).
+- `api_key_header` (String) Header name for API key auth (default X-API-Key)
+- `audience` (String) OAuth2 audience parameter (e.g. for Auth0, Azure AD). Can be plain text or {{env.key}} reference.
+- `body_params` (Map of String) Additional key-value pairs for the OAuth2 token request body. Values can be {{env.key}} references.
+- `client_id` (String) OAuth2 client ID. Can be plain text or {{env.key}} reference.
+- `client_secret` (String) OAuth2 client secret. Must be an {{env.key}} reference (secret).
+- `headers` (Map of String) Additional headers for the OAuth2 token request. Values can be {{env.key}} references.
+- `query_params` (Map of String) Additional query parameters for the OAuth2 token URL. Values can be {{env.key}} references.
+- `resource` (String) OAuth2 resource parameter (e.g. for Azure AD). Can be plain text or {{env.key}} reference.
+- `scope` (String) OAuth2 scope
+- `token` (String) Bearer token value. Must be an {{env.key}} reference (secret).
+- `token_url` (String) OAuth2 token URL. Can be plain text or {{env.key}} reference.
+- `type` (String) Authentication type. must be one of ["oauth2_client_credentials", "api_key", "bearer"]
+
+
+<a id="nestedatt--connector_config--types_versions"></a>
+### Nested Schema for `connector_config.types_versions`
+
+Optional:
+
+- `generated_at` (String) Not Null
+- `generated_by` (String) Not Null
+- `package_name` (String) Not Null
+- `status` (String) Not Null; must be one of ["active", "deprecated"]
+- `version` (String) Not Null
+
+
 
 <a id="nestedatt--settings"></a>
 ### Nested Schema for `settings`

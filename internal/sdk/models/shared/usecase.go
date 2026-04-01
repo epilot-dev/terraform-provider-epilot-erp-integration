@@ -9,26 +9,30 @@ import (
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
 )
 
-type UseCaseType string
+type UseCaseUnionType string
 
 const (
-	UseCaseTypeInbound   UseCaseType = "inbound"
-	UseCaseTypeOutbound  UseCaseType = "outbound"
-	UseCaseTypeFileProxy UseCaseType = "file_proxy"
+	UseCaseUnionTypeInbound     UseCaseUnionType = "inbound"
+	UseCaseUnionTypeOutbound    UseCaseUnionType = "outbound"
+	UseCaseUnionTypeFileProxy   UseCaseUnionType = "file_proxy"
+	UseCaseUnionTypeManagedCall UseCaseUnionType = "managed_call"
+	UseCaseUnionTypeSecureProxy UseCaseUnionType = "secure_proxy"
 )
 
 type UseCase struct {
-	InboundUseCase   *InboundUseCase   `queryParam:"inline" union:"member"`
-	OutboundUseCase  *OutboundUseCase  `queryParam:"inline" union:"member"`
-	FileProxyUseCase *FileProxyUseCase `queryParam:"inline" union:"member"`
+	InboundUseCase     *InboundUseCase     `queryParam:"inline" union:"member"`
+	OutboundUseCase    *OutboundUseCase    `queryParam:"inline" union:"member"`
+	FileProxyUseCase   *FileProxyUseCase   `queryParam:"inline" union:"member"`
+	ManagedCallUseCase *ManagedCallUseCase `queryParam:"inline" union:"member"`
+	SecureProxyUseCase *SecureProxyUseCase `queryParam:"inline" union:"member"`
 
-	Type UseCaseType
+	Type UseCaseUnionType
 }
 
 func CreateUseCaseInbound(inbound InboundUseCase) UseCase {
-	typ := UseCaseTypeInbound
+	typ := UseCaseUnionTypeInbound
 
-	typStr := Type(typ)
+	typStr := InboundUseCaseType(typ)
 	inbound.Type = typStr
 
 	return UseCase{
@@ -38,7 +42,7 @@ func CreateUseCaseInbound(inbound InboundUseCase) UseCase {
 }
 
 func CreateUseCaseOutbound(outbound OutboundUseCase) UseCase {
-	typ := UseCaseTypeOutbound
+	typ := UseCaseUnionTypeOutbound
 
 	typStr := OutboundUseCaseType(typ)
 	outbound.Type = typStr
@@ -50,7 +54,7 @@ func CreateUseCaseOutbound(outbound OutboundUseCase) UseCase {
 }
 
 func CreateUseCaseFileProxy(fileProxy FileProxyUseCase) UseCase {
-	typ := UseCaseTypeFileProxy
+	typ := UseCaseUnionTypeFileProxy
 
 	typStr := FileProxyUseCaseType(typ)
 	fileProxy.Type = typStr
@@ -58,6 +62,30 @@ func CreateUseCaseFileProxy(fileProxy FileProxyUseCase) UseCase {
 	return UseCase{
 		FileProxyUseCase: &fileProxy,
 		Type:             typ,
+	}
+}
+
+func CreateUseCaseManagedCall(managedCall ManagedCallUseCase) UseCase {
+	typ := UseCaseUnionTypeManagedCall
+
+	typStr := ManagedCallUseCaseType(typ)
+	managedCall.Type = typStr
+
+	return UseCase{
+		ManagedCallUseCase: &managedCall,
+		Type:               typ,
+	}
+}
+
+func CreateUseCaseSecureProxy(secureProxy SecureProxyUseCase) UseCase {
+	typ := UseCaseUnionTypeSecureProxy
+
+	typStr := SecureProxyUseCaseType(typ)
+	secureProxy.Type = typStr
+
+	return UseCase{
+		SecureProxyUseCase: &secureProxy,
+		Type:               typ,
 	}
 }
 
@@ -80,7 +108,7 @@ func (u *UseCase) UnmarshalJSON(data []byte) error {
 		}
 
 		u.InboundUseCase = inboundUseCase
-		u.Type = UseCaseTypeInbound
+		u.Type = UseCaseUnionTypeInbound
 		return nil
 	case "outbound":
 		outboundUseCase := new(OutboundUseCase)
@@ -89,7 +117,7 @@ func (u *UseCase) UnmarshalJSON(data []byte) error {
 		}
 
 		u.OutboundUseCase = outboundUseCase
-		u.Type = UseCaseTypeOutbound
+		u.Type = UseCaseUnionTypeOutbound
 		return nil
 	case "file_proxy":
 		fileProxyUseCase := new(FileProxyUseCase)
@@ -98,7 +126,25 @@ func (u *UseCase) UnmarshalJSON(data []byte) error {
 		}
 
 		u.FileProxyUseCase = fileProxyUseCase
-		u.Type = UseCaseTypeFileProxy
+		u.Type = UseCaseUnionTypeFileProxy
+		return nil
+	case "managed_call":
+		managedCallUseCase := new(ManagedCallUseCase)
+		if err := utils.UnmarshalJSON(data, &managedCallUseCase, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == managed_call) type ManagedCallUseCase within UseCase: %w", string(data), err)
+		}
+
+		u.ManagedCallUseCase = managedCallUseCase
+		u.Type = UseCaseUnionTypeManagedCall
+		return nil
+	case "secure_proxy":
+		secureProxyUseCase := new(SecureProxyUseCase)
+		if err := utils.UnmarshalJSON(data, &secureProxyUseCase, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == secure_proxy) type SecureProxyUseCase within UseCase: %w", string(data), err)
+		}
+
+		u.SecureProxyUseCase = secureProxyUseCase
+		u.Type = UseCaseUnionTypeSecureProxy
 		return nil
 	}
 
@@ -116,6 +162,14 @@ func (u UseCase) MarshalJSON() ([]byte, error) {
 
 	if u.FileProxyUseCase != nil {
 		return utils.MarshalJSON(u.FileProxyUseCase, "", true)
+	}
+
+	if u.ManagedCallUseCase != nil {
+		return utils.MarshalJSON(u.ManagedCallUseCase, "", true)
+	}
+
+	if u.SecureProxyUseCase != nil {
+		return utils.MarshalJSON(u.SecureProxyUseCase, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type UseCase: all fields are null")

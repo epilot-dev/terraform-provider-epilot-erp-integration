@@ -2,6 +2,39 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
+)
+
+// UpsertIntegrationWithUseCasesRequestIntegrationType - Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs.
+type UpsertIntegrationWithUseCasesRequestIntegrationType string
+
+const (
+	UpsertIntegrationWithUseCasesRequestIntegrationTypeErp       UpsertIntegrationWithUseCasesRequestIntegrationType = "erp"
+	UpsertIntegrationWithUseCasesRequestIntegrationTypeConnector UpsertIntegrationWithUseCasesRequestIntegrationType = "connector"
+)
+
+func (e UpsertIntegrationWithUseCasesRequestIntegrationType) ToPointer() *UpsertIntegrationWithUseCasesRequestIntegrationType {
+	return &e
+}
+func (e *UpsertIntegrationWithUseCasesRequestIntegrationType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "erp":
+		fallthrough
+	case "connector":
+		*e = UpsertIntegrationWithUseCasesRequestIntegrationType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for UpsertIntegrationWithUseCasesRequestIntegrationType: %v", v)
+	}
+}
+
 // UpsertIntegrationWithUseCasesRequest - Request to create or update an integration with embedded use cases (upsert).
 // This is a declarative operation - the request represents the desired state.
 type UpsertIntegrationWithUseCasesRequest struct {
@@ -14,9 +47,29 @@ type UpsertIntegrationWithUseCasesRequest struct {
 	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
 	// Settings for the integration
-	Settings          *IntegrationSettings `json:"settings,omitempty"`
-	EnvironmentConfig any                  `json:"environment_config,omitempty"`
-	UseCases          any                  `json:"use_cases,omitempty"`
+	Settings *IntegrationSettings `json:"settings,omitempty"`
+	// Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs.
+	//
+	IntegrationType *UpsertIntegrationWithUseCasesRequestIntegrationType `default:"erp" json:"integration_type"`
+	// Shared configuration for connector-type integrations
+	ConnectorConfig *ConnectorConfig `json:"connector_config,omitempty"`
+	// If true, integration is displayed in read-only mode in the UI to discourage changes
+	Protected *bool `json:"protected,omitempty"`
+	// The manifest IDs associated with this integration
+	Manifest          []string `json:"_manifest,omitempty"`
+	EnvironmentConfig any      `json:"environment_config,omitempty"`
+	UseCases          any      `json:"use_cases,omitempty"`
+}
+
+func (u UpsertIntegrationWithUseCasesRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *UpsertIntegrationWithUseCasesRequest) GetName() string {
@@ -52,6 +105,34 @@ func (u *UpsertIntegrationWithUseCasesRequest) GetSettings() *IntegrationSetting
 		return nil
 	}
 	return u.Settings
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetIntegrationType() *UpsertIntegrationWithUseCasesRequestIntegrationType {
+	if u == nil {
+		return nil
+	}
+	return u.IntegrationType
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetConnectorConfig() *ConnectorConfig {
+	if u == nil {
+		return nil
+	}
+	return u.ConnectorConfig
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetProtected() *bool {
+	if u == nil {
+		return nil
+	}
+	return u.Protected
+}
+
+func (u *UpsertIntegrationWithUseCasesRequest) GetManifest() []string {
+	if u == nil {
+		return nil
+	}
+	return u.Manifest
 }
 
 func (u *UpsertIntegrationWithUseCasesRequest) GetEnvironmentConfig() any {

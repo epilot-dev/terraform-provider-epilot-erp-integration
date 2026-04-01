@@ -7,6 +7,9 @@ import (
 	"fmt"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk"
+	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators"
+	speakeasy_objectvalidators "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators/objectvalidators"
+	speakeasy_stringvalidators "github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/validators/stringvalidators"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -14,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -37,12 +41,16 @@ type IntegrationResource struct {
 type IntegrationResourceModel struct {
 	AccessTokenIds    []types.String               `tfsdk:"access_token_ids"`
 	AppIds            []types.String               `tfsdk:"app_ids"`
+	ConnectorConfig   *tfTypes.ConnectorConfig     `tfsdk:"connector_config"`
 	CreatedAt         types.String                 `tfsdk:"created_at"`
 	Description       types.String                 `tfsdk:"description"`
 	EnvironmentConfig jsontypes.Normalized         `tfsdk:"environment_config"`
 	ID                types.String                 `tfsdk:"id"`
+	IntegrationType   types.String                 `tfsdk:"integration_type"`
+	Manifest          []types.String               `tfsdk:"manifest"`
 	Name              types.String                 `tfsdk:"name"`
 	OrgID             types.String                 `tfsdk:"org_id"`
+	Protected         types.Bool                   `tfsdk:"protected"`
 	Settings          *tfTypes.IntegrationSettings `tfsdk:"settings"`
 	UpdatedAt         types.String                 `tfsdk:"updated_at"`
 	UseCases          jsontypes.Normalized         `tfsdk:"use_cases"`
@@ -68,6 +76,167 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 				ElementType: types.StringType,
 				Description: `List of app IDs associated with this integration`,
 			},
+			"connector_config": schema.SingleNestedAttribute{
+				Computed: true,
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"auth": schema.SingleNestedAttribute{
+						Computed: true,
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"api_key": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `API key value. Must be an {{env.key}} reference (secret).`,
+							},
+							"api_key_header": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `Header name for API key auth (default X-API-Key)`,
+							},
+							"audience": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `OAuth2 audience parameter (e.g. for Auth0, Azure AD). Can be plain text or {{env.key}} reference.`,
+							},
+							"body_params": schema.MapAttribute{
+								Computed:    true,
+								Optional:    true,
+								ElementType: types.StringType,
+								Description: `Additional key-value pairs for the OAuth2 token request body. Values can be {{env.key}} references.`,
+							},
+							"client_id": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `OAuth2 client ID. Can be plain text or {{env.key}} reference.`,
+							},
+							"client_secret": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `OAuth2 client secret. Must be an {{env.key}} reference (secret).`,
+							},
+							"headers": schema.MapAttribute{
+								Computed:    true,
+								Optional:    true,
+								ElementType: types.StringType,
+								Description: `Additional headers for the OAuth2 token request. Values can be {{env.key}} references.`,
+							},
+							"query_params": schema.MapAttribute{
+								Computed:    true,
+								Optional:    true,
+								ElementType: types.StringType,
+								Description: `Additional query parameters for the OAuth2 token URL. Values can be {{env.key}} references.`,
+							},
+							"resource": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `OAuth2 resource parameter (e.g. for Azure AD). Can be plain text or {{env.key}} reference.`,
+							},
+							"scope": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `OAuth2 scope`,
+							},
+							"token": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `Bearer token value. Must be an {{env.key}} reference (secret).`,
+							},
+							"token_url": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `OAuth2 token URL. Can be plain text or {{env.key}} reference.`,
+							},
+							"type": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `Authentication type. must be one of ["oauth2_client_credentials", "api_key", "bearer"]`,
+								Validators: []validator.String{
+									stringvalidator.OneOf(
+										"oauth2_client_credentials",
+										"api_key",
+										"bearer",
+									),
+								},
+							},
+						},
+						Description: `Authentication configuration for managed call requests`,
+					},
+					"base_url": schema.StringAttribute{
+						Computed:    true,
+						Optional:    true,
+						Description: `Base URL for the partner API`,
+					},
+					"latest_types_package_name": schema.StringAttribute{
+						Computed:    true,
+						Optional:    true,
+						Description: `Latest active types package name`,
+					},
+					"latest_types_version": schema.StringAttribute{
+						Computed:    true,
+						Optional:    true,
+						Description: `Latest active types package version`,
+					},
+					"types_versions": schema.ListNestedAttribute{
+						Computed: true,
+						Optional: true,
+						NestedObject: schema.NestedAttributeObject{
+							Validators: []validator.Object{
+								speakeasy_objectvalidators.NotNull(),
+							},
+							Attributes: map[string]schema.Attribute{
+								"generated_at": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										validators.IsRFC3339(),
+									},
+								},
+								"generated_by": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+									},
+								},
+								"package_name": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+									},
+								},
+								"status": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Not Null; must be one of ["active", "deprecated"]`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+										stringvalidator.OneOf(
+											"active",
+											"deprecated",
+										),
+									},
+								},
+								"version": schema.StringAttribute{
+									Computed:    true,
+									Optional:    true,
+									Description: `Not Null`,
+									Validators: []validator.String{
+										speakeasy_stringvalidators.NotNull(),
+									},
+								},
+							},
+						},
+						Description: `History of generated type package versions`,
+					},
+				},
+				Description: `Shared configuration for connector-type integrations`,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was created`,
@@ -90,6 +259,24 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed:    true,
 				Description: `Unique identifier for the integration`,
 			},
+			"integration_type": schema.StringAttribute{
+				Computed:    true,
+				Optional:    true,
+				Default:     stringdefault.StaticString(`erp`),
+				Description: `Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs. Default: "erp"; must be one of ["erp", "connector"]`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"erp",
+						"connector",
+					),
+				},
+			},
+			"manifest": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `The manifest IDs associated with this integration`,
+			},
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `Integration name`,
@@ -100,6 +287,11 @@ func (r *IntegrationResource) Schema(ctx context.Context, req resource.SchemaReq
 			"org_id": schema.StringAttribute{
 				Computed:    true,
 				Description: `Organization ID`,
+			},
+			"protected": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `If true, integration is displayed in read-only mode in the UI to discourage changes`,
 			},
 			"settings": schema.SingleNestedAttribute{
 				Computed: true,

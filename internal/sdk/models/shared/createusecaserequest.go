@@ -12,15 +12,19 @@ import (
 type CreateUseCaseRequestType string
 
 const (
-	CreateUseCaseRequestTypeInbound   CreateUseCaseRequestType = "inbound"
-	CreateUseCaseRequestTypeOutbound  CreateUseCaseRequestType = "outbound"
-	CreateUseCaseRequestTypeFileProxy CreateUseCaseRequestType = "file_proxy"
+	CreateUseCaseRequestTypeInbound     CreateUseCaseRequestType = "inbound"
+	CreateUseCaseRequestTypeOutbound    CreateUseCaseRequestType = "outbound"
+	CreateUseCaseRequestTypeFileProxy   CreateUseCaseRequestType = "file_proxy"
+	CreateUseCaseRequestTypeManagedCall CreateUseCaseRequestType = "managed_call"
+	CreateUseCaseRequestTypeSecureProxy CreateUseCaseRequestType = "secure_proxy"
 )
 
 type CreateUseCaseRequest struct {
-	CreateInboundUseCaseRequest   *CreateInboundUseCaseRequest   `queryParam:"inline" union:"member"`
-	CreateOutboundUseCaseRequest  *CreateOutboundUseCaseRequest  `queryParam:"inline" union:"member"`
-	CreateFileProxyUseCaseRequest *CreateFileProxyUseCaseRequest `queryParam:"inline" union:"member"`
+	CreateInboundUseCaseRequest     *CreateInboundUseCaseRequest     `queryParam:"inline" union:"member"`
+	CreateOutboundUseCaseRequest    *CreateOutboundUseCaseRequest    `queryParam:"inline" union:"member"`
+	CreateFileProxyUseCaseRequest   *CreateFileProxyUseCaseRequest   `queryParam:"inline" union:"member"`
+	CreateManagedCallUseCaseRequest *CreateManagedCallUseCaseRequest `queryParam:"inline" union:"member"`
+	CreateSecureProxyUseCaseRequest *CreateSecureProxyUseCaseRequest `queryParam:"inline" union:"member"`
 
 	Type CreateUseCaseRequestType
 }
@@ -58,6 +62,30 @@ func CreateCreateUseCaseRequestFileProxy(fileProxy CreateFileProxyUseCaseRequest
 	return CreateUseCaseRequest{
 		CreateFileProxyUseCaseRequest: &fileProxy,
 		Type:                          typ,
+	}
+}
+
+func CreateCreateUseCaseRequestManagedCall(managedCall CreateManagedCallUseCaseRequest) CreateUseCaseRequest {
+	typ := CreateUseCaseRequestTypeManagedCall
+
+	typStr := CreateManagedCallUseCaseRequestType(typ)
+	managedCall.Type = typStr
+
+	return CreateUseCaseRequest{
+		CreateManagedCallUseCaseRequest: &managedCall,
+		Type:                            typ,
+	}
+}
+
+func CreateCreateUseCaseRequestSecureProxy(secureProxy CreateSecureProxyUseCaseRequest) CreateUseCaseRequest {
+	typ := CreateUseCaseRequestTypeSecureProxy
+
+	typStr := CreateSecureProxyUseCaseRequestType(typ)
+	secureProxy.Type = typStr
+
+	return CreateUseCaseRequest{
+		CreateSecureProxyUseCaseRequest: &secureProxy,
+		Type:                            typ,
 	}
 }
 
@@ -100,6 +128,24 @@ func (u *CreateUseCaseRequest) UnmarshalJSON(data []byte) error {
 		u.CreateFileProxyUseCaseRequest = createFileProxyUseCaseRequest
 		u.Type = CreateUseCaseRequestTypeFileProxy
 		return nil
+	case "managed_call":
+		createManagedCallUseCaseRequest := new(CreateManagedCallUseCaseRequest)
+		if err := utils.UnmarshalJSON(data, &createManagedCallUseCaseRequest, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == managed_call) type CreateManagedCallUseCaseRequest within CreateUseCaseRequest: %w", string(data), err)
+		}
+
+		u.CreateManagedCallUseCaseRequest = createManagedCallUseCaseRequest
+		u.Type = CreateUseCaseRequestTypeManagedCall
+		return nil
+	case "secure_proxy":
+		createSecureProxyUseCaseRequest := new(CreateSecureProxyUseCaseRequest)
+		if err := utils.UnmarshalJSON(data, &createSecureProxyUseCaseRequest, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == secure_proxy) type CreateSecureProxyUseCaseRequest within CreateUseCaseRequest: %w", string(data), err)
+		}
+
+		u.CreateSecureProxyUseCaseRequest = createSecureProxyUseCaseRequest
+		u.Type = CreateUseCaseRequestTypeSecureProxy
+		return nil
 	}
 
 	return fmt.Errorf("could not unmarshal `%s` into any supported union types for CreateUseCaseRequest", string(data))
@@ -116,6 +162,14 @@ func (u CreateUseCaseRequest) MarshalJSON() ([]byte, error) {
 
 	if u.CreateFileProxyUseCaseRequest != nil {
 		return utils.MarshalJSON(u.CreateFileProxyUseCaseRequest, "", true)
+	}
+
+	if u.CreateManagedCallUseCaseRequest != nil {
+		return utils.MarshalJSON(u.CreateManagedCallUseCaseRequest, "", true)
+	}
+
+	if u.CreateSecureProxyUseCaseRequest != nil {
+		return utils.MarshalJSON(u.CreateSecureProxyUseCaseRequest, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type CreateUseCaseRequest: all fields are null")

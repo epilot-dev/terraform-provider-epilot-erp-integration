@@ -55,6 +55,9 @@ func (i *IntegrationConfigurationV2Mapping) GetEvents() map[string]InboundIntegr
 	return i.Events
 }
 
+// #region class-body-integrationconfigurationv2mapping
+// #endregion class-body-integrationconfigurationv2mapping
+
 type IntegrationConfigurationV2 struct {
 	// Mapping specification version
 	Version IntegrationConfigurationV2Version `json:"version"`
@@ -85,3 +88,6 @@ func (i *IntegrationConfigurationV2) GetMapping() IntegrationConfigurationV2Mapp
 	}
 	return i.Mapping
 }
+
+// #region class-body-integrationconfigurationv2
+// #endregion class-body-integrationconfigurationv2

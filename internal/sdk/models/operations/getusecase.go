@@ -90,6 +90,20 @@ func (g *GetUseCaseResponse) GetUseCaseFileProxy() *shared.FileProxyUseCase {
 	return nil
 }
 
+func (g *GetUseCaseResponse) GetUseCaseManagedCall() *shared.ManagedCallUseCase {
+	if v := g.GetUseCase(); v != nil {
+		return v.ManagedCallUseCase
+	}
+	return nil
+}
+
+func (g *GetUseCaseResponse) GetUseCaseSecureProxy() *shared.SecureProxyUseCase {
+	if v := g.GetUseCase(); v != nil {
+		return v.SecureProxyUseCase
+	}
+	return nil
+}
+
 func (g *GetUseCaseResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
 	if g == nil {
 		return nil

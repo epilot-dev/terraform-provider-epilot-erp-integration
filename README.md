@@ -48,7 +48,7 @@ terraform {
 
 provider "epilot-erp-integration" {
   epilot_auth = "<YOUR_EPILOT_AUTH>" # Required
-  server_url = "..." # Optional
+  server_url  = "..."                # Optional
 }
 ```
 <!-- End Installation [installation] -->
@@ -68,9 +68,10 @@ Available configuration:
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
-### Resources
+### Managed Resources
 
 * [epilot-erp-integration_integration](docs/resources/integration.md)
+
 ### Data Sources
 
 * [epilot-erp-integration_integration](docs/data-sources/integration.md)

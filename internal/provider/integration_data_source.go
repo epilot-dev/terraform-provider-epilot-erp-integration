@@ -32,12 +32,16 @@ type IntegrationDataSource struct {
 type IntegrationDataSourceModel struct {
 	AccessTokenIds    []types.String               `tfsdk:"access_token_ids"`
 	AppIds            []types.String               `tfsdk:"app_ids"`
+	ConnectorConfig   *tfTypes.ConnectorConfig     `tfsdk:"connector_config"`
 	CreatedAt         types.String                 `tfsdk:"created_at"`
 	Description       types.String                 `tfsdk:"description"`
 	EnvironmentConfig jsontypes.Normalized         `tfsdk:"environment_config"`
 	ID                types.String                 `tfsdk:"id"`
+	IntegrationType   types.String                 `tfsdk:"integration_type"`
+	Manifest          []types.String               `tfsdk:"manifest"`
 	Name              types.String                 `tfsdk:"name"`
 	OrgID             types.String                 `tfsdk:"org_id"`
+	Protected         types.Bool                   `tfsdk:"protected"`
 	Settings          *tfTypes.IntegrationSettings `tfsdk:"settings"`
 	UpdatedAt         types.String                 `tfsdk:"updated_at"`
 	UseCases          jsontypes.Normalized         `tfsdk:"use_cases"`
@@ -64,6 +68,108 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 				ElementType: types.StringType,
 				Description: `List of app IDs associated with this integration`,
 			},
+			"connector_config": schema.SingleNestedAttribute{
+				Computed: true,
+				Attributes: map[string]schema.Attribute{
+					"auth": schema.SingleNestedAttribute{
+						Computed: true,
+						Attributes: map[string]schema.Attribute{
+							"api_key": schema.StringAttribute{
+								Computed:    true,
+								Description: `API key value. Must be an {{env.key}} reference (secret).`,
+							},
+							"api_key_header": schema.StringAttribute{
+								Computed:    true,
+								Description: `Header name for API key auth (default X-API-Key)`,
+							},
+							"audience": schema.StringAttribute{
+								Computed:    true,
+								Description: `OAuth2 audience parameter (e.g. for Auth0, Azure AD). Can be plain text or {{env.key}} reference.`,
+							},
+							"body_params": schema.MapAttribute{
+								Computed:    true,
+								ElementType: types.StringType,
+								Description: `Additional key-value pairs for the OAuth2 token request body. Values can be {{env.key}} references.`,
+							},
+							"client_id": schema.StringAttribute{
+								Computed:    true,
+								Description: `OAuth2 client ID. Can be plain text or {{env.key}} reference.`,
+							},
+							"client_secret": schema.StringAttribute{
+								Computed:    true,
+								Description: `OAuth2 client secret. Must be an {{env.key}} reference (secret).`,
+							},
+							"headers": schema.MapAttribute{
+								Computed:    true,
+								ElementType: types.StringType,
+								Description: `Additional headers for the OAuth2 token request. Values can be {{env.key}} references.`,
+							},
+							"query_params": schema.MapAttribute{
+								Computed:    true,
+								ElementType: types.StringType,
+								Description: `Additional query parameters for the OAuth2 token URL. Values can be {{env.key}} references.`,
+							},
+							"resource": schema.StringAttribute{
+								Computed:    true,
+								Description: `OAuth2 resource parameter (e.g. for Azure AD). Can be plain text or {{env.key}} reference.`,
+							},
+							"scope": schema.StringAttribute{
+								Computed:    true,
+								Description: `OAuth2 scope`,
+							},
+							"token": schema.StringAttribute{
+								Computed:    true,
+								Description: `Bearer token value. Must be an {{env.key}} reference (secret).`,
+							},
+							"token_url": schema.StringAttribute{
+								Computed:    true,
+								Description: `OAuth2 token URL. Can be plain text or {{env.key}} reference.`,
+							},
+							"type": schema.StringAttribute{
+								Computed:    true,
+								Description: `Authentication type`,
+							},
+						},
+						Description: `Authentication configuration for managed call requests`,
+					},
+					"base_url": schema.StringAttribute{
+						Computed:    true,
+						Description: `Base URL for the partner API`,
+					},
+					"latest_types_package_name": schema.StringAttribute{
+						Computed:    true,
+						Description: `Latest active types package name`,
+					},
+					"latest_types_version": schema.StringAttribute{
+						Computed:    true,
+						Description: `Latest active types package version`,
+					},
+					"types_versions": schema.ListNestedAttribute{
+						Computed: true,
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"generated_at": schema.StringAttribute{
+									Computed: true,
+								},
+								"generated_by": schema.StringAttribute{
+									Computed: true,
+								},
+								"package_name": schema.StringAttribute{
+									Computed: true,
+								},
+								"status": schema.StringAttribute{
+									Computed: true,
+								},
+								"version": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
+						Description: `History of generated type package versions`,
+					},
+				},
+				Description: `Shared configuration for connector-type integrations`,
+			},
 			"created_at": schema.StringAttribute{
 				Computed:    true,
 				Description: `ISO-8601 timestamp when the integration was created`,
@@ -78,8 +184,17 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: `Parsed as JSON.`,
 			},
 			"id": schema.StringAttribute{
-				Computed:    true,
+				Required:    true,
 				Description: `Unique identifier for the integration`,
+			},
+			"integration_type": schema.StringAttribute{
+				Computed:    true,
+				Description: `Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs.`,
+			},
+			"manifest": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: `The manifest IDs associated with this integration`,
 			},
 			"name": schema.StringAttribute{
 				Computed:    true,
@@ -88,6 +203,10 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 			"org_id": schema.StringAttribute{
 				Computed:    true,
 				Description: `Organization ID`,
+			},
+			"protected": schema.BoolAttribute{
+				Computed:    true,
+				Description: `If true, integration is displayed in read-only mode in the UI to discourage changes`,
 			},
 			"settings": schema.SingleNestedAttribute{
 				Computed: true,

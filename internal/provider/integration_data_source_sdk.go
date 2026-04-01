@@ -18,6 +18,10 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		r.Manifest = make([]types.String, 0, len(resp.Manifest))
+		for _, v := range resp.Manifest {
+			r.Manifest = append(r.Manifest, types.StringValue(v))
+		}
 		r.AccessTokenIds = make([]types.String, 0, len(resp.AccessTokenIds))
 		for _, v := range resp.AccessTokenIds {
 			r.AccessTokenIds = append(r.AccessTokenIds, types.StringValue(v))
@@ -25,6 +29,64 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 		r.AppIds = make([]types.String, 0, len(resp.AppIds))
 		for _, v := range resp.AppIds {
 			r.AppIds = append(r.AppIds, types.StringValue(v))
+		}
+		if resp.ConnectorConfig == nil {
+			r.ConnectorConfig = nil
+		} else {
+			r.ConnectorConfig = &tfTypes.ConnectorConfig{}
+			if resp.ConnectorConfig.Auth == nil {
+				r.ConnectorConfig.Auth = nil
+			} else {
+				r.ConnectorConfig.Auth = &tfTypes.ManagedCallAuth{}
+				r.ConnectorConfig.Auth.APIKey = types.StringPointerValue(resp.ConnectorConfig.Auth.APIKey)
+				r.ConnectorConfig.Auth.APIKeyHeader = types.StringPointerValue(resp.ConnectorConfig.Auth.APIKeyHeader)
+				r.ConnectorConfig.Auth.Audience = types.StringPointerValue(resp.ConnectorConfig.Auth.Audience)
+				if len(resp.ConnectorConfig.Auth.BodyParams) > 0 {
+					r.ConnectorConfig.Auth.BodyParams = make(map[string]types.String, len(resp.ConnectorConfig.Auth.BodyParams))
+					for key, value := range resp.ConnectorConfig.Auth.BodyParams {
+						r.ConnectorConfig.Auth.BodyParams[key] = types.StringValue(value)
+					}
+				}
+				r.ConnectorConfig.Auth.ClientID = types.StringPointerValue(resp.ConnectorConfig.Auth.ClientID)
+				r.ConnectorConfig.Auth.ClientSecret = types.StringPointerValue(resp.ConnectorConfig.Auth.ClientSecret)
+				if len(resp.ConnectorConfig.Auth.Headers) > 0 {
+					r.ConnectorConfig.Auth.Headers = make(map[string]types.String, len(resp.ConnectorConfig.Auth.Headers))
+					for key1, value1 := range resp.ConnectorConfig.Auth.Headers {
+						r.ConnectorConfig.Auth.Headers[key1] = types.StringValue(value1)
+					}
+				}
+				if len(resp.ConnectorConfig.Auth.QueryParams) > 0 {
+					r.ConnectorConfig.Auth.QueryParams = make(map[string]types.String, len(resp.ConnectorConfig.Auth.QueryParams))
+					for key2, value2 := range resp.ConnectorConfig.Auth.QueryParams {
+						r.ConnectorConfig.Auth.QueryParams[key2] = types.StringValue(value2)
+					}
+				}
+				r.ConnectorConfig.Auth.Resource = types.StringPointerValue(resp.ConnectorConfig.Auth.Resource)
+				r.ConnectorConfig.Auth.Scope = types.StringPointerValue(resp.ConnectorConfig.Auth.Scope)
+				r.ConnectorConfig.Auth.Token = types.StringPointerValue(resp.ConnectorConfig.Auth.Token)
+				r.ConnectorConfig.Auth.TokenURL = types.StringPointerValue(resp.ConnectorConfig.Auth.TokenURL)
+				if resp.ConnectorConfig.Auth.Type != nil {
+					r.ConnectorConfig.Auth.Type = types.StringValue(string(*resp.ConnectorConfig.Auth.Type))
+				} else {
+					r.ConnectorConfig.Auth.Type = types.StringNull()
+				}
+			}
+			r.ConnectorConfig.BaseURL = types.StringPointerValue(resp.ConnectorConfig.BaseURL)
+			r.ConnectorConfig.LatestTypesPackageName = types.StringPointerValue(resp.ConnectorConfig.LatestTypesPackageName)
+			r.ConnectorConfig.LatestTypesVersion = types.StringPointerValue(resp.ConnectorConfig.LatestTypesVersion)
+			r.ConnectorConfig.TypesVersions = []tfTypes.TypesVersions{}
+
+			for _, typesVersionsItem := range resp.ConnectorConfig.TypesVersions {
+				var typesVersions tfTypes.TypesVersions
+
+				typesVersions.GeneratedAt = types.StringValue(typeconvert.TimeToString(typesVersionsItem.GeneratedAt))
+				typesVersions.GeneratedBy = types.StringValue(typesVersionsItem.GeneratedBy)
+				typesVersions.PackageName = types.StringValue(typesVersionsItem.PackageName)
+				typesVersions.Status = types.StringValue(string(typesVersionsItem.Status))
+				typesVersions.Version = types.StringValue(typesVersionsItem.Version)
+
+				r.ConnectorConfig.TypesVersions = append(r.ConnectorConfig.TypesVersions, typesVersions)
+			}
 		}
 		r.CreatedAt = types.StringValue(typeconvert.TimeToString(resp.CreatedAt))
 		r.Description = types.StringPointerValue(resp.Description)
@@ -35,8 +97,14 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 			r.EnvironmentConfig = jsontypes.NewNormalizedValue(string(environmentConfigResult))
 		}
 		r.ID = types.StringValue(resp.ID)
+		if resp.IntegrationType != nil {
+			r.IntegrationType = types.StringValue(string(*resp.IntegrationType))
+		} else {
+			r.IntegrationType = types.StringNull()
+		}
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)
+		r.Protected = types.BoolPointerValue(resp.Protected)
 		if resp.Settings == nil {
 			r.Settings = nil
 		} else {

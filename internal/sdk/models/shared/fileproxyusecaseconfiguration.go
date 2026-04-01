@@ -12,9 +12,12 @@ import (
 // The `orgId` is included in the signed URL to establish organization context without requiring authentication.
 // Additional use-case-specific parameters are declared in the `params` array.
 type FileProxyUseCaseConfiguration struct {
-	// Whether requests require VPC routing for IP allowlisting. Read-only after creation — can only be modified directly in DynamoDB.
-	RequiresVpc *bool          `default:"false" json:"requires_vpc"`
-	Auth        *FileProxyAuth `json:"auth,omitempty"`
+	// Optional secure proxy attachment for routing all outbound file proxy requests.
+	// Only `use_case_slug` is supported and the referenced secure_proxy use case
+	// must belong to the same integration.
+	//
+	SecureProxy *FileProxySecureProxyAttachment `json:"secure_proxy,omitempty"`
+	Auth        *FileProxyAuth                  `json:"auth,omitempty"`
 	// Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, and useCaseSlug or useCaseId)
 	Params []FileProxyParam `json:"params,omitempty"`
 	// Ordered list of HTTP steps to execute to retrieve the file
@@ -33,11 +36,11 @@ func (f *FileProxyUseCaseConfiguration) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (f *FileProxyUseCaseConfiguration) GetRequiresVpc() *bool {
+func (f *FileProxyUseCaseConfiguration) GetSecureProxy() *FileProxySecureProxyAttachment {
 	if f == nil {
 		return nil
 	}
-	return f.RequiresVpc
+	return f.SecureProxy
 }
 
 func (f *FileProxyUseCaseConfiguration) GetAuth() *FileProxyAuth {

@@ -48,7 +48,7 @@ type CreateFileProxyUseCaseRequest struct {
 	// The `orgId` is included in the signed URL to establish organization context without requiring authentication.
 	// Additional use-case-specific parameters are declared in the `params` array.
 	//
-	Configuration *FileProxyUseCaseConfigurationInput `json:"configuration,omitempty"`
+	Configuration *FileProxyUseCaseConfiguration `json:"configuration,omitempty"`
 }
 
 func (c CreateFileProxyUseCaseRequest) MarshalJSON() ([]byte, error) {
@@ -90,7 +90,7 @@ func (c *CreateFileProxyUseCaseRequest) GetType() CreateFileProxyUseCaseRequestT
 	return c.Type
 }
 
-func (c *CreateFileProxyUseCaseRequest) GetConfiguration() *FileProxyUseCaseConfigurationInput {
+func (c *CreateFileProxyUseCaseRequest) GetConfiguration() *FileProxyUseCaseConfiguration {
 	if c == nil {
 		return nil
 	}

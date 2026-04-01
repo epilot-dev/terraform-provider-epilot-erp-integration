@@ -12,15 +12,19 @@ import (
 type UpdateUseCaseRequestType string
 
 const (
-	UpdateUseCaseRequestTypeInbound   UpdateUseCaseRequestType = "inbound"
-	UpdateUseCaseRequestTypeOutbound  UpdateUseCaseRequestType = "outbound"
-	UpdateUseCaseRequestTypeFileProxy UpdateUseCaseRequestType = "file_proxy"
+	UpdateUseCaseRequestTypeInbound     UpdateUseCaseRequestType = "inbound"
+	UpdateUseCaseRequestTypeOutbound    UpdateUseCaseRequestType = "outbound"
+	UpdateUseCaseRequestTypeFileProxy   UpdateUseCaseRequestType = "file_proxy"
+	UpdateUseCaseRequestTypeManagedCall UpdateUseCaseRequestType = "managed_call"
+	UpdateUseCaseRequestTypeSecureProxy UpdateUseCaseRequestType = "secure_proxy"
 )
 
 type UpdateUseCaseRequest struct {
-	UpdateInboundUseCaseRequest   *UpdateInboundUseCaseRequest   `queryParam:"inline" union:"member"`
-	UpdateOutboundUseCaseRequest  *UpdateOutboundUseCaseRequest  `queryParam:"inline" union:"member"`
-	UpdateFileProxyUseCaseRequest *UpdateFileProxyUseCaseRequest `queryParam:"inline" union:"member"`
+	UpdateInboundUseCaseRequest     *UpdateInboundUseCaseRequest     `queryParam:"inline" union:"member"`
+	UpdateOutboundUseCaseRequest    *UpdateOutboundUseCaseRequest    `queryParam:"inline" union:"member"`
+	UpdateFileProxyUseCaseRequest   *UpdateFileProxyUseCaseRequest   `queryParam:"inline" union:"member"`
+	UpdateManagedCallUseCaseRequest *UpdateManagedCallUseCaseRequest `queryParam:"inline" union:"member"`
+	UpdateSecureProxyUseCaseRequest *UpdateSecureProxyUseCaseRequest `queryParam:"inline" union:"member"`
 
 	Type UpdateUseCaseRequestType
 }
@@ -58,6 +62,30 @@ func CreateUpdateUseCaseRequestFileProxy(fileProxy UpdateFileProxyUseCaseRequest
 	return UpdateUseCaseRequest{
 		UpdateFileProxyUseCaseRequest: &fileProxy,
 		Type:                          typ,
+	}
+}
+
+func CreateUpdateUseCaseRequestManagedCall(managedCall UpdateManagedCallUseCaseRequest) UpdateUseCaseRequest {
+	typ := UpdateUseCaseRequestTypeManagedCall
+
+	typStr := UpdateManagedCallUseCaseRequestType(typ)
+	managedCall.Type = &typStr
+
+	return UpdateUseCaseRequest{
+		UpdateManagedCallUseCaseRequest: &managedCall,
+		Type:                            typ,
+	}
+}
+
+func CreateUpdateUseCaseRequestSecureProxy(secureProxy UpdateSecureProxyUseCaseRequest) UpdateUseCaseRequest {
+	typ := UpdateUseCaseRequestTypeSecureProxy
+
+	typStr := UpdateSecureProxyUseCaseRequestType(typ)
+	secureProxy.Type = &typStr
+
+	return UpdateUseCaseRequest{
+		UpdateSecureProxyUseCaseRequest: &secureProxy,
+		Type:                            typ,
 	}
 }
 
@@ -100,6 +128,24 @@ func (u *UpdateUseCaseRequest) UnmarshalJSON(data []byte) error {
 		u.UpdateFileProxyUseCaseRequest = updateFileProxyUseCaseRequest
 		u.Type = UpdateUseCaseRequestTypeFileProxy
 		return nil
+	case "managed_call":
+		updateManagedCallUseCaseRequest := new(UpdateManagedCallUseCaseRequest)
+		if err := utils.UnmarshalJSON(data, &updateManagedCallUseCaseRequest, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == managed_call) type UpdateManagedCallUseCaseRequest within UpdateUseCaseRequest: %w", string(data), err)
+		}
+
+		u.UpdateManagedCallUseCaseRequest = updateManagedCallUseCaseRequest
+		u.Type = UpdateUseCaseRequestTypeManagedCall
+		return nil
+	case "secure_proxy":
+		updateSecureProxyUseCaseRequest := new(UpdateSecureProxyUseCaseRequest)
+		if err := utils.UnmarshalJSON(data, &updateSecureProxyUseCaseRequest, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == secure_proxy) type UpdateSecureProxyUseCaseRequest within UpdateUseCaseRequest: %w", string(data), err)
+		}
+
+		u.UpdateSecureProxyUseCaseRequest = updateSecureProxyUseCaseRequest
+		u.Type = UpdateUseCaseRequestTypeSecureProxy
+		return nil
 	}
 
 	return fmt.Errorf("could not unmarshal `%s` into any supported union types for UpdateUseCaseRequest", string(data))
@@ -116,6 +162,14 @@ func (u UpdateUseCaseRequest) MarshalJSON() ([]byte, error) {
 
 	if u.UpdateFileProxyUseCaseRequest != nil {
 		return utils.MarshalJSON(u.UpdateFileProxyUseCaseRequest, "", true)
+	}
+
+	if u.UpdateManagedCallUseCaseRequest != nil {
+		return utils.MarshalJSON(u.UpdateManagedCallUseCaseRequest, "", true)
+	}
+
+	if u.UpdateSecureProxyUseCaseRequest != nil {
+		return utils.MarshalJSON(u.UpdateSecureProxyUseCaseRequest, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type UpdateUseCaseRequest: all fields are null")

@@ -2,6 +2,39 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
+)
+
+// UpdateIntegrationRequestIntegrationType - Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs.
+type UpdateIntegrationRequestIntegrationType string
+
+const (
+	UpdateIntegrationRequestIntegrationTypeErp       UpdateIntegrationRequestIntegrationType = "erp"
+	UpdateIntegrationRequestIntegrationTypeConnector UpdateIntegrationRequestIntegrationType = "connector"
+)
+
+func (e UpdateIntegrationRequestIntegrationType) ToPointer() *UpdateIntegrationRequestIntegrationType {
+	return &e
+}
+func (e *UpdateIntegrationRequestIntegrationType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "erp":
+		fallthrough
+	case "connector":
+		*e = UpdateIntegrationRequestIntegrationType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for UpdateIntegrationRequestIntegrationType: %v", v)
+	}
+}
+
 type UpdateIntegrationRequest struct {
 	// Integration name
 	Name *string `json:"name,omitempty"`
@@ -12,8 +45,28 @@ type UpdateIntegrationRequest struct {
 	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
 	// Settings for the integration
-	Settings          *IntegrationSettings `json:"settings,omitempty"`
-	EnvironmentConfig any                  `json:"environment_config,omitempty"`
+	Settings *IntegrationSettings `json:"settings,omitempty"`
+	// Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs.
+	//
+	IntegrationType *UpdateIntegrationRequestIntegrationType `default:"erp" json:"integration_type"`
+	// Shared configuration for connector-type integrations
+	ConnectorConfig *ConnectorConfig `json:"connector_config,omitempty"`
+	// If true, integration is displayed in read-only mode in the UI to discourage changes
+	Protected *bool `json:"protected,omitempty"`
+	// The manifest IDs associated with this integration
+	Manifest          []string `json:"_manifest,omitempty"`
+	EnvironmentConfig any      `json:"environment_config,omitempty"`
+}
+
+func (u UpdateIntegrationRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *UpdateIntegrationRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *UpdateIntegrationRequest) GetName() *string {
@@ -49,6 +102,34 @@ func (u *UpdateIntegrationRequest) GetSettings() *IntegrationSettings {
 		return nil
 	}
 	return u.Settings
+}
+
+func (u *UpdateIntegrationRequest) GetIntegrationType() *UpdateIntegrationRequestIntegrationType {
+	if u == nil {
+		return nil
+	}
+	return u.IntegrationType
+}
+
+func (u *UpdateIntegrationRequest) GetConnectorConfig() *ConnectorConfig {
+	if u == nil {
+		return nil
+	}
+	return u.ConnectorConfig
+}
+
+func (u *UpdateIntegrationRequest) GetProtected() *bool {
+	if u == nil {
+		return nil
+	}
+	return u.Protected
+}
+
+func (u *UpdateIntegrationRequest) GetManifest() []string {
+	if u == nil {
+		return nil
+	}
+	return u.Manifest
 }
 
 func (u *UpdateIntegrationRequest) GetEnvironmentConfig() any {

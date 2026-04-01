@@ -168,3 +168,6 @@ func (m *MappingSimulationV2Request) GetPayload() MappingSimulationV2RequestPayl
 	}
 	return m.Payload
 }
+
+// #region class-body-mappingsimulationv2request
+// #endregion class-body-mappingsimulationv2request

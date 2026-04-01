@@ -27,6 +27,9 @@ func (u *UpdateIntegrationV2Request) GetUpsertIntegrationWithUseCasesRequest() s
 	return u.UpsertIntegrationWithUseCasesRequest
 }
 
+// #region class-body-updateintegrationv2request
+// #endregion class-body-updateintegrationv2request
+
 type UpdateIntegrationV2Response struct {
 	// HTTP response content type for this operation
 	ContentType string
@@ -74,3 +77,6 @@ func (u *UpdateIntegrationV2Response) GetErrorResponseBase() *shared.ErrorRespon
 	}
 	return u.ErrorResponseBase
 }
+
+// #region class-body-updateintegrationv2response
+// #endregion class-body-updateintegrationv2response

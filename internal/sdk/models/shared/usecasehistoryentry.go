@@ -12,15 +12,19 @@ import (
 type UseCaseHistoryEntryType string
 
 const (
-	UseCaseHistoryEntryTypeInbound   UseCaseHistoryEntryType = "inbound"
-	UseCaseHistoryEntryTypeOutbound  UseCaseHistoryEntryType = "outbound"
-	UseCaseHistoryEntryTypeFileProxy UseCaseHistoryEntryType = "file_proxy"
+	UseCaseHistoryEntryTypeInbound     UseCaseHistoryEntryType = "inbound"
+	UseCaseHistoryEntryTypeOutbound    UseCaseHistoryEntryType = "outbound"
+	UseCaseHistoryEntryTypeFileProxy   UseCaseHistoryEntryType = "file_proxy"
+	UseCaseHistoryEntryTypeManagedCall UseCaseHistoryEntryType = "managed_call"
+	UseCaseHistoryEntryTypeSecureProxy UseCaseHistoryEntryType = "secure_proxy"
 )
 
 type UseCaseHistoryEntry struct {
-	InboundUseCaseHistoryEntry   *InboundUseCaseHistoryEntry   `queryParam:"inline" union:"member"`
-	OutboundUseCaseHistoryEntry  *OutboundUseCaseHistoryEntry  `queryParam:"inline" union:"member"`
-	FileProxyUseCaseHistoryEntry *FileProxyUseCaseHistoryEntry `queryParam:"inline" union:"member"`
+	InboundUseCaseHistoryEntry     *InboundUseCaseHistoryEntry     `queryParam:"inline" union:"member"`
+	OutboundUseCaseHistoryEntry    *OutboundUseCaseHistoryEntry    `queryParam:"inline" union:"member"`
+	FileProxyUseCaseHistoryEntry   *FileProxyUseCaseHistoryEntry   `queryParam:"inline" union:"member"`
+	ManagedCallUseCaseHistoryEntry *ManagedCallUseCaseHistoryEntry `queryParam:"inline" union:"member"`
+	SecureProxyUseCaseHistoryEntry *SecureProxyUseCaseHistoryEntry `queryParam:"inline" union:"member"`
 
 	Type UseCaseHistoryEntryType
 }
@@ -58,6 +62,30 @@ func CreateUseCaseHistoryEntryFileProxy(fileProxy FileProxyUseCaseHistoryEntry) 
 	return UseCaseHistoryEntry{
 		FileProxyUseCaseHistoryEntry: &fileProxy,
 		Type:                         typ,
+	}
+}
+
+func CreateUseCaseHistoryEntryManagedCall(managedCall ManagedCallUseCaseHistoryEntry) UseCaseHistoryEntry {
+	typ := UseCaseHistoryEntryTypeManagedCall
+
+	typStr := ManagedCallUseCaseHistoryEntryType(typ)
+	managedCall.Type = typStr
+
+	return UseCaseHistoryEntry{
+		ManagedCallUseCaseHistoryEntry: &managedCall,
+		Type:                           typ,
+	}
+}
+
+func CreateUseCaseHistoryEntrySecureProxy(secureProxy SecureProxyUseCaseHistoryEntry) UseCaseHistoryEntry {
+	typ := UseCaseHistoryEntryTypeSecureProxy
+
+	typStr := SecureProxyUseCaseHistoryEntryType(typ)
+	secureProxy.Type = typStr
+
+	return UseCaseHistoryEntry{
+		SecureProxyUseCaseHistoryEntry: &secureProxy,
+		Type:                           typ,
 	}
 }
 
@@ -100,6 +128,24 @@ func (u *UseCaseHistoryEntry) UnmarshalJSON(data []byte) error {
 		u.FileProxyUseCaseHistoryEntry = fileProxyUseCaseHistoryEntry
 		u.Type = UseCaseHistoryEntryTypeFileProxy
 		return nil
+	case "managed_call":
+		managedCallUseCaseHistoryEntry := new(ManagedCallUseCaseHistoryEntry)
+		if err := utils.UnmarshalJSON(data, &managedCallUseCaseHistoryEntry, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == managed_call) type ManagedCallUseCaseHistoryEntry within UseCaseHistoryEntry: %w", string(data), err)
+		}
+
+		u.ManagedCallUseCaseHistoryEntry = managedCallUseCaseHistoryEntry
+		u.Type = UseCaseHistoryEntryTypeManagedCall
+		return nil
+	case "secure_proxy":
+		secureProxyUseCaseHistoryEntry := new(SecureProxyUseCaseHistoryEntry)
+		if err := utils.UnmarshalJSON(data, &secureProxyUseCaseHistoryEntry, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == secure_proxy) type SecureProxyUseCaseHistoryEntry within UseCaseHistoryEntry: %w", string(data), err)
+		}
+
+		u.SecureProxyUseCaseHistoryEntry = secureProxyUseCaseHistoryEntry
+		u.Type = UseCaseHistoryEntryTypeSecureProxy
+		return nil
 	}
 
 	return fmt.Errorf("could not unmarshal `%s` into any supported union types for UseCaseHistoryEntry", string(data))
@@ -116,6 +162,14 @@ func (u UseCaseHistoryEntry) MarshalJSON() ([]byte, error) {
 
 	if u.FileProxyUseCaseHistoryEntry != nil {
 		return utils.MarshalJSON(u.FileProxyUseCaseHistoryEntry, "", true)
+	}
+
+	if u.ManagedCallUseCaseHistoryEntry != nil {
+		return utils.MarshalJSON(u.ManagedCallUseCaseHistoryEntry, "", true)
+	}
+
+	if u.SecureProxyUseCaseHistoryEntry != nil {
+		return utils.MarshalJSON(u.SecureProxyUseCaseHistoryEntry, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type UseCaseHistoryEntry: all fields are null")

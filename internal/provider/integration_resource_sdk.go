@@ -12,12 +12,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"time"
 )
 
 func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx context.Context, resp *shared.IntegrationWithUseCases) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		r.Manifest = make([]types.String, 0, len(resp.Manifest))
+		for _, v := range resp.Manifest {
+			r.Manifest = append(r.Manifest, types.StringValue(v))
+		}
 		r.AccessTokenIds = make([]types.String, 0, len(resp.AccessTokenIds))
 		for _, v := range resp.AccessTokenIds {
 			r.AccessTokenIds = append(r.AccessTokenIds, types.StringValue(v))
@@ -25,6 +30,64 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 		r.AppIds = make([]types.String, 0, len(resp.AppIds))
 		for _, v := range resp.AppIds {
 			r.AppIds = append(r.AppIds, types.StringValue(v))
+		}
+		if resp.ConnectorConfig == nil {
+			r.ConnectorConfig = nil
+		} else {
+			r.ConnectorConfig = &tfTypes.ConnectorConfig{}
+			if resp.ConnectorConfig.Auth == nil {
+				r.ConnectorConfig.Auth = nil
+			} else {
+				r.ConnectorConfig.Auth = &tfTypes.ManagedCallAuth{}
+				r.ConnectorConfig.Auth.APIKey = types.StringPointerValue(resp.ConnectorConfig.Auth.APIKey)
+				r.ConnectorConfig.Auth.APIKeyHeader = types.StringPointerValue(resp.ConnectorConfig.Auth.APIKeyHeader)
+				r.ConnectorConfig.Auth.Audience = types.StringPointerValue(resp.ConnectorConfig.Auth.Audience)
+				if len(resp.ConnectorConfig.Auth.BodyParams) > 0 {
+					r.ConnectorConfig.Auth.BodyParams = make(map[string]types.String, len(resp.ConnectorConfig.Auth.BodyParams))
+					for key, value := range resp.ConnectorConfig.Auth.BodyParams {
+						r.ConnectorConfig.Auth.BodyParams[key] = types.StringValue(value)
+					}
+				}
+				r.ConnectorConfig.Auth.ClientID = types.StringPointerValue(resp.ConnectorConfig.Auth.ClientID)
+				r.ConnectorConfig.Auth.ClientSecret = types.StringPointerValue(resp.ConnectorConfig.Auth.ClientSecret)
+				if len(resp.ConnectorConfig.Auth.Headers) > 0 {
+					r.ConnectorConfig.Auth.Headers = make(map[string]types.String, len(resp.ConnectorConfig.Auth.Headers))
+					for key1, value1 := range resp.ConnectorConfig.Auth.Headers {
+						r.ConnectorConfig.Auth.Headers[key1] = types.StringValue(value1)
+					}
+				}
+				if len(resp.ConnectorConfig.Auth.QueryParams) > 0 {
+					r.ConnectorConfig.Auth.QueryParams = make(map[string]types.String, len(resp.ConnectorConfig.Auth.QueryParams))
+					for key2, value2 := range resp.ConnectorConfig.Auth.QueryParams {
+						r.ConnectorConfig.Auth.QueryParams[key2] = types.StringValue(value2)
+					}
+				}
+				r.ConnectorConfig.Auth.Resource = types.StringPointerValue(resp.ConnectorConfig.Auth.Resource)
+				r.ConnectorConfig.Auth.Scope = types.StringPointerValue(resp.ConnectorConfig.Auth.Scope)
+				r.ConnectorConfig.Auth.Token = types.StringPointerValue(resp.ConnectorConfig.Auth.Token)
+				r.ConnectorConfig.Auth.TokenURL = types.StringPointerValue(resp.ConnectorConfig.Auth.TokenURL)
+				if resp.ConnectorConfig.Auth.Type != nil {
+					r.ConnectorConfig.Auth.Type = types.StringValue(string(*resp.ConnectorConfig.Auth.Type))
+				} else {
+					r.ConnectorConfig.Auth.Type = types.StringNull()
+				}
+			}
+			r.ConnectorConfig.BaseURL = types.StringPointerValue(resp.ConnectorConfig.BaseURL)
+			r.ConnectorConfig.LatestTypesPackageName = types.StringPointerValue(resp.ConnectorConfig.LatestTypesPackageName)
+			r.ConnectorConfig.LatestTypesVersion = types.StringPointerValue(resp.ConnectorConfig.LatestTypesVersion)
+			r.ConnectorConfig.TypesVersions = []tfTypes.TypesVersions{}
+
+			for _, typesVersionsItem := range resp.ConnectorConfig.TypesVersions {
+				var typesVersions tfTypes.TypesVersions
+
+				typesVersions.GeneratedAt = types.StringValue(typeconvert.TimeToString(typesVersionsItem.GeneratedAt))
+				typesVersions.GeneratedBy = types.StringValue(typesVersionsItem.GeneratedBy)
+				typesVersions.PackageName = types.StringValue(typesVersionsItem.PackageName)
+				typesVersions.Status = types.StringValue(string(typesVersionsItem.Status))
+				typesVersions.Version = types.StringValue(typesVersionsItem.Version)
+
+				r.ConnectorConfig.TypesVersions = append(r.ConnectorConfig.TypesVersions, typesVersions)
+			}
 		}
 		r.CreatedAt = types.StringValue(typeconvert.TimeToString(resp.CreatedAt))
 		r.Description = types.StringPointerValue(resp.Description)
@@ -35,8 +98,14 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 			r.EnvironmentConfig = jsontypes.NewNormalizedValue(string(environmentConfigResult))
 		}
 		r.ID = types.StringValue(resp.ID)
+		if resp.IntegrationType != nil {
+			r.IntegrationType = types.StringValue(string(*resp.IntegrationType))
+		} else {
+			r.IntegrationType = types.StringNull()
+		}
 		r.Name = types.StringValue(resp.Name)
 		r.OrgID = types.StringValue(resp.OrgID)
+		r.Protected = types.BoolPointerValue(resp.Protected)
 		if resp.Settings == nil {
 			r.Settings = nil
 		} else {
@@ -149,6 +218,170 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 			AutoRefresh: autoRefresh,
 		}
 	}
+	integrationType := new(shared.UpsertIntegrationWithUseCasesRequestIntegrationType)
+	if !r.IntegrationType.IsUnknown() && !r.IntegrationType.IsNull() {
+		*integrationType = shared.UpsertIntegrationWithUseCasesRequestIntegrationType(r.IntegrationType.ValueString())
+	} else {
+		integrationType = nil
+	}
+	var connectorConfig *shared.ConnectorConfig
+	if r.ConnectorConfig != nil {
+		baseURL := new(string)
+		if !r.ConnectorConfig.BaseURL.IsUnknown() && !r.ConnectorConfig.BaseURL.IsNull() {
+			*baseURL = r.ConnectorConfig.BaseURL.ValueString()
+		} else {
+			baseURL = nil
+		}
+		var auth *shared.ManagedCallAuth
+		if r.ConnectorConfig.Auth != nil {
+			typeVar := new(shared.Type)
+			if !r.ConnectorConfig.Auth.Type.IsUnknown() && !r.ConnectorConfig.Auth.Type.IsNull() {
+				*typeVar = shared.Type(r.ConnectorConfig.Auth.Type.ValueString())
+			} else {
+				typeVar = nil
+			}
+			tokenURL := new(string)
+			if !r.ConnectorConfig.Auth.TokenURL.IsUnknown() && !r.ConnectorConfig.Auth.TokenURL.IsNull() {
+				*tokenURL = r.ConnectorConfig.Auth.TokenURL.ValueString()
+			} else {
+				tokenURL = nil
+			}
+			clientID := new(string)
+			if !r.ConnectorConfig.Auth.ClientID.IsUnknown() && !r.ConnectorConfig.Auth.ClientID.IsNull() {
+				*clientID = r.ConnectorConfig.Auth.ClientID.ValueString()
+			} else {
+				clientID = nil
+			}
+			clientSecret := new(string)
+			if !r.ConnectorConfig.Auth.ClientSecret.IsUnknown() && !r.ConnectorConfig.Auth.ClientSecret.IsNull() {
+				*clientSecret = r.ConnectorConfig.Auth.ClientSecret.ValueString()
+			} else {
+				clientSecret = nil
+			}
+			scope := new(string)
+			if !r.ConnectorConfig.Auth.Scope.IsUnknown() && !r.ConnectorConfig.Auth.Scope.IsNull() {
+				*scope = r.ConnectorConfig.Auth.Scope.ValueString()
+			} else {
+				scope = nil
+			}
+			audience := new(string)
+			if !r.ConnectorConfig.Auth.Audience.IsUnknown() && !r.ConnectorConfig.Auth.Audience.IsNull() {
+				*audience = r.ConnectorConfig.Auth.Audience.ValueString()
+			} else {
+				audience = nil
+			}
+			resource := new(string)
+			if !r.ConnectorConfig.Auth.Resource.IsUnknown() && !r.ConnectorConfig.Auth.Resource.IsNull() {
+				*resource = r.ConnectorConfig.Auth.Resource.ValueString()
+			} else {
+				resource = nil
+			}
+			bodyParams := make(map[string]string)
+			for bodyParamsKey := range r.ConnectorConfig.Auth.BodyParams {
+				var bodyParamsInst string
+				bodyParamsInst = r.ConnectorConfig.Auth.BodyParams[bodyParamsKey].ValueString()
+
+				bodyParams[bodyParamsKey] = bodyParamsInst
+			}
+			headers := make(map[string]string)
+			for headersKey := range r.ConnectorConfig.Auth.Headers {
+				var headersInst string
+				headersInst = r.ConnectorConfig.Auth.Headers[headersKey].ValueString()
+
+				headers[headersKey] = headersInst
+			}
+			queryParams := make(map[string]string)
+			for queryParamsKey := range r.ConnectorConfig.Auth.QueryParams {
+				var queryParamsInst string
+				queryParamsInst = r.ConnectorConfig.Auth.QueryParams[queryParamsKey].ValueString()
+
+				queryParams[queryParamsKey] = queryParamsInst
+			}
+			apiKeyHeader := new(string)
+			if !r.ConnectorConfig.Auth.APIKeyHeader.IsUnknown() && !r.ConnectorConfig.Auth.APIKeyHeader.IsNull() {
+				*apiKeyHeader = r.ConnectorConfig.Auth.APIKeyHeader.ValueString()
+			} else {
+				apiKeyHeader = nil
+			}
+			apiKey := new(string)
+			if !r.ConnectorConfig.Auth.APIKey.IsUnknown() && !r.ConnectorConfig.Auth.APIKey.IsNull() {
+				*apiKey = r.ConnectorConfig.Auth.APIKey.ValueString()
+			} else {
+				apiKey = nil
+			}
+			token := new(string)
+			if !r.ConnectorConfig.Auth.Token.IsUnknown() && !r.ConnectorConfig.Auth.Token.IsNull() {
+				*token = r.ConnectorConfig.Auth.Token.ValueString()
+			} else {
+				token = nil
+			}
+			auth = &shared.ManagedCallAuth{
+				Type:         typeVar,
+				TokenURL:     tokenURL,
+				ClientID:     clientID,
+				ClientSecret: clientSecret,
+				Scope:        scope,
+				Audience:     audience,
+				Resource:     resource,
+				BodyParams:   bodyParams,
+				Headers:      headers,
+				QueryParams:  queryParams,
+				APIKeyHeader: apiKeyHeader,
+				APIKey:       apiKey,
+				Token:        token,
+			}
+		}
+		typesVersions := make([]shared.TypesVersions, 0, len(r.ConnectorConfig.TypesVersions))
+		for typesVersionsIndex := range r.ConnectorConfig.TypesVersions {
+			var version string
+			version = r.ConnectorConfig.TypesVersions[typesVersionsIndex].Version.ValueString()
+
+			var packageName string
+			packageName = r.ConnectorConfig.TypesVersions[typesVersionsIndex].PackageName.ValueString()
+
+			generatedAt, _ := time.Parse(time.RFC3339Nano, r.ConnectorConfig.TypesVersions[typesVersionsIndex].GeneratedAt.ValueString())
+			var generatedBy string
+			generatedBy = r.ConnectorConfig.TypesVersions[typesVersionsIndex].GeneratedBy.ValueString()
+
+			status := shared.ConnectorConfigStatus(r.ConnectorConfig.TypesVersions[typesVersionsIndex].Status.ValueString())
+			typesVersions = append(typesVersions, shared.TypesVersions{
+				Version:     version,
+				PackageName: packageName,
+				GeneratedAt: generatedAt,
+				GeneratedBy: generatedBy,
+				Status:      status,
+			})
+		}
+		latestTypesVersion := new(string)
+		if !r.ConnectorConfig.LatestTypesVersion.IsUnknown() && !r.ConnectorConfig.LatestTypesVersion.IsNull() {
+			*latestTypesVersion = r.ConnectorConfig.LatestTypesVersion.ValueString()
+		} else {
+			latestTypesVersion = nil
+		}
+		latestTypesPackageName := new(string)
+		if !r.ConnectorConfig.LatestTypesPackageName.IsUnknown() && !r.ConnectorConfig.LatestTypesPackageName.IsNull() {
+			*latestTypesPackageName = r.ConnectorConfig.LatestTypesPackageName.ValueString()
+		} else {
+			latestTypesPackageName = nil
+		}
+		connectorConfig = &shared.ConnectorConfig{
+			BaseURL:                baseURL,
+			Auth:                   auth,
+			TypesVersions:          typesVersions,
+			LatestTypesVersion:     latestTypesVersion,
+			LatestTypesPackageName: latestTypesPackageName,
+		}
+	}
+	protected := new(bool)
+	if !r.Protected.IsUnknown() && !r.Protected.IsNull() {
+		*protected = r.Protected.ValueBool()
+	} else {
+		protected = nil
+	}
+	manifest := make([]string, 0, len(r.Manifest))
+	for manifestIndex := range r.Manifest {
+		manifest = append(manifest, r.Manifest[manifestIndex].ValueString())
+	}
 	var environmentConfig interface{}
 	if !r.EnvironmentConfig.IsUnknown() && !r.EnvironmentConfig.IsNull() {
 		_ = json.Unmarshal([]byte(r.EnvironmentConfig.ValueString()), &environmentConfig)
@@ -163,6 +396,10 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 		AccessTokenIds:    accessTokenIds,
 		AppIds:            appIds,
 		Settings:          settings,
+		IntegrationType:   integrationType,
+		ConnectorConfig:   connectorConfig,
+		Protected:         protected,
+		Manifest:          manifest,
 		EnvironmentConfig: environmentConfig,
 		UseCases:          useCases,
 	}

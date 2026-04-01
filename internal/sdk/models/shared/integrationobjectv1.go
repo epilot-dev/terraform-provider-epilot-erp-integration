@@ -128,3 +128,6 @@ func (i *IntegrationObjectV1) GetFields() []IntegrationFieldV1 {
 	}
 	return i.Fields
 }
+
+// #region class-body-integrationobjectv1
+// #endregion class-body-integrationobjectv1

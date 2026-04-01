@@ -39,6 +39,14 @@ func (c *CreateUseCaseRequest) GetCreateUseCaseRequestFileProxy() *shared.Create
 	return c.GetCreateUseCaseRequest().CreateFileProxyUseCaseRequest
 }
 
+func (c *CreateUseCaseRequest) GetCreateUseCaseRequestManagedCall() *shared.CreateManagedCallUseCaseRequest {
+	return c.GetCreateUseCaseRequest().CreateManagedCallUseCaseRequest
+}
+
+func (c *CreateUseCaseRequest) GetCreateUseCaseRequestSecureProxy() *shared.CreateSecureProxyUseCaseRequest {
+	return c.GetCreateUseCaseRequest().CreateSecureProxyUseCaseRequest
+}
+
 type CreateUseCaseResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
@@ -97,6 +105,20 @@ func (c *CreateUseCaseResponse) GetUseCaseOutbound() *shared.OutboundUseCase {
 func (c *CreateUseCaseResponse) GetUseCaseFileProxy() *shared.FileProxyUseCase {
 	if v := c.GetUseCase(); v != nil {
 		return v.FileProxyUseCase
+	}
+	return nil
+}
+
+func (c *CreateUseCaseResponse) GetUseCaseManagedCall() *shared.ManagedCallUseCase {
+	if v := c.GetUseCase(); v != nil {
+		return v.ManagedCallUseCase
+	}
+	return nil
+}
+
+func (c *CreateUseCaseResponse) GetUseCaseSecureProxy() *shared.SecureProxyUseCase {
+	if v := c.GetUseCase(); v != nil {
+		return v.SecureProxyUseCase
 	}
 	return nil
 }

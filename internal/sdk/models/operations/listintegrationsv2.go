@@ -19,6 +19,9 @@ func (l *ListIntegrationsV2ResponseBody) GetIntegrations() []shared.IntegrationW
 	return l.Integrations
 }
 
+// #region class-body-listintegrationsv2responsebody
+// #endregion class-body-listintegrationsv2responsebody
+
 type ListIntegrationsV2Response struct {
 	// HTTP response content type for this operation
 	ContentType string
@@ -66,3 +69,6 @@ func (l *ListIntegrationsV2Response) GetErrorResponseBase() *shared.ErrorRespons
 	}
 	return l.ErrorResponseBase
 }
+
+// #region class-body-listintegrationsv2response
+// #endregion class-body-listintegrationsv2response

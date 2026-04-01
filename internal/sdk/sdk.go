@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.47.0 and generator version 2.795.8
+// Generated from OpenAPI doc version 0.58.0 and generator version 2.879.1
 
 import (
 	"context"
@@ -59,6 +59,10 @@ type SDK struct {
 	Integrations *Integrations
 	// Monitoring and analytics endpoints
 	Monitoring *Monitoring
+	// Secure proxy endpoints
+	Proxy *Proxy
+	// Managed call endpoints for synchronous external API calls
+	ManagedCall *ManagedCall
 
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -66,7 +70,7 @@ type SDK struct {
 
 type SDKOption func(*SDK)
 
-// WithServerURL allows the overriding of the default server URL
+// WithServerURL allows providing an alternative server URL
 func WithServerURL(serverURL string) SDKOption {
 	return func(sdk *SDK) {
 		sdk.sdkConfiguration.ServerURL = serverURL
@@ -134,9 +138,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		SDKVersion: "0.21.6",
+		SDKVersion: "0.22.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.21.6 2.795.8 0.47.0 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.22.0 2.879.1 0.58.0 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -161,6 +165,8 @@ func New(opts ...SDKOption) *SDK {
 	sdk.Trigger = newTrigger(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Integrations = newIntegrations(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Monitoring = newMonitoring(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Proxy = newProxy(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ManagedCall = newManagedCall(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
 }

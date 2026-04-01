@@ -54,6 +54,9 @@ func (f *FileProxyURLParam2) GetConstant() any {
 	return f.Constant
 }
 
+// #region class-body-fileproxyurlparam2
+// #endregion class-body-fileproxyurlparam2
+
 type FileProxyURLParam1 struct {
 	// Source field name or JSONPath expression (if starts with $)
 	Field string `json:"field"`
@@ -76,6 +79,9 @@ func (f *FileProxyURLParam1) GetField() string {
 	}
 	return f.Field
 }
+
+// #region class-body-fileproxyurlparam1
+// #endregion class-body-fileproxyurlparam1
 
 type FileProxyURLParamType string
 

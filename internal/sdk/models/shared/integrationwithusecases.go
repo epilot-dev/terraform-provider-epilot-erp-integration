@@ -3,9 +3,38 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
 	"time"
 )
+
+// IntegrationWithUseCasesIntegrationType - Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs.
+type IntegrationWithUseCasesIntegrationType string
+
+const (
+	IntegrationWithUseCasesIntegrationTypeErp       IntegrationWithUseCasesIntegrationType = "erp"
+	IntegrationWithUseCasesIntegrationTypeConnector IntegrationWithUseCasesIntegrationType = "connector"
+)
+
+func (e IntegrationWithUseCasesIntegrationType) ToPointer() *IntegrationWithUseCasesIntegrationType {
+	return &e
+}
+func (e *IntegrationWithUseCasesIntegrationType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "erp":
+		fallthrough
+	case "connector":
+		*e = IntegrationWithUseCasesIntegrationType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for IntegrationWithUseCasesIntegrationType: %v", v)
+	}
+}
 
 // IntegrationWithUseCases - Integration with embedded use cases for atomic CRUD operations
 type IntegrationWithUseCases struct {
@@ -26,9 +55,18 @@ type IntegrationWithUseCases struct {
 	// List of app IDs associated with this integration
 	AppIds []string `json:"app_ids,omitempty"`
 	// Settings for the integration
-	Settings          *IntegrationSettings `json:"settings,omitempty"`
-	EnvironmentConfig any                  `json:"environment_config,omitempty"`
-	UseCases          any                  `json:"use_cases"`
+	Settings *IntegrationSettings `json:"settings,omitempty"`
+	// Type of integration. "erp" is the ERP integration with inbound/outbound use cases. "connector" is for complex proxy integrations with external APIs.
+	//
+	IntegrationType *IntegrationWithUseCasesIntegrationType `default:"erp" json:"integration_type"`
+	// Shared configuration for connector-type integrations
+	ConnectorConfig *ConnectorConfig `json:"connector_config,omitempty"`
+	// If true, integration is displayed in read-only mode in the UI to discourage changes
+	Protected *bool `json:"protected,omitempty"`
+	// The manifest IDs associated with this integration
+	Manifest          []string `json:"_manifest,omitempty"`
+	EnvironmentConfig any      `json:"environment_config,omitempty"`
+	UseCases          any      `json:"use_cases"`
 }
 
 func (i IntegrationWithUseCases) MarshalJSON() ([]byte, error) {
@@ -103,6 +141,34 @@ func (i *IntegrationWithUseCases) GetSettings() *IntegrationSettings {
 		return nil
 	}
 	return i.Settings
+}
+
+func (i *IntegrationWithUseCases) GetIntegrationType() *IntegrationWithUseCasesIntegrationType {
+	if i == nil {
+		return nil
+	}
+	return i.IntegrationType
+}
+
+func (i *IntegrationWithUseCases) GetConnectorConfig() *ConnectorConfig {
+	if i == nil {
+		return nil
+	}
+	return i.ConnectorConfig
+}
+
+func (i *IntegrationWithUseCases) GetProtected() *bool {
+	if i == nil {
+		return nil
+	}
+	return i.Protected
+}
+
+func (i *IntegrationWithUseCases) GetManifest() []string {
+	if i == nil {
+		return nil
+	}
+	return i.Manifest
 }
 
 func (i *IntegrationWithUseCases) GetEnvironmentConfig() any {
