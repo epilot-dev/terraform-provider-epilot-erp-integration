@@ -1,17 +1,18 @@
 lockVersion: 2.0.0
 id: 15fc1ae3-2912-47ad-8b62-703c6db72e27
 management:
-  docChecksum: 23b8b659a0dcd445f6622b96ee1f1e8c
-  docVersion: 0.58.0
-  speakeasyVersion: 1.761.0
-  generationVersion: 2.879.1
-  releaseVersion: 0.22.0
-  configChecksum: 150b6aeaaaae0ab11e0a3ec6fbca1113
+  docChecksum: 7ef7ebe2c843f3fe63a94fb2aed8b989
+  docVersion: 1.0.3
+  speakeasyVersion: 1.761.5
+  generationVersion: 2.879.13
+  releaseVersion: 0.23.0
+  configChecksum: bfc2489e697617b77e2971fdf600f18c
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-erp-integration.git
+  installationURL: https://github.com/epilot-dev/terraform-provider-epilot-erp-integration
 persistentEdits:
-  generation_id: b9bd3bfe-9ea4-4603-858b-e33f6a8eb747
-  pristine_commit_hash: d9c9dc785ae561a43aa7e9c00a7c45bac0e30ffc
-  pristine_tree_hash: 1b6445fbb9f85fe10d4940eeff1bc3c77fa25e9d
+  generation_id: f93a6e8c-1580-461b-9a7c-36c5a3df980d
+  pristine_commit_hash: c3d751caf9a5a4fb7f207ba084e4da2f4b9b60fe
+  pristine_tree_hash: 786497634d35015491dea424ab050cb764a98c92
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -40,8 +41,8 @@ trackedFiles:
     pristine_git_object: bb02e077500de84a623de57ffe46448bc951cc58
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:8379bd0fb14e2a28a5277f1517097b983121aff1
-    pristine_git_object: da09277b6735f4ca3cca102c168e15ef88bc4ec7
+    last_write_checksum: sha1:07d1b35a2e39af09f11e7548513a637f5d3db318
+    pristine_git_object: 383697eaebfb28cff2ff26d66ad83afdbabb5382
   examples/resources/epilot-erp-integration_integration/import-by-string-id.tf:
     id: 4183e30b18a7
     last_write_checksum: sha1:7b6c3500f63071e0e923f524c8e7d71fb8bf087c
@@ -56,8 +57,8 @@ trackedFiles:
     pristine_git_object: 60a08565530021fc041f07134bfde7a4486633a3
   go.mod:
     id: c47645c391ad
-    last_write_checksum: sha1:8a7dda10bdb6f80063e8170f9271f11502301d4d
-    pristine_git_object: 92a43020c3f0bd10fc52d8b7a749109364856d2a
+    last_write_checksum: sha1:12930b7f08349d4d886f6398d7c1d8a5021309be
+    pristine_git_object: b381bb8e7b5ef8a132a8fc803fe05ab7cf7b85c9
   internal/planmodifiers/boolplanmodifier/suppress_diff.go:
     id: 3cf85b98963e
     last_write_checksum: sha1:56a62808eef897f96e6bb10c4a31dcf1c5e43d3e
@@ -216,8 +217,8 @@ trackedFiles:
     pristine_git_object: bc7daead4e7fc2ba618a85d0dae0f60eb1c373f8
   internal/provider/provider.go:
     id: 1e7e86841cf3
-    last_write_checksum: sha1:2b38fa332c10b869d935208336402676b55bf354
-    pristine_git_object: 8447d77d7087b3afb78ffc3fd5a80aff743d2530
+    last_write_checksum: sha1:1b8d608f8668db5da0edde09fa59da3d08b075bf
+    pristine_git_object: 663050ba1079e0b8d8790dd258d39346ef39c92a
   internal/provider/reflect/diags.go:
     id: 35b6b44972e2
     last_write_checksum: sha1:ace8bc53054bb1d8ee8689acf3e4323de75a6297
@@ -716,8 +717,8 @@ trackedFiles:
     pristine_git_object: bc88231c3bfb5bf4c910180438a65125dcae74f1
   internal/sdk/models/shared/getmonitoringtimeseriesv2request.go:
     id: 67cd37e17cb4
-    last_write_checksum: sha1:fc7bfa6529d43465e0846793acb177194b08dd13
-    pristine_git_object: 7a99f3426f0761376e99cccbd5125978620fb4a3
+    last_write_checksum: sha1:f83c7a11c178385f70000a975122ef054ea3ba97
+    pristine_git_object: fbd67d335e150c2b2cc07e60b554175e33dd0849
   internal/sdk/models/shared/inboundintegrationeventconfiguration.go:
     id: 92eae0f5b558
     last_write_checksum: sha1:df3eb04aa14f295a723d3d5540e345d526f75df8
@@ -896,8 +897,8 @@ trackedFiles:
     pristine_git_object: 395b9a14d3a2c0e49b0fa8d90b55c3181704e916
   internal/sdk/models/shared/querymonitoringeventsv2request.go:
     id: 03bb022ee764
-    last_write_checksum: sha1:9d4a37aaeca78acdd8ea25b7c829183f51878e50
-    pristine_git_object: 82cf2bc044d1d0d2b6313775cade5cd331dcd284
+    last_write_checksum: sha1:4cd3cf39d3d63b930876bfd56459506b0510d3da
+    pristine_git_object: 158ca58d96b25ccb3f32f9ccf5d6108a07a9b9dc
   internal/sdk/models/shared/queryoutboundmonitoringeventsrequest.go:
     id: c9754b163e65
     last_write_checksum: sha1:e4b37de038fd8e57f9253ef9785772b48c464d4a
@@ -970,14 +971,18 @@ trackedFiles:
     id: 7bbc48adb147
     last_write_checksum: sha1:44507ea7b1d786811afc31cd9055d7f4e19f20d6
     pristine_git_object: 5212ddd4d15e29d83dee9e05f3a86784441f7850
+  internal/sdk/models/shared/timeseriesbreakdownitemv2.go:
+    id: 562d46dd8cef
+    last_write_checksum: sha1:13134d103664838f1f721ab6e55be99203edb747
+    pristine_git_object: 6e2072a0906c1e9a440f248da24fceb3b2de6ea7
   internal/sdk/models/shared/timeseriesbucket.go:
     id: 7f03fa15a94d
     last_write_checksum: sha1:e39b734e54670f33df879bb87fefeccbe182f121
     pristine_git_object: 49e71105ee08a595b19a45fabbe5873191acf7f0
   internal/sdk/models/shared/timeseriesbucketv2.go:
     id: 74cf9b05ea54
-    last_write_checksum: sha1:3d7057125c33b456499ddd9cd394347b086c95b6
-    pristine_git_object: c7c33dc6f3be835e12bf72466bc7c53e829d2ac0
+    last_write_checksum: sha1:9e2191cbcbf58f381ed0ed00fc3e601748f0457e
+    pristine_git_object: 208bf16e53f1d0da99f061294073d64d74cef585
   internal/sdk/models/shared/triggererpactionrequest.go:
     id: bc1af4eb9631
     last_write_checksum: sha1:79572dfaa744427c1a0d3e54f7c202bfc76547c9
@@ -1064,8 +1069,8 @@ trackedFiles:
     pristine_git_object: 5b3dc7c122d8ab08905485342d7474f8f163888d
   internal/sdk/sdk.go:
     id: 02d7190ee502
-    last_write_checksum: sha1:16f6375c43af1da875e5c248fa02042b53ae90f7
-    pristine_git_object: 0e5c4a81b40c121b0ffebc3fcb374be06041c8a3
+    last_write_checksum: sha1:3c7a9db71957ec0907792e36f35dc85cdb92eb96
+    pristine_git_object: 47f23547d0a8be004974a0f6d29f127da7718796
   internal/sdk/trigger.go:
     id: 8bbb8a8ac0b5
     last_write_checksum: sha1:4cb285b85543eb4d29cd9e667b9ba9631428c883
@@ -2049,6 +2054,7 @@ examples:
         "502":
           application/json: {"error": {"code": "<value>", "message": "<value>"}}
 examplesVersion: 1.0.2
+releaseNotes: "## Terraform SDK Changes:\n* `SDK.integrations.listUseCases()`:  `response.use_cases[]` **Changed** (Breaking ⚠️)\n* `SDK.erp.simulateMapping()`: \n  *  `request.mapping_configuration.union(IntegrationConfigurationV2).mapping.events.Map<InboundIntegrationEventConfiguration>.entities[].fields[].file_proxy_url` **Changed** (Breaking ⚠️)\n  *  `response.warnings` **Added**\n* `SDK.integrations.updateIntegrationV2()`: \n  *  `request.UpsertIntegrationWithUseCasesRequest` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.getIntegrationV2()`:  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.createIntegrationV2()`: \n  *  `request` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.listIntegrationsV2()`:  `response.integrations[]` **Changed** (Breaking ⚠️)\n* `SDK.integrations.listUseCaseHistory()`:  `response.history[]` **Changed** (Breaking ⚠️)\n* `SDK.integrations.updateUseCase()`: \n  *  `request.UpdateUseCaseRequest` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.getUseCase()`:  `response` **Changed** (Breaking ⚠️)\n* `SDK.erp.processErpUpdatesEventsV3()`: \n  *  `request.events[]` **Changed** (Breaking ⚠️)\n* `SDK.erp.simulateMappingV2()`: \n  *  `request.event_configuration.entities[].fields[].file_proxy_url` **Changed** (Breaking ⚠️)\n  *  `response.warnings` **Added**\n* `SDK.integrations.getIntegration()`:  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.createIntegration()`: \n  *  `request` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.listIntegrations()`:  `response.integrations[]` **Changed** (Breaking ⚠️)\n* `SDK.integrations.createUseCase()`: \n  *  `request.CreateUseCaseRequest` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.updateIntegration()`: \n  *  `request.UpdateIntegrationRequest` **Changed** (Breaking ⚠️)\n  *  `response` **Changed** (Breaking ⚠️)\n* `SDK.integrations.generateTypes()`: **Added**\n* `SDK.integrations.getAssociatedMonitoringEvents()`: **Added**\n* `SDK.proxy.secureProxy()`: **Added**\n* `SDK.monitoring.getAssociatedMonitoringEvents()`: **Added**\n* `SDK.monitoring.getMonitoringTimeSeriesV2()`: **Added**\n* `SDK.integrations.getMonitoringStatsV2()`: **Added**\n* `SDK.integrations.commitTypes()`: **Added**\n* `SDK.monitoring.queryMonitoringEventsV2()`: **Added**\n* `SDK.managed-call.managedCallExecute()`: **Added**\n* `SDK.monitoring.getMonitoringStatsV2()`: **Added**\n* `SDK.integrations.generateTypesPreview()`: **Added**\n* `SDK.integrations.listSecureProxies()`: **Added**\n* `SDK.integrations.queryMonitoringEventsV2()`: **Added**\n* `SDK.integrations.getMonitoringTimeSeriesV2()`: **Added**\n"
 generatedFiles:
   - .gitattributes
   - USAGE.md
