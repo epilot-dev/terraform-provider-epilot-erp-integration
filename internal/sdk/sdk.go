@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.58.0 and generator version 2.879.1
+// Generated from OpenAPI doc version 1.0.4 and generator version 2.881.2
 
 import (
 	"context"
@@ -18,8 +18,8 @@ import (
 
 // ServerList contains the list of servers available to the SDK
 var ServerList = []string{
-	"https://erp-integration-api.sls.epilot.io",
-	"https://erp-integration-api.sls.epilot.io",
+	"https://integration-toolkit.sls.epilot.io",
+	"https://integration-toolkit.sls.epilot.io",
 }
 
 // HTTPClient provides an interface for supplying the SDK with a custom HTTP client
@@ -48,7 +48,7 @@ func Float64(f float64) *float64 { return &f }
 // Pointer provides a helper function to return a pointer to a type
 func Pointer[T any](v T) *T { return &v }
 
-// SDK - ERP Integration API: API for integrating with ERP systems, handling tracking acknowledgments, triggering ERP processes, and processing ERP updates.
+// SDK - Integration Toolkit API: API for integrating with external systems in a standardised way.
 type SDK struct {
 	SDKVersion string
 	// ERP integration endpoints
@@ -138,9 +138,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		SDKVersion: "0.22.0",
+		SDKVersion: "0.23.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.22.0 2.879.1 0.58.0 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.23.0 2.881.2 1.0.4 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),

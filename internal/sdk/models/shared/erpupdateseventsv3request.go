@@ -7,6 +7,27 @@ type ErpUpdatesEventsV3Request struct {
 	IntegrationID string `json:"integration_id"`
 	// Optional ID that identifies the specific request for debugging purposes
 	CorrelationID *string `json:"correlation_id,omitempty"`
+	// Controls ordering and parallelism for this request's events.
+	//
+	// By default, all events for a given `integration_id` are processed
+	// **strictly in order, one at a time**. For high-volume integrations this
+	// can become a throughput bottleneck.
+	//
+	// Set `group_id` to opt into **parallel processing**:
+	// - Events sharing the same `group_id` are processed in the order received.
+	// - Events with different `group_id` values are processed in parallel.
+	//
+	// Typical usage is to derive `group_id` from a logical partition key in
+	// your payload — for example the customer ID, contract ID, or meter ID —
+	// so updates to the same business object remain ordered while unrelated
+	// objects are processed concurrently.
+	//
+	// Notes:
+	// - Up to 20 groups per integration are processed concurrently. Using
+	//   more distinct values than that yields no additional parallelism.
+	// - Omit this field if strict per-integration ordering is required.
+	//
+	GroupID *string `json:"group_id,omitempty"`
 	// List of ERP events to process
 	Events []ErpEventV3 `json:"events"`
 }
@@ -23,6 +44,13 @@ func (e *ErpUpdatesEventsV3Request) GetCorrelationID() *string {
 		return nil
 	}
 	return e.CorrelationID
+}
+
+func (e *ErpUpdatesEventsV3Request) GetGroupID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.GroupID
 }
 
 func (e *ErpUpdatesEventsV3Request) GetEvents() []ErpEventV3 {
