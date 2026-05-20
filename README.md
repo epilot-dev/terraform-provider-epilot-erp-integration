@@ -17,7 +17,7 @@ ERP Integration API: API for integrating with ERP systems, handling tracking ack
 <!-- Start Summary [summary] -->
 ## Summary
 
-ERP Integration API: API for integrating with ERP systems, handling tracking acknowledgments, triggering ERP processes, and processing ERP updates.
+Integration Toolkit API: API for integrating with external systems in a standardised way.
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
@@ -41,7 +41,7 @@ terraform {
   required_providers {
     epilot-erp-integration = {
       source  = "epilot-dev/epilot-erp-integration"
-      version = "0.21.6"
+      version = "0.22.0"
     }
   }
 }

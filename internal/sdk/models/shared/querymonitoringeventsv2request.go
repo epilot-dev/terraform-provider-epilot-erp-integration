@@ -113,7 +113,8 @@ func (q *QueryMonitoringEventsV2RequestCursor) GetID() *string {
 // #endregion class-body-querymonitoringeventsv2requestcursor
 
 type QueryMonitoringEventsV2Request struct {
-	// Filter by use case ID (UUID). Empty string matches "General" events.
+	// Filter by use case ID (UUID). Empty string matches "General" events. Special value "__unknown__" matches events whose use_case_id does not belong to any currently configured use case for this integration (excludes "General" events).
+	//
 	UseCaseID *string `json:"use_case_id,omitempty"`
 	// Filter by use case type (replaces direction)
 	UseCaseType *UseCaseType `json:"use_case_type,omitempty"`

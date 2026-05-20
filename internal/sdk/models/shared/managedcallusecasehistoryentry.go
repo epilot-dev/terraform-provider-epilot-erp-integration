@@ -48,6 +48,8 @@ type ManagedCallUseCaseHistoryEntry struct {
 	Enabled bool `json:"enabled"`
 	// Description of the change that was made at this point in history
 	ChangeDescription *string `json:"change_description,omitempty"`
+	// User ID of the user who made the change that produced this history entry
+	ChangedBy *string `json:"changed_by,omitempty"`
 	// ISO-8601 timestamp when the use case was originally created
 	CreatedAt time.Time `json:"created_at"`
 	// ISO-8601 timestamp of this historical snapshot (before the update)
@@ -122,6 +124,13 @@ func (m *ManagedCallUseCaseHistoryEntry) GetChangeDescription() *string {
 		return nil
 	}
 	return m.ChangeDescription
+}
+
+func (m *ManagedCallUseCaseHistoryEntry) GetChangedBy() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ChangedBy
 }
 
 func (m *ManagedCallUseCaseHistoryEntry) GetCreatedAt() time.Time {

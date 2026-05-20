@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.58.0 and generator version 2.879.1
+// Generated from OpenAPI doc version 1.0.11 and generator version 2.884.4
 
 import (
 	"context"
@@ -18,8 +18,8 @@ import (
 
 // ServerList contains the list of servers available to the SDK
 var ServerList = []string{
-	"https://erp-integration-api.sls.epilot.io",
-	"https://erp-integration-api.sls.epilot.io",
+	"https://integration-toolkit.sls.epilot.io",
+	"https://integration-toolkit.sls.epilot.io",
 }
 
 // HTTPClient provides an interface for supplying the SDK with a custom HTTP client
@@ -48,7 +48,7 @@ func Float64(f float64) *float64 { return &f }
 // Pointer provides a helper function to return a pointer to a type
 func Pointer[T any](v T) *T { return &v }
 
-// SDK - ERP Integration API: API for integrating with ERP systems, handling tracking acknowledgments, triggering ERP processes, and processing ERP updates.
+// SDK - Integration Toolkit API: API for integrating with external systems in a standardised way.
 type SDK struct {
 	SDKVersion string
 	// ERP integration endpoints
@@ -57,10 +57,10 @@ type SDK struct {
 	Trigger *Trigger
 	// Integration and Use Case management endpoints
 	Integrations *Integrations
-	// Monitoring and analytics endpoints
-	Monitoring *Monitoring
 	// Secure proxy endpoints
 	Proxy *Proxy
+	// Monitoring and analytics endpoints
+	Monitoring *Monitoring
 	// Managed call endpoints for synchronous external API calls
 	ManagedCall *ManagedCall
 
@@ -138,9 +138,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		SDKVersion: "0.22.0",
+		SDKVersion: "0.23.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.22.0 2.879.1 0.58.0 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.23.0 2.884.4 1.0.11 github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -164,8 +164,8 @@ func New(opts ...SDKOption) *SDK {
 	sdk.Erp = newErp(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Trigger = newTrigger(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Integrations = newIntegrations(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Monitoring = newMonitoring(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Proxy = newProxy(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Monitoring = newMonitoring(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ManagedCall = newManagedCall(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk

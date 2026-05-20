@@ -20,6 +20,8 @@ type FileProxyUseCaseConfiguration struct {
 	Auth        *FileProxyAuth                  `json:"auth,omitempty"`
 	// Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, and useCaseSlug or useCaseId)
 	Params []FileProxyParam `json:"params,omitempty"`
+	// Additional origins permitted to call /download for this use case (CORS, exact match). Portal origins are always allowed.
+	AllowedOrigins []string `json:"allowed_origins,omitempty"`
 	// Ordered list of HTTP steps to execute to retrieve the file
 	Steps    []FileProxyStep         `json:"steps"`
 	Response FileProxyResponseConfig `json:"response"`
@@ -55,6 +57,13 @@ func (f *FileProxyUseCaseConfiguration) GetParams() []FileProxyParam {
 		return nil
 	}
 	return f.Params
+}
+
+func (f *FileProxyUseCaseConfiguration) GetAllowedOrigins() []string {
+	if f == nil {
+		return nil
+	}
+	return f.AllowedOrigins
 }
 
 func (f *FileProxyUseCaseConfiguration) GetSteps() []FileProxyStep {

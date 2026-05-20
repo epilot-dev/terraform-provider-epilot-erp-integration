@@ -84,6 +84,33 @@ func (e *GetMonitoringTimeSeriesV2RequestUseCaseType) UnmarshalJSON(data []byte)
 	}
 }
 
+// GetMonitoringTimeSeriesV2RequestGroupBy - Field to group the bucket breakdown by
+type GetMonitoringTimeSeriesV2RequestGroupBy string
+
+const (
+	GetMonitoringTimeSeriesV2RequestGroupByUseCaseType GetMonitoringTimeSeriesV2RequestGroupBy = "use_case_type"
+	GetMonitoringTimeSeriesV2RequestGroupByUseCase     GetMonitoringTimeSeriesV2RequestGroupBy = "use_case"
+)
+
+func (e GetMonitoringTimeSeriesV2RequestGroupBy) ToPointer() *GetMonitoringTimeSeriesV2RequestGroupBy {
+	return &e
+}
+func (e *GetMonitoringTimeSeriesV2RequestGroupBy) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "use_case_type":
+		fallthrough
+	case "use_case":
+		*e = GetMonitoringTimeSeriesV2RequestGroupBy(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GetMonitoringTimeSeriesV2RequestGroupBy: %v", v)
+	}
+}
+
 type GetMonitoringTimeSeriesV2Request struct {
 	// Start of the time range (required)
 	FromDate time.Time `json:"from_date"`
@@ -93,6 +120,8 @@ type GetMonitoringTimeSeriesV2Request struct {
 	Interval GetMonitoringTimeSeriesV2RequestInterval `json:"interval"`
 	// Filter by use case type
 	UseCaseType *GetMonitoringTimeSeriesV2RequestUseCaseType `json:"use_case_type,omitempty"`
+	// Field to group the bucket breakdown by
+	GroupBy *GetMonitoringTimeSeriesV2RequestGroupBy `json:"group_by,omitempty"`
 }
 
 func (g GetMonitoringTimeSeriesV2Request) MarshalJSON() ([]byte, error) {
@@ -132,6 +161,13 @@ func (g *GetMonitoringTimeSeriesV2Request) GetUseCaseType() *GetMonitoringTimeSe
 		return nil
 	}
 	return g.UseCaseType
+}
+
+func (g *GetMonitoringTimeSeriesV2Request) GetGroupBy() *GetMonitoringTimeSeriesV2RequestGroupBy {
+	if g == nil {
+		return nil
+	}
+	return g.GroupBy
 }
 
 // #region class-body-getmonitoringtimeseriesv2request
