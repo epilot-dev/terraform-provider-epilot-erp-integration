@@ -12,6 +12,8 @@ import (
 // - 'all_webhooks_disabled': All webhooks are disabled while use case is enabled
 // - 'event_enabled_while_disabled': Event is enabled while use case is disabled
 // - 'webhook_enabled_while_disabled': A webhook is enabled while use case is disabled
+// - 'stream_blocked': The outbound stream is halted by a poison message awaiting operator action or consumer ack (poll mode)
+// - 'dlq_items_present': Dead-lettered messages await redrive or expiry (poll mode)
 type OutboundConflictType string
 
 const (
@@ -19,6 +21,8 @@ const (
 	OutboundConflictTypeAllWebhooksDisabled         OutboundConflictType = "all_webhooks_disabled"
 	OutboundConflictTypeEventEnabledWhileDisabled   OutboundConflictType = "event_enabled_while_disabled"
 	OutboundConflictTypeWebhookEnabledWhileDisabled OutboundConflictType = "webhook_enabled_while_disabled"
+	OutboundConflictTypeStreamBlocked               OutboundConflictType = "stream_blocked"
+	OutboundConflictTypeDlqItemsPresent             OutboundConflictType = "dlq_items_present"
 )
 
 func (e OutboundConflictType) ToPointer() *OutboundConflictType {
@@ -37,6 +41,10 @@ func (e *OutboundConflictType) UnmarshalJSON(data []byte) error {
 	case "event_enabled_while_disabled":
 		fallthrough
 	case "webhook_enabled_while_disabled":
+		fallthrough
+	case "stream_blocked":
+		fallthrough
+	case "dlq_items_present":
 		*e = OutboundConflictType(v)
 		return nil
 	default:
@@ -50,6 +58,8 @@ type OutboundConflict struct {
 	// - 'all_webhooks_disabled': All webhooks are disabled while use case is enabled
 	// - 'event_enabled_while_disabled': Event is enabled while use case is disabled
 	// - 'webhook_enabled_while_disabled': A webhook is enabled while use case is disabled
+	// - 'stream_blocked': The outbound stream is halted by a poison message awaiting operator action or consumer ack (poll mode)
+	// - 'dlq_items_present': Dead-lettered messages await redrive or expiry (poll mode)
 	//
 	Type OutboundConflictType `json:"type"`
 	// Webhook ID (only present for webhook_enabled_while_disabled conflicts)

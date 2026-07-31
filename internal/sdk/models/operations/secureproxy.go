@@ -18,6 +18,14 @@ type SecureProxyResponse struct {
 	SecureProxyResponse *shared.SecureProxyResponse
 	// Bad request
 	ErrorResponseBase *shared.ErrorResponseBase
+	// Upstream failure: epilot could not obtain an HTTP response from the proxied target
+	// (e.g. TLS handshake failure, connection refused/reset, DNS failure or timeout).
+	// The body's `code`/`reason` identify the underlying cause, distinguishing a
+	// remote-side problem from an epilot-side one. When the target *does* answer with
+	// its own status, that status and body are passed through unchanged via
+	// `SecureProxyResponse` instead.
+	//
+	SecureProxyUpstreamError *shared.SecureProxyUpstreamError
 }
 
 func (s *SecureProxyResponse) GetContentType() string {
@@ -53,4 +61,11 @@ func (s *SecureProxyResponse) GetErrorResponseBase() *shared.ErrorResponseBase {
 		return nil
 	}
 	return s.ErrorResponseBase
+}
+
+func (s *SecureProxyResponse) GetSecureProxyUpstreamError() *shared.SecureProxyUpstreamError {
+	if s == nil {
+		return nil
+	}
+	return s.SecureProxyUpstreamError
 }

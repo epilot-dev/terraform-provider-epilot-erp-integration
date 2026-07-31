@@ -6,6 +6,8 @@ package shared
 type IntegrationSettings struct {
 	// Auto-refresh settings for keeping integration data fresh
 	AutoRefresh *AutoRefreshSettings `json:"autoRefresh,omitempty"`
+	// Integration monitoring notification configuration. Rides Integration.settings.notifications (camelCase) and surfaces on both v1 and v2 GET/PUT. Unknown keys are stripped server-side to stay forward-compatible with deferred (V2) rule types.
+	Notifications *IntegrationNotificationConfig `json:"notifications,omitempty"`
 }
 
 func (i *IntegrationSettings) GetAutoRefresh() *AutoRefreshSettings {
@@ -13,4 +15,11 @@ func (i *IntegrationSettings) GetAutoRefresh() *AutoRefreshSettings {
 		return nil
 	}
 	return i.AutoRefresh
+}
+
+func (i *IntegrationSettings) GetNotifications() *IntegrationNotificationConfig {
+	if i == nil {
+		return nil
+	}
+	return i.Notifications
 }

@@ -117,6 +117,93 @@ func (r *IntegrationResourceModel) RefreshFromSharedIntegrationWithUseCases(ctx 
 				r.Settings.AutoRefresh.Enabled = types.BoolPointerValue(resp.Settings.AutoRefresh.Enabled)
 				r.Settings.AutoRefresh.FreshnessThresholdMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.FreshnessThresholdMinutes)
 			}
+			if resp.Settings.Notifications == nil {
+				r.Settings.Notifications = nil
+			} else {
+				r.Settings.Notifications = &tfTypes.IntegrationNotificationConfig{}
+				r.Settings.Notifications.DefaultChannels = &tfTypes.NotificationChannelSet{}
+				r.Settings.Notifications.DefaultChannels.Email = types.BoolValue(resp.Settings.Notifications.DefaultChannels.Email)
+				r.Settings.Notifications.DefaultChannels.InApp = types.BoolValue(resp.Settings.Notifications.DefaultChannels.InApp)
+				r.Settings.Notifications.Digest = &tfTypes.NotificationDigestConfig{}
+				r.Settings.Notifications.Digest.Channels = &tfTypes.NotificationChannelSet{}
+				r.Settings.Notifications.Digest.Channels.Email = types.BoolValue(resp.Settings.Notifications.Digest.Channels.Email)
+				r.Settings.Notifications.Digest.Channels.InApp = types.BoolValue(resp.Settings.Notifications.Digest.Channels.InApp)
+				if resp.Settings.Notifications.Digest.DayOfWeek != nil {
+					r.Settings.Notifications.Digest.DayOfWeek = types.Int64Value(int64(*resp.Settings.Notifications.Digest.DayOfWeek))
+				} else {
+					r.Settings.Notifications.Digest.DayOfWeek = types.Int64Null()
+				}
+				r.Settings.Notifications.Digest.Enabled = types.BoolValue(resp.Settings.Notifications.Digest.Enabled)
+				r.Settings.Notifications.Digest.Frequency = types.StringValue(string(resp.Settings.Notifications.Digest.Frequency))
+				r.Settings.Notifications.Digest.IncludeHealthy = types.BoolValue(resp.Settings.Notifications.Digest.IncludeHealthy)
+				r.Settings.Notifications.Digest.SkipIfEmpty = types.BoolValue(resp.Settings.Notifications.Digest.SkipIfEmpty)
+				r.Settings.Notifications.Digest.TimeOfDay = types.StringValue(resp.Settings.Notifications.Digest.TimeOfDay)
+				r.Settings.Notifications.Digest.Timezone = types.StringValue(resp.Settings.Notifications.Digest.Timezone)
+				r.Settings.Notifications.Enabled = types.BoolValue(resp.Settings.Notifications.Enabled)
+				r.Settings.Notifications.MonitoredCodes = make([]types.String, 0, len(resp.Settings.Notifications.MonitoredCodes))
+				for _, v := range resp.Settings.Notifications.MonitoredCodes {
+					r.Settings.Notifications.MonitoredCodes = append(r.Settings.Notifications.MonitoredCodes, types.StringValue(v))
+				}
+				r.Settings.Notifications.MonitoredUseCases = make([]types.String, 0, len(resp.Settings.Notifications.MonitoredUseCases))
+				for _, v := range resp.Settings.Notifications.MonitoredUseCases {
+					r.Settings.Notifications.MonitoredUseCases = append(r.Settings.Notifications.MonitoredUseCases, types.StringValue(v))
+				}
+				r.Settings.Notifications.MuteUntil = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.Settings.Notifications.MuteUntil))
+				r.Settings.Notifications.Recipients = []tfTypes.NotificationRecipient{}
+
+				for _, recipientsItem := range resp.Settings.Notifications.Recipients {
+					var recipients tfTypes.NotificationRecipient
+
+					recipients.UserID = types.StringValue(recipientsItem.UserID)
+
+					r.Settings.Notifications.Recipients = append(r.Settings.Notifications.Recipients, recipients)
+				}
+				r.Settings.Notifications.Rules = []tfTypes.NotificationRule{}
+
+				for _, rulesItem := range resp.Settings.Notifications.Rules {
+					var rules tfTypes.NotificationRule
+
+					if rulesItem.Channels == nil {
+						rules.Channels = nil
+					} else {
+						rules.Channels = &tfTypes.NotificationChannelSet{}
+						rules.Channels.Email = types.BoolValue(rulesItem.Channels.Email)
+						rules.Channels.InApp = types.BoolValue(rulesItem.Channels.InApp)
+					}
+					rules.Codes = make([]types.String, 0, len(rulesItem.Codes))
+					for _, v := range rulesItem.Codes {
+						rules.Codes = append(rules.Codes, types.StringValue(v))
+					}
+					rules.Enabled = types.BoolValue(rulesItem.Enabled)
+					rules.FallbackThreshold = types.Float64PointerValue(rulesItem.FallbackThreshold)
+					rules.ID = types.StringPointerValue(rulesItem.ID)
+					rules.MinSampleSize = types.Int64PointerValue(rulesItem.MinSampleSize)
+					rules.Name = types.StringPointerValue(rulesItem.Name)
+					rules.QuietPeriod = types.StringPointerValue(rulesItem.QuietPeriod)
+					if rulesItem.Sensitivity != nil {
+						rules.Sensitivity = types.StringValue(string(*rulesItem.Sensitivity))
+					} else {
+						rules.Sensitivity = types.StringNull()
+					}
+					if rulesItem.Threshold != nil {
+						rules.Threshold = &tfTypes.Threshold{}
+						if rulesItem.Threshold.Number != nil {
+							rules.Threshold.Number = types.Float64PointerValue(rulesItem.Threshold.Number)
+						}
+						if rulesItem.Threshold.NotificationRule2 != nil {
+							if rulesItem.Threshold.NotificationRule2 != nil {
+								rules.Threshold.Two = types.StringValue(string(*rulesItem.Threshold.NotificationRule2))
+							} else {
+								rules.Threshold.Two = types.StringNull()
+							}
+						}
+					}
+					rules.Type = types.StringValue(string(rulesItem.Type))
+					rules.Window = types.StringPointerValue(rulesItem.Window)
+
+					r.Settings.Notifications.Rules = append(r.Settings.Notifications.Rules, rules)
+				}
+			}
 		}
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
 		useCasesResult, _ := json.Marshal(resp.UseCases)
@@ -214,8 +301,205 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 				FreshnessThresholdMinutes: freshnessThresholdMinutes,
 			}
 		}
+		var notifications *shared.IntegrationNotificationConfig
+		if r.Settings.Notifications != nil {
+			var enabled1 bool
+			enabled1 = r.Settings.Notifications.Enabled.ValueBool()
+
+			recipients := make([]shared.NotificationRecipient, 0, len(r.Settings.Notifications.Recipients))
+			for recipientsIndex := range r.Settings.Notifications.Recipients {
+				var userID string
+				userID = r.Settings.Notifications.Recipients[recipientsIndex].UserID.ValueString()
+
+				recipients = append(recipients, shared.NotificationRecipient{
+					UserID: userID,
+				})
+			}
+			var email bool
+			email = r.Settings.Notifications.DefaultChannels.Email.ValueBool()
+
+			var inApp bool
+			inApp = r.Settings.Notifications.DefaultChannels.InApp.ValueBool()
+
+			defaultChannels := shared.NotificationChannelSet{
+				Email: email,
+				InApp: inApp,
+			}
+			monitoredUseCases := make([]string, 0, len(r.Settings.Notifications.MonitoredUseCases))
+			for monitoredUseCasesIndex := range r.Settings.Notifications.MonitoredUseCases {
+				monitoredUseCases = append(monitoredUseCases, r.Settings.Notifications.MonitoredUseCases[monitoredUseCasesIndex].ValueString())
+			}
+			monitoredCodes := make([]string, 0, len(r.Settings.Notifications.MonitoredCodes))
+			for monitoredCodesIndex := range r.Settings.Notifications.MonitoredCodes {
+				monitoredCodes = append(monitoredCodes, r.Settings.Notifications.MonitoredCodes[monitoredCodesIndex].ValueString())
+			}
+			rules := make([]shared.NotificationRule, 0, len(r.Settings.Notifications.Rules))
+			for rulesIndex := range r.Settings.Notifications.Rules {
+				id := new(string)
+				if !r.Settings.Notifications.Rules[rulesIndex].ID.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].ID.IsNull() {
+					*id = r.Settings.Notifications.Rules[rulesIndex].ID.ValueString()
+				} else {
+					id = nil
+				}
+				name1 := new(string)
+				if !r.Settings.Notifications.Rules[rulesIndex].Name.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].Name.IsNull() {
+					*name1 = r.Settings.Notifications.Rules[rulesIndex].Name.ValueString()
+				} else {
+					name1 = nil
+				}
+				typeVar := shared.Type(r.Settings.Notifications.Rules[rulesIndex].Type.ValueString())
+				var enabled2 bool
+				enabled2 = r.Settings.Notifications.Rules[rulesIndex].Enabled.ValueBool()
+
+				var channels *shared.NotificationChannelSet
+				if r.Settings.Notifications.Rules[rulesIndex].Channels != nil {
+					var email1 bool
+					email1 = r.Settings.Notifications.Rules[rulesIndex].Channels.Email.ValueBool()
+
+					var inApp1 bool
+					inApp1 = r.Settings.Notifications.Rules[rulesIndex].Channels.InApp.ValueBool()
+
+					channels = &shared.NotificationChannelSet{
+						Email: email1,
+						InApp: inApp1,
+					}
+				}
+				codes := make([]string, 0, len(r.Settings.Notifications.Rules[rulesIndex].Codes))
+				for codesIndex := range r.Settings.Notifications.Rules[rulesIndex].Codes {
+					codes = append(codes, r.Settings.Notifications.Rules[rulesIndex].Codes[codesIndex].ValueString())
+				}
+				var threshold *shared.Threshold
+				if r.Settings.Notifications.Rules[rulesIndex].Threshold != nil {
+					number := new(float64)
+					if !r.Settings.Notifications.Rules[rulesIndex].Threshold.Number.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].Threshold.Number.IsNull() {
+						*number = r.Settings.Notifications.Rules[rulesIndex].Threshold.Number.ValueFloat64()
+					} else {
+						number = nil
+					}
+					if number != nil {
+						threshold = &shared.Threshold{
+							Number: number,
+						}
+					}
+					notificationRule2 := new(shared.NotificationRule2)
+					if !r.Settings.Notifications.Rules[rulesIndex].Threshold.Two.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].Threshold.Two.IsNull() {
+						*notificationRule2 = shared.NotificationRule2(r.Settings.Notifications.Rules[rulesIndex].Threshold.Two.ValueString())
+					} else {
+						notificationRule2 = nil
+					}
+					if notificationRule2 != nil {
+						threshold = &shared.Threshold{
+							NotificationRule2: notificationRule2,
+						}
+					}
+				}
+				sensitivity := new(shared.Sensitivity)
+				if !r.Settings.Notifications.Rules[rulesIndex].Sensitivity.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].Sensitivity.IsNull() {
+					*sensitivity = shared.Sensitivity(r.Settings.Notifications.Rules[rulesIndex].Sensitivity.ValueString())
+				} else {
+					sensitivity = nil
+				}
+				fallbackThreshold := new(float64)
+				if !r.Settings.Notifications.Rules[rulesIndex].FallbackThreshold.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].FallbackThreshold.IsNull() {
+					*fallbackThreshold = r.Settings.Notifications.Rules[rulesIndex].FallbackThreshold.ValueFloat64()
+				} else {
+					fallbackThreshold = nil
+				}
+				window := new(string)
+				if !r.Settings.Notifications.Rules[rulesIndex].Window.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].Window.IsNull() {
+					*window = r.Settings.Notifications.Rules[rulesIndex].Window.ValueString()
+				} else {
+					window = nil
+				}
+				minSampleSize := new(int64)
+				if !r.Settings.Notifications.Rules[rulesIndex].MinSampleSize.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].MinSampleSize.IsNull() {
+					*minSampleSize = r.Settings.Notifications.Rules[rulesIndex].MinSampleSize.ValueInt64()
+				} else {
+					minSampleSize = nil
+				}
+				quietPeriod := new(string)
+				if !r.Settings.Notifications.Rules[rulesIndex].QuietPeriod.IsUnknown() && !r.Settings.Notifications.Rules[rulesIndex].QuietPeriod.IsNull() {
+					*quietPeriod = r.Settings.Notifications.Rules[rulesIndex].QuietPeriod.ValueString()
+				} else {
+					quietPeriod = nil
+				}
+				rules = append(rules, shared.NotificationRule{
+					ID:                id,
+					Name:              name1,
+					Type:              typeVar,
+					Enabled:           enabled2,
+					Channels:          channels,
+					Codes:             codes,
+					Threshold:         threshold,
+					Sensitivity:       sensitivity,
+					FallbackThreshold: fallbackThreshold,
+					Window:            window,
+					MinSampleSize:     minSampleSize,
+					QuietPeriod:       quietPeriod,
+				})
+			}
+			var enabled3 bool
+			enabled3 = r.Settings.Notifications.Digest.Enabled.ValueBool()
+
+			frequency := shared.Frequency(r.Settings.Notifications.Digest.Frequency.ValueString())
+			dayOfWeek := new(shared.DayOfWeek)
+			if !r.Settings.Notifications.Digest.DayOfWeek.IsUnknown() && !r.Settings.Notifications.Digest.DayOfWeek.IsNull() {
+				*dayOfWeek = shared.DayOfWeek(r.Settings.Notifications.Digest.DayOfWeek.ValueInt64())
+			} else {
+				dayOfWeek = nil
+			}
+			var timeOfDay string
+			timeOfDay = r.Settings.Notifications.Digest.TimeOfDay.ValueString()
+
+			var timezone string
+			timezone = r.Settings.Notifications.Digest.Timezone.ValueString()
+
+			var email2 bool
+			email2 = r.Settings.Notifications.Digest.Channels.Email.ValueBool()
+
+			var inApp2 bool
+			inApp2 = r.Settings.Notifications.Digest.Channels.InApp.ValueBool()
+
+			channels1 := shared.NotificationChannelSet{
+				Email: email2,
+				InApp: inApp2,
+			}
+			var includeHealthy bool
+			includeHealthy = r.Settings.Notifications.Digest.IncludeHealthy.ValueBool()
+
+			var skipIfEmpty bool
+			skipIfEmpty = r.Settings.Notifications.Digest.SkipIfEmpty.ValueBool()
+
+			digest := shared.NotificationDigestConfig{
+				Enabled:        enabled3,
+				Frequency:      frequency,
+				DayOfWeek:      dayOfWeek,
+				TimeOfDay:      timeOfDay,
+				Timezone:       timezone,
+				Channels:       channels1,
+				IncludeHealthy: includeHealthy,
+				SkipIfEmpty:    skipIfEmpty,
+			}
+			muteUntil := new(time.Time)
+			if !r.Settings.Notifications.MuteUntil.IsUnknown() && !r.Settings.Notifications.MuteUntil.IsNull() {
+				*muteUntil, _ = time.Parse(time.RFC3339Nano, r.Settings.Notifications.MuteUntil.ValueString())
+			} else {
+				muteUntil = nil
+			}
+			notifications = &shared.IntegrationNotificationConfig{
+				Enabled:           enabled1,
+				Recipients:        recipients,
+				DefaultChannels:   defaultChannels,
+				MonitoredUseCases: monitoredUseCases,
+				MonitoredCodes:    monitoredCodes,
+				Rules:             rules,
+				Digest:            digest,
+				MuteUntil:         muteUntil,
+			}
+		}
 		settings = &shared.IntegrationSettings{
-			AutoRefresh: autoRefresh,
+			AutoRefresh:   autoRefresh,
+			Notifications: notifications,
 		}
 	}
 	integrationType := new(shared.UpsertIntegrationWithUseCasesRequestIntegrationType)
@@ -234,11 +518,11 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 		}
 		var auth *shared.ManagedCallAuth
 		if r.ConnectorConfig.Auth != nil {
-			typeVar := new(shared.Type)
+			typeVar1 := new(shared.ManagedCallAuthType)
 			if !r.ConnectorConfig.Auth.Type.IsUnknown() && !r.ConnectorConfig.Auth.Type.IsNull() {
-				*typeVar = shared.Type(r.ConnectorConfig.Auth.Type.ValueString())
+				*typeVar1 = shared.ManagedCallAuthType(r.ConnectorConfig.Auth.Type.ValueString())
 			} else {
-				typeVar = nil
+				typeVar1 = nil
 			}
 			tokenURL := new(string)
 			if !r.ConnectorConfig.Auth.TokenURL.IsUnknown() && !r.ConnectorConfig.Auth.TokenURL.IsNull() {
@@ -316,7 +600,7 @@ func (r *IntegrationResourceModel) ToSharedUpsertIntegrationWithUseCasesRequest(
 				token = nil
 			}
 			auth = &shared.ManagedCallAuth{
-				Type:         typeVar,
+				Type:         typeVar1,
 				TokenURL:     tokenURL,
 				ClientID:     clientID,
 				ClientSecret: clientSecret,

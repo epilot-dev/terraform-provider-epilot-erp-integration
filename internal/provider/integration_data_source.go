@@ -225,6 +225,170 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 						},
 						Description: `Auto-refresh settings for keeping integration data fresh`,
 					},
+					"notifications": schema.SingleNestedAttribute{
+						Computed: true,
+						Attributes: map[string]schema.Attribute{
+							"default_channels": schema.SingleNestedAttribute{
+								Computed: true,
+								Attributes: map[string]schema.Attribute{
+									"email": schema.BoolAttribute{
+										Computed: true,
+									},
+									"in_app": schema.BoolAttribute{
+										Computed: true,
+									},
+								},
+								Description: `Delivery channel toggles. New channels added in svc-notification-api inherit here.`,
+							},
+							"digest": schema.SingleNestedAttribute{
+								Computed: true,
+								Attributes: map[string]schema.Attribute{
+									"channels": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"email": schema.BoolAttribute{
+												Computed: true,
+											},
+											"in_app": schema.BoolAttribute{
+												Computed: true,
+											},
+										},
+										Description: `Delivery channel toggles. New channels added in svc-notification-api inherit here.`,
+									},
+									"day_of_week": schema.Int64Attribute{
+										Computed:    true,
+										Description: `Weekly only. 0 = Sunday … 6 = Saturday.`,
+									},
+									"enabled": schema.BoolAttribute{
+										Computed: true,
+									},
+									"frequency": schema.StringAttribute{
+										Computed: true,
+									},
+									"include_healthy": schema.BoolAttribute{
+										Computed:    true,
+										Description: `List all integrations vs. only ones with issues.`,
+									},
+									"skip_if_empty": schema.BoolAttribute{
+										Computed:    true,
+										Description: `Suppress the digest when nothing happened.`,
+									},
+									"time_of_day": schema.StringAttribute{
+										Computed:    true,
+										Description: `HH:mm`,
+									},
+									"timezone": schema.StringAttribute{
+										Computed:    true,
+										Description: `IANA timezone, e.g. 'Europe/Berlin'.`,
+									},
+								},
+								Description: `Digest schedule and content configuration.`,
+							},
+							"enabled": schema.BoolAttribute{
+								Computed:    true,
+								Description: `Master switch for this integration's notifications.`,
+							},
+							"monitored_codes": schema.ListAttribute{
+								Computed:    true,
+								ElementType: types.StringType,
+								Description: `Integration-level code scope; absent/empty resolves to ['_error_']. Accepts concrete monitoring error codes or group sentinels (_error_, _warning_, _success_, _info_, _any_, _parent_).`,
+							},
+							"monitored_use_cases": schema.ListAttribute{
+								Computed:    true,
+								ElementType: types.StringType,
+								Description: `Integration-level use-case include-filter; absent/empty means all use cases.`,
+							},
+							"mute_until": schema.StringAttribute{
+								Computed:    true,
+								Description: `ISO instant; snooze all non-digest alerts until this time. ` + "`" + `null` + "`" + ` means not muted.`,
+							},
+							"recipients": schema.ListNestedAttribute{
+								Computed: true,
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"user_id": schema.StringAttribute{
+											Computed:    true,
+											Description: `epilot user id. Same-org membership is enforced at send time (Phases 3–5), which re-validates each recipient against the integration's org before fanning out — it is not enforced at config-write time.`,
+										},
+									},
+								},
+								Description: `epilot user ids notified for this integration. Same-org membership and per-user notification preferences are enforced at send time (Phases 3–5), not at config-write time.`,
+							},
+							"rules": schema.ListNestedAttribute{
+								Computed: true,
+								NestedObject: schema.NestedAttributeObject{
+									Attributes: map[string]schema.Attribute{
+										"channels": schema.SingleNestedAttribute{
+											Computed: true,
+											Attributes: map[string]schema.Attribute{
+												"email": schema.BoolAttribute{
+													Computed: true,
+												},
+												"in_app": schema.BoolAttribute{
+													Computed: true,
+												},
+											},
+											Description: `Delivery channel toggles. New channels added in svc-notification-api inherit here.`,
+										},
+										"codes": schema.ListAttribute{
+											Computed:    true,
+											ElementType: types.StringType,
+											Description: `Per-rule code scope. Event-matching rules default to ['_parent_']; silence defaults to ['_any_']. success_rate_drop and recovery take no codes.`,
+										},
+										"enabled": schema.BoolAttribute{
+											Computed: true,
+										},
+										"fallback_threshold": schema.Float64Attribute{
+											Computed:    true,
+											Description: `Static value used while the 'auto' baseline is immature (cold start).`,
+										},
+										"id": schema.StringAttribute{
+											Computed:    true,
+											Description: `Stable AlertState + baseline key. Optional on write — the server mints a ULID when omitted; a supplied id is preserved verbatim.`,
+										},
+										"min_sample_size": schema.Int64Attribute{
+											Computed:    true,
+											Description: `success_rate_drop minimum sample size guard.`,
+										},
+										"name": schema.StringAttribute{
+											Computed:    true,
+											Description: `Optional human label disambiguating two rules of the same type.`,
+										},
+										"quiet_period": schema.StringAttribute{
+											Computed:    true,
+											Description: `silence quiet period, e.g. '12h'.`,
+										},
+										"sensitivity": schema.StringAttribute{
+											Computed:    true,
+											Description: `Band width for 'auto' mode.`,
+										},
+										"threshold": schema.SingleNestedAttribute{
+											Computed: true,
+											Attributes: map[string]schema.Attribute{
+												"number": schema.Float64Attribute{
+													Computed: true,
+												},
+												"two": schema.StringAttribute{
+													Computed: true,
+												},
+											},
+											Description: `Count or percentage; 'auto' selects anomaly-baseline mode.`,
+										},
+										"type": schema.StringAttribute{
+											Computed:    true,
+											Description: `Rule trigger type. These are the only supported types; each is produced by a real alerter.`,
+										},
+										"window": schema.StringAttribute{
+											Computed:    true,
+											Description: `Evaluation window, e.g. '15m', '1h', '24h'.`,
+										},
+									},
+								},
+								Description: `Enabled triggers and their params. A type MAY repeat; capped at 20 rules (enforced at the write boundary).`,
+							},
+						},
+						Description: `Integration monitoring notification configuration. Rides Integration.settings.notifications (camelCase) and surfaces on both v1 and v2 GET/PUT. Unknown keys are stripped server-side to stay forward-compatible with deferred (V2) rule types.`,
+					},
 				},
 				Description: `Settings for the integration`,
 			},

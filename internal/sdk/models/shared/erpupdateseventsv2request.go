@@ -8,7 +8,7 @@ type ErpUpdatesEventsV2Request struct {
 	// Optional ID that identifies the specific request for debugging purposes
 	CorrelationID *string `json:"correlation_id,omitempty"`
 	// List of ERP events to process
-	Events []ErpEvent `json:"events"`
+	Events []ErpEventInput `json:"events"`
 }
 
 func (e *ErpUpdatesEventsV2Request) GetIntegrationID() string {
@@ -25,9 +25,9 @@ func (e *ErpUpdatesEventsV2Request) GetCorrelationID() *string {
 	return e.CorrelationID
 }
 
-func (e *ErpUpdatesEventsV2Request) GetEvents() []ErpEvent {
+func (e *ErpUpdatesEventsV2Request) GetEvents() []ErpEventInput {
 	if e == nil {
-		return []ErpEvent{}
+		return []ErpEventInput{}
 	}
 	return e.Events
 }

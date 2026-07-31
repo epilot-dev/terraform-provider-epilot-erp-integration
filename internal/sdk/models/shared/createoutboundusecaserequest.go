@@ -35,9 +35,9 @@ func (e *CreateOutboundUseCaseRequestType) UnmarshalJSON(data []byte) error {
 type CreateOutboundUseCaseRequest struct {
 	// Use case name
 	Name string `json:"name"`
-	// URL-safe identifier for the use case. Recommended for portable cross-environment referencing. Must be unique per integration. Immutable after creation. Lowercase alphanumeric, hyphens, and underscores only.
+	// URL-safe identifier for the use case. Required for explicit creates so every use case has a portable cross-environment identifier. Must be unique per integration. Immutable after creation. Lowercase alphanumeric, hyphens, and underscores only.
 	//
-	Slug *string `json:"slug,omitempty"`
+	Slug string `json:"slug"`
 	// Whether the use case is enabled
 	Enabled bool `json:"enabled"`
 	// Use case type
@@ -64,9 +64,9 @@ func (c *CreateOutboundUseCaseRequest) GetName() string {
 	return c.Name
 }
 
-func (c *CreateOutboundUseCaseRequest) GetSlug() *string {
+func (c *CreateOutboundUseCaseRequest) GetSlug() string {
 	if c == nil {
-		return nil
+		return ""
 	}
 	return c.Slug
 }

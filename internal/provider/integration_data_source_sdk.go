@@ -116,6 +116,93 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationWithUseCases(ct
 				r.Settings.AutoRefresh.Enabled = types.BoolPointerValue(resp.Settings.AutoRefresh.Enabled)
 				r.Settings.AutoRefresh.FreshnessThresholdMinutes = types.Int64PointerValue(resp.Settings.AutoRefresh.FreshnessThresholdMinutes)
 			}
+			if resp.Settings.Notifications == nil {
+				r.Settings.Notifications = nil
+			} else {
+				r.Settings.Notifications = &tfTypes.IntegrationNotificationConfig{}
+				r.Settings.Notifications.DefaultChannels = &tfTypes.NotificationChannelSet{}
+				r.Settings.Notifications.DefaultChannels.Email = types.BoolValue(resp.Settings.Notifications.DefaultChannels.Email)
+				r.Settings.Notifications.DefaultChannels.InApp = types.BoolValue(resp.Settings.Notifications.DefaultChannels.InApp)
+				r.Settings.Notifications.Digest = &tfTypes.NotificationDigestConfig{}
+				r.Settings.Notifications.Digest.Channels = &tfTypes.NotificationChannelSet{}
+				r.Settings.Notifications.Digest.Channels.Email = types.BoolValue(resp.Settings.Notifications.Digest.Channels.Email)
+				r.Settings.Notifications.Digest.Channels.InApp = types.BoolValue(resp.Settings.Notifications.Digest.Channels.InApp)
+				if resp.Settings.Notifications.Digest.DayOfWeek != nil {
+					r.Settings.Notifications.Digest.DayOfWeek = types.Int64Value(int64(*resp.Settings.Notifications.Digest.DayOfWeek))
+				} else {
+					r.Settings.Notifications.Digest.DayOfWeek = types.Int64Null()
+				}
+				r.Settings.Notifications.Digest.Enabled = types.BoolValue(resp.Settings.Notifications.Digest.Enabled)
+				r.Settings.Notifications.Digest.Frequency = types.StringValue(string(resp.Settings.Notifications.Digest.Frequency))
+				r.Settings.Notifications.Digest.IncludeHealthy = types.BoolValue(resp.Settings.Notifications.Digest.IncludeHealthy)
+				r.Settings.Notifications.Digest.SkipIfEmpty = types.BoolValue(resp.Settings.Notifications.Digest.SkipIfEmpty)
+				r.Settings.Notifications.Digest.TimeOfDay = types.StringValue(resp.Settings.Notifications.Digest.TimeOfDay)
+				r.Settings.Notifications.Digest.Timezone = types.StringValue(resp.Settings.Notifications.Digest.Timezone)
+				r.Settings.Notifications.Enabled = types.BoolValue(resp.Settings.Notifications.Enabled)
+				r.Settings.Notifications.MonitoredCodes = make([]types.String, 0, len(resp.Settings.Notifications.MonitoredCodes))
+				for _, v := range resp.Settings.Notifications.MonitoredCodes {
+					r.Settings.Notifications.MonitoredCodes = append(r.Settings.Notifications.MonitoredCodes, types.StringValue(v))
+				}
+				r.Settings.Notifications.MonitoredUseCases = make([]types.String, 0, len(resp.Settings.Notifications.MonitoredUseCases))
+				for _, v := range resp.Settings.Notifications.MonitoredUseCases {
+					r.Settings.Notifications.MonitoredUseCases = append(r.Settings.Notifications.MonitoredUseCases, types.StringValue(v))
+				}
+				r.Settings.Notifications.MuteUntil = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.Settings.Notifications.MuteUntil))
+				r.Settings.Notifications.Recipients = []tfTypes.NotificationRecipient{}
+
+				for _, recipientsItem := range resp.Settings.Notifications.Recipients {
+					var recipients tfTypes.NotificationRecipient
+
+					recipients.UserID = types.StringValue(recipientsItem.UserID)
+
+					r.Settings.Notifications.Recipients = append(r.Settings.Notifications.Recipients, recipients)
+				}
+				r.Settings.Notifications.Rules = []tfTypes.NotificationRule{}
+
+				for _, rulesItem := range resp.Settings.Notifications.Rules {
+					var rules tfTypes.NotificationRule
+
+					if rulesItem.Channels == nil {
+						rules.Channels = nil
+					} else {
+						rules.Channels = &tfTypes.NotificationChannelSet{}
+						rules.Channels.Email = types.BoolValue(rulesItem.Channels.Email)
+						rules.Channels.InApp = types.BoolValue(rulesItem.Channels.InApp)
+					}
+					rules.Codes = make([]types.String, 0, len(rulesItem.Codes))
+					for _, v := range rulesItem.Codes {
+						rules.Codes = append(rules.Codes, types.StringValue(v))
+					}
+					rules.Enabled = types.BoolValue(rulesItem.Enabled)
+					rules.FallbackThreshold = types.Float64PointerValue(rulesItem.FallbackThreshold)
+					rules.ID = types.StringPointerValue(rulesItem.ID)
+					rules.MinSampleSize = types.Int64PointerValue(rulesItem.MinSampleSize)
+					rules.Name = types.StringPointerValue(rulesItem.Name)
+					rules.QuietPeriod = types.StringPointerValue(rulesItem.QuietPeriod)
+					if rulesItem.Sensitivity != nil {
+						rules.Sensitivity = types.StringValue(string(*rulesItem.Sensitivity))
+					} else {
+						rules.Sensitivity = types.StringNull()
+					}
+					if rulesItem.Threshold != nil {
+						rules.Threshold = &tfTypes.Threshold{}
+						if rulesItem.Threshold.Number != nil {
+							rules.Threshold.Number = types.Float64PointerValue(rulesItem.Threshold.Number)
+						}
+						if rulesItem.Threshold.NotificationRule2 != nil {
+							if rulesItem.Threshold.NotificationRule2 != nil {
+								rules.Threshold.Two = types.StringValue(string(*rulesItem.Threshold.NotificationRule2))
+							} else {
+								rules.Threshold.Two = types.StringNull()
+							}
+						}
+					}
+					rules.Type = types.StringValue(string(rulesItem.Type))
+					rules.Window = types.StringPointerValue(rulesItem.Window)
+
+					r.Settings.Notifications.Rules = append(r.Settings.Notifications.Rules, rules)
+				}
+			}
 		}
 		r.UpdatedAt = types.StringValue(typeconvert.TimeToString(resp.UpdatedAt))
 		useCasesResult, _ := json.Marshal(resp.UseCases)

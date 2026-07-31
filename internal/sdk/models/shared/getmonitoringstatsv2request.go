@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// GetMonitoringStatsV2RequestUseCaseType - Filter stats by use case type
+// GetMonitoringStatsV2RequestUseCaseType - Filter stats by a single use case type
 type GetMonitoringStatsV2RequestUseCaseType string
 
 const (
@@ -42,6 +42,41 @@ func (e *GetMonitoringStatsV2RequestUseCaseType) UnmarshalJSON(data []byte) erro
 		return nil
 	default:
 		return fmt.Errorf("invalid value for GetMonitoringStatsV2RequestUseCaseType: %v", v)
+	}
+}
+
+type UseCaseTypes string
+
+const (
+	UseCaseTypesInbound     UseCaseTypes = "inbound"
+	UseCaseTypesOutbound    UseCaseTypes = "outbound"
+	UseCaseTypesFileProxy   UseCaseTypes = "file_proxy"
+	UseCaseTypesManagedCall UseCaseTypes = "managed_call"
+	UseCaseTypesSecureProxy UseCaseTypes = "secure_proxy"
+)
+
+func (e UseCaseTypes) ToPointer() *UseCaseTypes {
+	return &e
+}
+func (e *UseCaseTypes) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "inbound":
+		fallthrough
+	case "outbound":
+		fallthrough
+	case "file_proxy":
+		fallthrough
+	case "managed_call":
+		fallthrough
+	case "secure_proxy":
+		*e = UseCaseTypes(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for UseCaseTypes: %v", v)
 	}
 }
 
@@ -81,15 +116,47 @@ func (e *GroupBy) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// Source - Data source for the stats. "monitoring" (default) aggregates processed events from erp_monitoring_v2 — this counts every event produced throughout the processing tree (fan-out children, post-actions, relation resolutions, etc.). "incoming" counts only the initial inbound events actually received (distinct event_id from erp_incoming_events); only group_by=use_case_id is supported and status/level breakdown is not available for this source (success/error/warning/skipped counts are returned as 0).
+type Source string
+
+const (
+	SourceMonitoring Source = "monitoring"
+	SourceIncoming   Source = "incoming"
+)
+
+func (e Source) ToPointer() *Source {
+	return &e
+}
+func (e *Source) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "monitoring":
+		fallthrough
+	case "incoming":
+		*e = Source(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Source: %v", v)
+	}
+}
+
 type GetMonitoringStatsV2Request struct {
 	// Start of the time range
 	FromDate *time.Time `json:"from_date,omitempty"`
 	// End of the time range
 	ToDate *time.Time `json:"to_date,omitempty"`
-	// Filter stats by use case type
+	// Filter stats by a single use case type
 	UseCaseType *GetMonitoringStatsV2RequestUseCaseType `json:"use_case_type,omitempty"`
+	// Filter stats to this set of use case types (matches any). Takes precedence over `use_case_type` when both are present. Used by the notification producers to scope alerts/digests to the integration's `monitoredUseCases`.
+	UseCaseTypes []UseCaseTypes `json:"use_case_types,omitempty"`
 	// Field to group the breakdown by
 	GroupBy *GroupBy `json:"group_by,omitempty"`
+	// Data source for the stats. "monitoring" (default) aggregates processed events from erp_monitoring_v2 — this counts every event produced throughout the processing tree (fan-out children, post-actions, relation resolutions, etc.). "incoming" counts only the initial inbound events actually received (distinct event_id from erp_incoming_events); only group_by=use_case_id is supported and status/level breakdown is not available for this source (success/error/warning/skipped counts are returned as 0).
+	//
+	Source *Source `default:"monitoring" json:"source"`
 }
 
 func (g GetMonitoringStatsV2Request) MarshalJSON() ([]byte, error) {
@@ -124,11 +191,25 @@ func (g *GetMonitoringStatsV2Request) GetUseCaseType() *GetMonitoringStatsV2Requ
 	return g.UseCaseType
 }
 
+func (g *GetMonitoringStatsV2Request) GetUseCaseTypes() []UseCaseTypes {
+	if g == nil {
+		return nil
+	}
+	return g.UseCaseTypes
+}
+
 func (g *GetMonitoringStatsV2Request) GetGroupBy() *GroupBy {
 	if g == nil {
 		return nil
 	}
 	return g.GroupBy
+}
+
+func (g *GetMonitoringStatsV2Request) GetSource() *Source {
+	if g == nil {
+		return nil
+	}
+	return g.Source
 }
 
 // #region class-body-getmonitoringstatsv2request

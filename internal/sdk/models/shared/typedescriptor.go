@@ -7,23 +7,23 @@ import (
 	"fmt"
 )
 
-type Kind string
+type TypeDescriptorKind string
 
 const (
-	KindObject  Kind = "object"
-	KindArray   Kind = "array"
-	KindString  Kind = "string"
-	KindNumber  Kind = "number"
-	KindBoolean Kind = "boolean"
-	KindNull    Kind = "null"
-	KindUnknown Kind = "unknown"
-	KindUnion   Kind = "union"
+	TypeDescriptorKindObject  TypeDescriptorKind = "object"
+	TypeDescriptorKindArray   TypeDescriptorKind = "array"
+	TypeDescriptorKindString  TypeDescriptorKind = "string"
+	TypeDescriptorKindNumber  TypeDescriptorKind = "number"
+	TypeDescriptorKindBoolean TypeDescriptorKind = "boolean"
+	TypeDescriptorKindNull    TypeDescriptorKind = "null"
+	TypeDescriptorKindUnknown TypeDescriptorKind = "unknown"
+	TypeDescriptorKindUnion   TypeDescriptorKind = "union"
 )
 
-func (e Kind) ToPointer() *Kind {
+func (e TypeDescriptorKind) ToPointer() *TypeDescriptorKind {
 	return &e
 }
-func (e *Kind) UnmarshalJSON(data []byte) error {
+func (e *TypeDescriptorKind) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -44,16 +44,16 @@ func (e *Kind) UnmarshalJSON(data []byte) error {
 	case "unknown":
 		fallthrough
 	case "union":
-		*e = Kind(v)
+		*e = TypeDescriptorKind(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for Kind: %v", v)
+		return fmt.Errorf("invalid value for TypeDescriptorKind: %v", v)
 	}
 }
 
 // TypeDescriptor - Describes the inferred type shape of a JSONata expression
 type TypeDescriptor struct {
-	Kind Kind `json:"kind"`
+	Kind TypeDescriptorKind `json:"kind"`
 	// For kind=object, the properties and their type descriptors
 	Properties map[string]TypeDescriptor `json:"properties,omitempty"`
 	// For kind=array, the type of array items
@@ -64,9 +64,9 @@ type TypeDescriptor struct {
 	Variants []TypeDescriptor `json:"variants,omitempty"`
 }
 
-func (t *TypeDescriptor) GetKind() Kind {
+func (t *TypeDescriptor) GetKind() TypeDescriptorKind {
 	if t == nil {
-		return Kind("")
+		return TypeDescriptorKind("")
 	}
 	return t.Kind
 }

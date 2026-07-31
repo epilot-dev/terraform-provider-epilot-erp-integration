@@ -7,7 +7,7 @@ type SecureProxyResponse struct {
 	StatusCode *int64 `json:"status_code,omitempty"`
 	// Response headers from upstream
 	Headers map[string]string `json:"headers,omitempty"`
-	// Response body from upstream
+	// Response body from upstream. When `status_code` is 502 and the target never produced an HTTP response (TLS/connection/DNS failure or timeout), this is a `SecureProxyUpstreamError` describing the underlying cause.
 	Body any `json:"body,omitempty"`
 }
 

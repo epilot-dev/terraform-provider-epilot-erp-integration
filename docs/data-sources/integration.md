@@ -92,6 +92,7 @@ Read-Only:
 Read-Only:
 
 - `auto_refresh` (Attributes) Auto-refresh settings for keeping integration data fresh (see [below for nested schema](#nestedatt--settings--auto_refresh))
+- `notifications` (Attributes) Integration monitoring notification configuration. Rides Integration.settings.notifications (camelCase) and surfaces on both v1 and v2 GET/PUT. Unknown keys are stripped server-side to stay forward-compatible with deferred (V2) rule types. (see [below for nested schema](#nestedatt--settings--notifications))
 
 <a id="nestedatt--settings--auto_refresh"></a>
 ### Nested Schema for `settings.auto_refresh`
@@ -100,3 +101,94 @@ Read-Only:
 
 - `enabled` (Boolean) Whether auto-refresh is enabled
 - `freshness_threshold_minutes` (Number) Maximum age (in minutes) of data before it is considered stale and eligible for refresh
+
+
+<a id="nestedatt--settings--notifications"></a>
+### Nested Schema for `settings.notifications`
+
+Read-Only:
+
+- `default_channels` (Attributes) Delivery channel toggles. New channels added in svc-notification-api inherit here. (see [below for nested schema](#nestedatt--settings--notifications--default_channels))
+- `digest` (Attributes) Digest schedule and content configuration. (see [below for nested schema](#nestedatt--settings--notifications--digest))
+- `enabled` (Boolean) Master switch for this integration's notifications.
+- `monitored_codes` (List of String) Integration-level code scope; absent/empty resolves to ['_error_']. Accepts concrete monitoring error codes or group sentinels (_error_, _warning_, _success_, _info_, _any_, _parent_).
+- `monitored_use_cases` (List of String) Integration-level use-case include-filter; absent/empty means all use cases.
+- `mute_until` (String) ISO instant; snooze all non-digest alerts until this time. `null` means not muted.
+- `recipients` (Attributes List) epilot user ids notified for this integration. Same-org membership and per-user notification preferences are enforced at send time (Phases 3–5), not at config-write time. (see [below for nested schema](#nestedatt--settings--notifications--recipients))
+- `rules` (Attributes List) Enabled triggers and their params. A type MAY repeat; capped at 20 rules (enforced at the write boundary). (see [below for nested schema](#nestedatt--settings--notifications--rules))
+
+<a id="nestedatt--settings--notifications--default_channels"></a>
+### Nested Schema for `settings.notifications.default_channels`
+
+Read-Only:
+
+- `email` (Boolean)
+- `in_app` (Boolean)
+
+
+<a id="nestedatt--settings--notifications--digest"></a>
+### Nested Schema for `settings.notifications.digest`
+
+Read-Only:
+
+- `channels` (Attributes) Delivery channel toggles. New channels added in svc-notification-api inherit here. (see [below for nested schema](#nestedatt--settings--notifications--digest--channels))
+- `day_of_week` (Number) Weekly only. 0 = Sunday … 6 = Saturday.
+- `enabled` (Boolean)
+- `frequency` (String)
+- `include_healthy` (Boolean) List all integrations vs. only ones with issues.
+- `skip_if_empty` (Boolean) Suppress the digest when nothing happened.
+- `time_of_day` (String) HH:mm
+- `timezone` (String) IANA timezone, e.g. 'Europe/Berlin'.
+
+<a id="nestedatt--settings--notifications--digest--channels"></a>
+### Nested Schema for `settings.notifications.digest.channels`
+
+Read-Only:
+
+- `email` (Boolean)
+- `in_app` (Boolean)
+
+
+
+<a id="nestedatt--settings--notifications--recipients"></a>
+### Nested Schema for `settings.notifications.recipients`
+
+Read-Only:
+
+- `user_id` (String) epilot user id. Same-org membership is enforced at send time (Phases 3–5), which re-validates each recipient against the integration's org before fanning out — it is not enforced at config-write time.
+
+
+<a id="nestedatt--settings--notifications--rules"></a>
+### Nested Schema for `settings.notifications.rules`
+
+Read-Only:
+
+- `channels` (Attributes) Delivery channel toggles. New channels added in svc-notification-api inherit here. (see [below for nested schema](#nestedatt--settings--notifications--rules--channels))
+- `codes` (List of String) Per-rule code scope. Event-matching rules default to ['_parent_']; silence defaults to ['_any_']. success_rate_drop and recovery take no codes.
+- `enabled` (Boolean)
+- `fallback_threshold` (Number) Static value used while the 'auto' baseline is immature (cold start).
+- `id` (String) Stable AlertState + baseline key. Optional on write — the server mints a ULID when omitted; a supplied id is preserved verbatim.
+- `min_sample_size` (Number) success_rate_drop minimum sample size guard.
+- `name` (String) Optional human label disambiguating two rules of the same type.
+- `quiet_period` (String) silence quiet period, e.g. '12h'.
+- `sensitivity` (String) Band width for 'auto' mode.
+- `threshold` (Attributes) Count or percentage; 'auto' selects anomaly-baseline mode. (see [below for nested schema](#nestedatt--settings--notifications--rules--threshold))
+- `type` (String) Rule trigger type. These are the only supported types; each is produced by a real alerter.
+- `window` (String) Evaluation window, e.g. '15m', '1h', '24h'.
+
+<a id="nestedatt--settings--notifications--rules--channels"></a>
+### Nested Schema for `settings.notifications.rules.channels`
+
+Read-Only:
+
+- `email` (Boolean)
+- `in_app` (Boolean)
+
+
+<a id="nestedatt--settings--notifications--rules--threshold"></a>
+### Nested Schema for `settings.notifications.rules.threshold`
+
+Read-Only:
+
+- `number` (Number)
+- `two` (String)

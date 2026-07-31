@@ -20,9 +20,19 @@ type FileProxyUseCaseConfiguration struct {
 	Auth        *FileProxyAuth                  `json:"auth,omitempty"`
 	// Additional use-case-specific parameters expected in the download URL query string (beyond the required orgId, integrationId, and useCaseSlug or useCaseId)
 	Params []FileProxyParam `json:"params,omitempty"`
+	// Additional origins permitted to call /download for this use case (CORS, exact match). Portal origins are always allowed.
+	AllowedOrigins []string `json:"allowed_origins,omitempty"`
 	// Ordered list of HTTP steps to execute to retrieve the file
 	Steps    []FileProxyStep         `json:"steps"`
 	Response FileProxyResponseConfig `json:"response"`
+	// When `true`, this use case is served via the streaming endpoint: mapped file URLs
+	// are built as `/stream/download`, files of any size are streamed inline over HTTP
+	// response streaming, and buffered `/download` requests for oversize files are
+	// 307-redirected to `/stream`. Files never transit epilot's temporary S3 storage on
+	// the streaming path. Defaults to `false` (small files are served directly and large
+	// files are transparently served via a temporary S3 redirect).
+	//
+	PreventIndirectServing *bool `default:"false" json:"prevent_indirect_serving"`
 }
 
 func (f FileProxyUseCaseConfiguration) MarshalJSON() ([]byte, error) {
@@ -57,6 +67,13 @@ func (f *FileProxyUseCaseConfiguration) GetParams() []FileProxyParam {
 	return f.Params
 }
 
+func (f *FileProxyUseCaseConfiguration) GetAllowedOrigins() []string {
+	if f == nil {
+		return nil
+	}
+	return f.AllowedOrigins
+}
+
 func (f *FileProxyUseCaseConfiguration) GetSteps() []FileProxyStep {
 	if f == nil {
 		return []FileProxyStep{}
@@ -69,4 +86,11 @@ func (f *FileProxyUseCaseConfiguration) GetResponse() FileProxyResponseConfig {
 		return FileProxyResponseConfig{}
 	}
 	return f.Response
+}
+
+func (f *FileProxyUseCaseConfiguration) GetPreventIndirectServing() *bool {
+	if f == nil {
+		return nil
+	}
+	return f.PreventIndirectServing
 }

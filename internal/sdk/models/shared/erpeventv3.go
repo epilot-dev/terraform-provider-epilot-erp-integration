@@ -143,6 +143,9 @@ type Two struct {
 	// Optional unique identifier for idempotency - prevents duplicate processing of the same event within 24 hours in context of the same integration. Must contain only alphanumeric characters, hyphens, and underscores.
 	//
 	DeduplicationID *string `json:"deduplication_id,omitempty"`
+	// Optional per-event ordering group. Overrides the request-level `group_id` for THIS event; when absent, the event inherits the request-level `group_id` (or the default strict per-integration ordering). Use it when a single batch carries events for unrelated business objects that may be processed in parallel. See the request-level `group_id` for semantics.
+	//
+	GroupID *string `json:"group_id,omitempty"`
 }
 
 func (t Two) MarshalJSON() ([]byte, error) {
@@ -196,6 +199,13 @@ func (t *Two) GetDeduplicationID() *string {
 		return nil
 	}
 	return t.DeduplicationID
+}
+
+func (t *Two) GetGroupID() *string {
+	if t == nil {
+		return nil
+	}
+	return t.GroupID
 }
 
 // ErpEventV3Format - Format of the payload data
@@ -331,6 +341,9 @@ type One struct {
 	// Optional unique identifier for idempotency - prevents duplicate processing of the same event within 24 hours in context of the same integration. Must contain only alphanumeric characters, hyphens, and underscores.
 	//
 	DeduplicationID *string `json:"deduplication_id,omitempty"`
+	// Optional per-event ordering group. Overrides the request-level `group_id` for THIS event; when absent, the event inherits the request-level `group_id` (or the default strict per-integration ordering). Use it when a single batch carries events for unrelated business objects that may be processed in parallel. See the request-level `group_id` for semantics.
+	//
+	GroupID *string `json:"group_id,omitempty"`
 }
 
 func (o One) MarshalJSON() ([]byte, error) {
@@ -384,6 +397,13 @@ func (o *One) GetDeduplicationID() *string {
 		return nil
 	}
 	return o.DeduplicationID
+}
+
+func (o *One) GetGroupID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.GroupID
 }
 
 type ErpEventV3Type string

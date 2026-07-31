@@ -122,6 +122,12 @@ type IntegrationEntityField struct {
 	// Auto-constructs a file proxy download URL. orgId and integrationId are injected from context. Exactly one of use_case_id or use_case_slug must be provided. Using use_case_slug is recommended as it is portable across environments.
 	//
 	FileProxyURL *FileProxyURLConfig `json:"file_proxy_url,omitempty"`
+	// Resolves to a property of one of the calling organization's epilot portal configurations at runtime, replacing hard-coded environment-specific portal UUIDs in inbound mappings. Matched portals are sorted ascending by `(_created_at, portal_id)`; portals without `_created_at` sort first (treated as oldest). When `select: "single"` matches more than one portal, the resolver still returns the oldest match and emits a `PORTAL_REF_AMBIGUOUS` warning.
+	//
+	PortalRef *PortalRefConfig `json:"portal_ref,omitempty"`
+	// Resolves to an org-scoped environment variable from the epilot environments-api service at runtime, replacing hard-coded environment-specific values (URLs, prefixes, identifiers) in inbound mappings. Secrets (`SecretString` values) are never exposed; the runtime treats both "missing key" and "secret-typed key" as identical `undefined` outcomes (no info disclosure via error code). For secret-resolving contexts (e.g. authorization headers in managed-call or file-proxy step configurations), use the templated `{{ env.<key> }}` syntax instead — that mechanism does decrypt secrets.
+	//
+	EnvVarRef *EnvVarRefConfig `json:"env_var_ref,omitempty"`
 }
 
 func (i IntegrationEntityField) MarshalJSON() ([]byte, error) {
@@ -196,4 +202,18 @@ func (i *IntegrationEntityField) GetFileProxyURL() *FileProxyURLConfig {
 		return nil
 	}
 	return i.FileProxyURL
+}
+
+func (i *IntegrationEntityField) GetPortalRef() *PortalRefConfig {
+	if i == nil {
+		return nil
+	}
+	return i.PortalRef
+}
+
+func (i *IntegrationEntityField) GetEnvVarRef() *EnvVarRefConfig {
+	if i == nil {
+		return nil
+	}
+	return i.EnvVarRef
 }

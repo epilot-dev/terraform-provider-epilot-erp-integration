@@ -7,19 +7,19 @@ import (
 	"fmt"
 )
 
-// Type - Authentication type
-type Type string
+// ManagedCallAuthType - Authentication type
+type ManagedCallAuthType string
 
 const (
-	TypeOauth2ClientCredentials Type = "oauth2_client_credentials"
-	TypeAPIKey                  Type = "api_key"
-	TypeBearer                  Type = "bearer"
+	ManagedCallAuthTypeOauth2ClientCredentials ManagedCallAuthType = "oauth2_client_credentials"
+	ManagedCallAuthTypeAPIKey                  ManagedCallAuthType = "api_key"
+	ManagedCallAuthTypeBearer                  ManagedCallAuthType = "bearer"
 )
 
-func (e Type) ToPointer() *Type {
+func (e ManagedCallAuthType) ToPointer() *ManagedCallAuthType {
 	return &e
 }
-func (e *Type) UnmarshalJSON(data []byte) error {
+func (e *ManagedCallAuthType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -30,17 +30,17 @@ func (e *Type) UnmarshalJSON(data []byte) error {
 	case "api_key":
 		fallthrough
 	case "bearer":
-		*e = Type(v)
+		*e = ManagedCallAuthType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for Type: %v", v)
+		return fmt.Errorf("invalid value for ManagedCallAuthType: %v", v)
 	}
 }
 
 // ManagedCallAuth - Authentication configuration for managed call requests
 type ManagedCallAuth struct {
 	// Authentication type
-	Type *Type `json:"type,omitempty"`
+	Type *ManagedCallAuthType `json:"type,omitempty"`
 	// OAuth2 token URL. Can be plain text or {{env.key}} reference.
 	TokenURL *string `json:"token_url,omitempty"`
 	// OAuth2 client ID. Can be plain text or {{env.key}} reference.
@@ -67,7 +67,7 @@ type ManagedCallAuth struct {
 	Token *string `json:"token,omitempty"`
 }
 
-func (m *ManagedCallAuth) GetType() *Type {
+func (m *ManagedCallAuth) GetType() *ManagedCallAuthType {
 	if m == nil {
 		return nil
 	}

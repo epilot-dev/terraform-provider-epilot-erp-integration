@@ -4,81 +4,93 @@ package shared
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/internal/utils"
 )
 
-// DeliveryConfigType - Delivery mechanism type (currently only webhook is supported)
 type DeliveryConfigType string
 
 const (
 	DeliveryConfigTypeWebhook DeliveryConfigType = "webhook"
+	DeliveryConfigTypePoll    DeliveryConfigType = "poll"
 )
 
-func (e DeliveryConfigType) ToPointer() *DeliveryConfigType {
-	return &e
-}
-func (e *DeliveryConfigType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "webhook":
-		*e = DeliveryConfigType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for DeliveryConfigType: %v", v)
-	}
-}
-
-// DeliveryConfig - Configuration for how the transformed event should be delivered
+// DeliveryConfig - Configuration for how the event should be delivered. webhook = push delivery via svc-webhooks (JSONata-transformed payload); poll = pull-based queue delivery where the consumer fetches items via the poll API (raw event payload)
 type DeliveryConfig struct {
-	// Delivery mechanism type (currently only webhook is supported)
-	Type DeliveryConfigType `json:"type"`
-	// Reference to the webhook configuration in svc-webhooks
-	WebhookID string `json:"webhook_id"`
-	// Cached webhook name for display purposes
-	WebhookName *string `json:"webhook_name,omitempty"`
-	// Cached webhook URL for display purposes
-	WebhookURL *string `json:"webhook_url,omitempty"`
+	WebhookDeliveryConfig *WebhookDeliveryConfig `queryParam:"inline" union:"member"`
+	PollDeliveryConfig    *PollDeliveryConfig    `queryParam:"inline" union:"member"`
+
+	Type DeliveryConfigType
 }
 
-func (d DeliveryConfig) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(d, "", false)
-}
+func CreateDeliveryConfigWebhook(webhook WebhookDeliveryConfig) DeliveryConfig {
+	typ := DeliveryConfigTypeWebhook
 
-func (d *DeliveryConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
-		return err
+	typStr := WebhookDeliveryConfigType(typ)
+	webhook.Type = typStr
+
+	return DeliveryConfig{
+		WebhookDeliveryConfig: &webhook,
+		Type:                  typ,
 	}
-	return nil
 }
 
-func (d *DeliveryConfig) GetType() DeliveryConfigType {
-	if d == nil {
-		return DeliveryConfigType("")
+func CreateDeliveryConfigPoll(poll PollDeliveryConfig) DeliveryConfig {
+	typ := DeliveryConfigTypePoll
+
+	typStr := PollDeliveryConfigType(typ)
+	poll.Type = typStr
+
+	return DeliveryConfig{
+		PollDeliveryConfig: &poll,
+		Type:               typ,
 	}
-	return d.Type
 }
 
-func (d *DeliveryConfig) GetWebhookID() string {
-	if d == nil {
-		return ""
+func (u *DeliveryConfig) UnmarshalJSON(data []byte) error {
+
+	type discriminator struct {
+		Type string `json:"type"`
 	}
-	return d.WebhookID
-}
 
-func (d *DeliveryConfig) GetWebhookName() *string {
-	if d == nil {
+	dis := new(discriminator)
+	if err := json.Unmarshal(data, &dis); err != nil {
+		return fmt.Errorf("could not unmarshal discriminator: %w", err)
+	}
+
+	switch dis.Type {
+	case "webhook":
+		webhookDeliveryConfig := new(WebhookDeliveryConfig)
+		if err := utils.UnmarshalJSON(data, &webhookDeliveryConfig, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == webhook) type WebhookDeliveryConfig within DeliveryConfig: %w", string(data), err)
+		}
+
+		u.WebhookDeliveryConfig = webhookDeliveryConfig
+		u.Type = DeliveryConfigTypeWebhook
+		return nil
+	case "poll":
+		pollDeliveryConfig := new(PollDeliveryConfig)
+		if err := utils.UnmarshalJSON(data, &pollDeliveryConfig, "", true, nil); err != nil {
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == poll) type PollDeliveryConfig within DeliveryConfig: %w", string(data), err)
+		}
+
+		u.PollDeliveryConfig = pollDeliveryConfig
+		u.Type = DeliveryConfigTypePoll
 		return nil
 	}
-	return d.WebhookName
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for DeliveryConfig", string(data))
 }
 
-func (d *DeliveryConfig) GetWebhookURL() *string {
-	if d == nil {
-		return nil
+func (u DeliveryConfig) MarshalJSON() ([]byte, error) {
+	if u.WebhookDeliveryConfig != nil {
+		return utils.MarshalJSON(u.WebhookDeliveryConfig, "", true)
 	}
-	return d.WebhookURL
+
+	if u.PollDeliveryConfig != nil {
+		return utils.MarshalJSON(u.PollDeliveryConfig, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type DeliveryConfig: all fields are null")
 }

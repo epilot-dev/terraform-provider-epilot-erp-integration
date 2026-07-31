@@ -53,6 +53,61 @@ resource "epilot-erp-integration_integration" "my_integration" {
       enabled                     = false
       freshness_threshold_minutes = 1
     }
+    notifications = {
+      default_channels = {
+        email  = true
+        in_app = true
+      }
+      digest = {
+        channels = {
+          email  = false
+          in_app = true
+        }
+        day_of_week     = 0
+        enabled         = true
+        frequency       = "weekly"
+        include_healthy = false
+        skip_if_empty   = true
+        time_of_day     = "...my_time_of_day..."
+        timezone        = "...my_timezone..."
+      }
+      enabled = false
+      monitored_codes = [
+        "..."
+      ]
+      monitored_use_cases = [
+        "..."
+      ]
+      mute_until = "2022-12-29T04:49:52.263Z"
+      recipients = [
+        {
+          user_id = "...my_user_id..."
+        }
+      ]
+      rules = [
+        {
+          channels = {
+            email  = true
+            in_app = false
+          }
+          codes = [
+            "..."
+          ]
+          enabled            = true
+          fallback_threshold = 5.59
+          id                 = "...my_id..."
+          min_sample_size    = 3
+          name               = "...my_name..."
+          quiet_period       = "...my_quiet_period..."
+          sensitivity        = "medium"
+          threshold = {
+            two = "auto"
+          }
+          type   = "warning_threshold"
+          window = "...my_window..."
+        }
+      ]
+    }
   }
   use_cases = "{ \"see\": \"documentation\" }"
 }

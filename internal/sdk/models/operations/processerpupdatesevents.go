@@ -50,7 +50,7 @@ type ProcessErpUpdatesEventsRequestBody struct {
 	// Metadata to be passed along with the events
 	Meta Meta `json:"meta"`
 	// List of ERP events to process
-	Events []shared.ErpEvent `json:"events"`
+	Events []shared.ErpEventInput `json:"events"`
 }
 
 func (p *ProcessErpUpdatesEventsRequestBody) GetAppID() string {
@@ -74,9 +74,9 @@ func (p *ProcessErpUpdatesEventsRequestBody) GetMeta() Meta {
 	return p.Meta
 }
 
-func (p *ProcessErpUpdatesEventsRequestBody) GetEvents() []shared.ErpEvent {
+func (p *ProcessErpUpdatesEventsRequestBody) GetEvents() []shared.ErpEventInput {
 	if p == nil {
-		return []shared.ErpEvent{}
+		return []shared.ErpEventInput{}
 	}
 	return p.Events
 }

@@ -3,5 +3,6 @@
 package types
 
 type IntegrationSettings struct {
-	AutoRefresh *AutoRefreshSettings `tfsdk:"auto_refresh"`
+	AutoRefresh   *AutoRefreshSettings           `tfsdk:"auto_refresh"`
+	Notifications *IntegrationNotificationConfig `tfsdk:"notifications"`
 }

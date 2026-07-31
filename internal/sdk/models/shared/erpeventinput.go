@@ -157,6 +157,85 @@ func (u Payload) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type Payload: all fields are null")
 }
 
+type ErpEventInput struct {
+	// Type of event (create, update, delete)
+	EventType EventType `json:"event_type"`
+	// Type of the object being updated (business_partner, contract_account, etc.). Corresponds to "Event Name" from the integration UI.
+	ObjectType string `json:"object_type"`
+	// Timestamp when the event occurred
+	Timestamp time.Time `json:"timestamp"`
+	// Format of the payload data
+	Format *Format `default:"json" json:"format"`
+	// The object data payload - can be either a serialized string or a direct JSON object
+	Payload Payload `json:"payload"`
+	// Optional unique identifier for idempotency - prevents duplicate processing of the same event within 24 hours in context of the same integration. Must contain only alphanumeric characters, hyphens, and underscores.
+	//
+	DeduplicationID *string `json:"deduplication_id,omitempty"`
+	// Optional per-event trace id for cross-system tracing (unique per business operation). Overrides the request-level meta.correlation_id for THIS event. When absent, the event inherits the request-level correlation_id; when both are absent, epilot mints its own event_id and the trace is epilot-only. Orthogonal to deduplication_id (idempotency).
+	//
+	CorrelationID *string `json:"correlation_id,omitempty"`
+}
+
+func (e ErpEventInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *ErpEventInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *ErpEventInput) GetEventType() EventType {
+	if e == nil {
+		return EventType("")
+	}
+	return e.EventType
+}
+
+func (e *ErpEventInput) GetObjectType() string {
+	if e == nil {
+		return ""
+	}
+	return e.ObjectType
+}
+
+func (e *ErpEventInput) GetTimestamp() time.Time {
+	if e == nil {
+		return time.Time{}
+	}
+	return e.Timestamp
+}
+
+func (e *ErpEventInput) GetFormat() *Format {
+	if e == nil {
+		return nil
+	}
+	return e.Format
+}
+
+func (e *ErpEventInput) GetPayload() Payload {
+	if e == nil {
+		return Payload{}
+	}
+	return e.Payload
+}
+
+func (e *ErpEventInput) GetDeduplicationID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.DeduplicationID
+}
+
+func (e *ErpEventInput) GetCorrelationID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.CorrelationID
+}
+
 type ErpEvent struct {
 	// Type of event (create, update, delete)
 	EventType EventType `json:"event_type"`
@@ -171,6 +250,12 @@ type ErpEvent struct {
 	// Optional unique identifier for idempotency - prevents duplicate processing of the same event within 24 hours in context of the same integration. Must contain only alphanumeric characters, hyphens, and underscores.
 	//
 	DeduplicationID *string `json:"deduplication_id,omitempty"`
+	// Optional per-event trace id for cross-system tracing (unique per business operation). Overrides the request-level meta.correlation_id for THIS event. When absent, the event inherits the request-level correlation_id; when both are absent, epilot mints its own event_id and the trace is epilot-only. Orthogonal to deduplication_id (idempotency).
+	//
+	CorrelationID *string `json:"correlation_id,omitempty"`
+	// Resolved use case ID for the inbound event. Null when no use case matched or for events ingested before this field was introduced. Server-populated only — ignored if supplied on inbound requests.
+	//
+	UseCaseID *string `json:"use_case_id,omitempty"`
 }
 
 func (e ErpEvent) MarshalJSON() ([]byte, error) {
@@ -224,4 +309,18 @@ func (e *ErpEvent) GetDeduplicationID() *string {
 		return nil
 	}
 	return e.DeduplicationID
+}
+
+func (e *ErpEvent) GetCorrelationID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.CorrelationID
+}
+
+func (e *ErpEvent) GetUseCaseID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.UseCaseID
 }

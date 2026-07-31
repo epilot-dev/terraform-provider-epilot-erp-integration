@@ -31,7 +31,7 @@ generation:
   sdkFlattening: true
   telemetryEnabled: false
 terraform:
-  version: 0.22.0
+  version: 0.23.0
   additionalActions: []
   additionalDataSources: []
   additionalDependencies: {}
@@ -68,6 +68,7 @@ terraform:
   outputModelSuffix: output
   packageName: epilot-erp-integration
   preApplyUnionDiscriminators: false
+  providerTypeNameOverride: ""
   respectRequiredFields: false
   respectTitlesForPrimitiveUnionMembers: false
   unionStrategy: populated-fields

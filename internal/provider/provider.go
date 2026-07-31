@@ -50,11 +50,11 @@ func (p *EpilotErpIntegrationProvider) Schema(ctx context.Context, req provider.
 				Sensitive:           true,
 			},
 			"server_url": schema.StringAttribute{
-				Description: `Server URL (defaults to https://erp-integration-api.sls.epilot.io)`,
+				Description: `Server URL (defaults to https://integration-toolkit.sls.epilot.io)`,
 				Optional:    true,
 			},
 		},
-		MarkdownDescription: `ERP Integration API: API for integrating with ERP systems, handling tracking acknowledgments, triggering ERP processes, and processing ERP updates.`,
+		MarkdownDescription: `Integration Toolkit API: API for integrating with external systems in a standardised way.`,
 	}
 }
 
@@ -70,7 +70,7 @@ func (p *EpilotErpIntegrationProvider) Configure(ctx context.Context, req provid
 	serverUrl := data.ServerURL.ValueString()
 
 	if serverUrl == "" {
-		serverUrl = "https://erp-integration-api.sls.epilot.io"
+		serverUrl = "https://integration-toolkit.sls.epilot.io"
 	}
 
 	security := shared.Security{}

@@ -60,6 +60,11 @@ type OutboundUseCaseStatus struct {
 	Status OutboundUseCaseStatusStatus `json:"status"`
 	// List of detected conflicts, if any
 	Conflicts []OutboundConflict `json:"conflicts,omitempty"`
+	// Queue/consumer health for a poll-mode use case. Present only on use
+	// cases with a poll delivery mapping — webhook-only use cases are
+	// unaffected. Depth/age/DLQ numbers are first-page approximations.
+	//
+	Poll *OutboundPollStatus `json:"poll,omitempty"`
 }
 
 func (o *OutboundUseCaseStatus) GetUseCaseID() string {
@@ -116,4 +121,11 @@ func (o *OutboundUseCaseStatus) GetConflicts() []OutboundConflict {
 		return nil
 	}
 	return o.Conflicts
+}
+
+func (o *OutboundUseCaseStatus) GetPoll() *OutboundPollStatus {
+	if o == nil {
+		return nil
+	}
+	return o.Poll
 }

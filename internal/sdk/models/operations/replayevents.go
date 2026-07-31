@@ -3,6 +3,8 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-erp-integration/internal/sdk/models/shared"
 	"net/http"
 )
@@ -27,10 +29,108 @@ func (r *ReplayEventsRequest) GetReplayEventsRequest() shared.ReplayEventsReques
 	return r.ReplayEventsRequest
 }
 
-// ReplayEventsResponseBody - Events replay initiated
+// ReplayEventsStatus - Outcome for this event. `success`/`queued` means it was enqueued for re-processing. `not_found` means no inbound event with that ID exists for the organization. `skipped` means it was deduplicated, `ignored` means no enabled use case matched it, and `error` means it could not be queued (see `message`).
+type ReplayEventsStatus string
+
+const (
+	ReplayEventsStatusSuccess  ReplayEventsStatus = "success"
+	ReplayEventsStatusQueued   ReplayEventsStatus = "queued"
+	ReplayEventsStatusSkipped  ReplayEventsStatus = "skipped"
+	ReplayEventsStatusIgnored  ReplayEventsStatus = "ignored"
+	ReplayEventsStatusNotFound ReplayEventsStatus = "not_found"
+	ReplayEventsStatusError    ReplayEventsStatus = "error"
+)
+
+func (e ReplayEventsStatus) ToPointer() *ReplayEventsStatus {
+	return &e
+}
+func (e *ReplayEventsStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "success":
+		fallthrough
+	case "queued":
+		fallthrough
+	case "skipped":
+		fallthrough
+	case "ignored":
+		fallthrough
+	case "not_found":
+		fallthrough
+	case "error":
+		*e = ReplayEventsStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ReplayEventsStatus: %v", v)
+	}
+}
+
+type ReplayEventsResults struct {
+	// The requested (source) event ID.
+	EventID string `json:"event_id"`
+	// Outcome for this event. `success`/`queued` means it was enqueued for re-processing. `not_found` means no inbound event with that ID exists for the organization. `skipped` means it was deduplicated, `ignored` means no enabled use case matched it, and `error` means it could not be queued (see `message`).
+	//
+	Status ReplayEventsStatus `json:"status"`
+	// The new event ID assigned to the replayed event. Use it to follow the replay in monitoring.
+	//
+	ReplayEventID *string `json:"replay_event_id,omitempty"`
+	// Human-readable detail for this outcome.
+	Message *string `json:"message,omitempty"`
+}
+
+func (r *ReplayEventsResults) GetEventID() string {
+	if r == nil {
+		return ""
+	}
+	return r.EventID
+}
+
+func (r *ReplayEventsResults) GetStatus() ReplayEventsStatus {
+	if r == nil {
+		return ReplayEventsStatus("")
+	}
+	return r.Status
+}
+
+func (r *ReplayEventsResults) GetReplayEventID() *string {
+	if r == nil {
+		return nil
+	}
+	return r.ReplayEventID
+}
+
+func (r *ReplayEventsResults) GetMessage() *string {
+	if r == nil {
+		return nil
+	}
+	return r.Message
+}
+
+// ReplayEventsResponseBody - Events replay initiated. Always 200 — per-event outcomes are reported in `results`, so inspect it (or compare `replayed` against the number of requested ids) rather than treating the status code as success.
 type ReplayEventsResponseBody struct {
+	// Number of events actually queued for re-processing.
+	Replayed int64 `json:"replayed"`
+	// One entry per requested event id, in request order.
+	Results []ReplayEventsResults `json:"results"`
 	// List of event IDs for which replay was requested
 	EventIds []string `json:"event_ids,omitempty"`
+}
+
+func (r *ReplayEventsResponseBody) GetReplayed() int64 {
+	if r == nil {
+		return 0
+	}
+	return r.Replayed
+}
+
+func (r *ReplayEventsResponseBody) GetResults() []ReplayEventsResults {
+	if r == nil {
+		return []ReplayEventsResults{}
+	}
+	return r.Results
 }
 
 func (r *ReplayEventsResponseBody) GetEventIds() []string {
@@ -47,7 +147,8 @@ type ReplayEventsResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Events replay initiated
+	// Events replay initiated. Always 200 — per-event outcomes are reported in `results`, so inspect it (or compare `replayed` against the number of requested ids) rather than treating the status code as success.
+	//
 	Object *ReplayEventsResponseBody
 	// Bad request
 	ErrorResponseBase *shared.ErrorResponseBase

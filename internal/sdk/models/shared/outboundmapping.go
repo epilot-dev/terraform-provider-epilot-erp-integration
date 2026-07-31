@@ -7,17 +7,17 @@ import (
 	"time"
 )
 
-// OutboundMapping - A mapping that transforms an event and delivers it to a webhook
+// OutboundMapping - A mapping that delivers an event to an external system — either pushed to a webhook (with a JSONata payload transformation) or made available on the pull-based poll queue (raw event payload, no transformation)
 type OutboundMapping struct {
 	// Unique identifier for this mapping
 	ID *string `json:"id,omitempty"`
 	// Human-readable name for this mapping
 	Name string `json:"name"`
-	// JSONata expression to transform the event payload
-	JsonataExpression string `json:"jsonata_expression"`
+	// JSONata expression to transform the event payload. Required for webhook delivery; ignored for poll delivery.
+	JsonataExpression *string `json:"jsonata_expression,omitempty"`
 	// Whether this mapping is active
 	Enabled *bool `default:"true" json:"enabled"`
-	// Configuration for how the transformed event should be delivered
+	// Configuration for how the event should be delivered. webhook = push delivery via svc-webhooks (JSONata-transformed payload); poll = pull-based queue delivery where the consumer fetches items via the poll API (raw event payload)
 	Delivery DeliveryConfig `json:"delivery"`
 	// Timestamp when the mapping was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -50,9 +50,9 @@ func (o *OutboundMapping) GetName() string {
 	return o.Name
 }
 
-func (o *OutboundMapping) GetJsonataExpression() string {
+func (o *OutboundMapping) GetJsonataExpression() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.JsonataExpression
 }
@@ -69,6 +69,14 @@ func (o *OutboundMapping) GetDelivery() DeliveryConfig {
 		return DeliveryConfig{}
 	}
 	return o.Delivery
+}
+
+func (o *OutboundMapping) GetDeliveryWebhook() *WebhookDeliveryConfig {
+	return o.GetDelivery().WebhookDeliveryConfig
+}
+
+func (o *OutboundMapping) GetDeliveryPoll() *PollDeliveryConfig {
+	return o.GetDelivery().PollDeliveryConfig
 }
 
 func (o *OutboundMapping) GetCreatedAt() *time.Time {

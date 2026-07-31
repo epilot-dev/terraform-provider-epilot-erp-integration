@@ -20,6 +20,8 @@ type TimeSeriesBucketV2 struct {
 	SkippedCount *int64 `json:"skipped_count,omitempty"`
 	// Total events in the bucket
 	TotalCount int64 `json:"total_count"`
+	// Statistics breakdown by the requested group_by field for this bucket
+	Breakdown []TimeSeriesBreakdownItemV2 `json:"breakdown,omitempty"`
 }
 
 func (t TimeSeriesBucketV2) MarshalJSON() ([]byte, error) {
@@ -73,6 +75,13 @@ func (t *TimeSeriesBucketV2) GetTotalCount() int64 {
 		return 0
 	}
 	return t.TotalCount
+}
+
+func (t *TimeSeriesBucketV2) GetBreakdown() []TimeSeriesBreakdownItemV2 {
+	if t == nil {
+		return nil
+	}
+	return t.Breakdown
 }
 
 // #region class-body-timeseriesbucketv2

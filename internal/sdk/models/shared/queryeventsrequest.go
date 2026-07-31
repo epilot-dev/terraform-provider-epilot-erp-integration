@@ -83,6 +83,8 @@ type QueryEventsRequest struct {
 	ObjectType *string `json:"object_type,omitempty"`
 	// Filter by event name (alias for object_type)
 	EventName *string `json:"event_name,omitempty"`
+	// Filter by use case ID
+	UseCaseID *string `json:"use_case_id,omitempty"`
 	// Maximum number of results to return
 	Limit *int64 `default:"25" json:"limit"`
 	// Cursor for pagination. Use the next_cursor from the previous response to get the next page.
@@ -133,6 +135,13 @@ func (q *QueryEventsRequest) GetEventName() *string {
 		return nil
 	}
 	return q.EventName
+}
+
+func (q *QueryEventsRequest) GetUseCaseID() *string {
+	if q == nil {
+		return nil
+	}
+	return q.UseCaseID
 }
 
 func (q *QueryEventsRequest) GetLimit() *int64 {

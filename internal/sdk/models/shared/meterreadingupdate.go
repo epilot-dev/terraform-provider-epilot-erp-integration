@@ -29,7 +29,7 @@ func (m *MeterCounter) GetDollarEntityUniqueIds() map[string]any {
 type MeterReadingUpdate struct {
 	Meter        Meter         `json:"meter"`
 	MeterCounter *MeterCounter `json:"meter_counter,omitempty"`
-	// Meter reading attributes. Required: external_id, timestamp, source, value. `source` must be one of: ECP, ERP, 360, journey-submission. `reason` (optional) must be one of: regular, irregular, last, first, meter_change, contract_change, meter_adjustment (or empty/null).
+	// Meter reading attributes. Required: external_id, timestamp, source, value. `timestamp` must be ISO 8601 — either `YYYY-MM-DD` or `YYYY-MM-DDTHH:mm:ss` (with optional fractional seconds and optional `Z` / `±HH:mm` timezone offset); non-ISO formats (e.g. `DD.MM.YYYY` or epoch numbers) are rejected and must be converted upstream via a `jsonataExpression` (e.g. `$fromMillis(...)`). Date-only values are normalized to midnight UTC and offset-less date-times are anchored to UTC before being forwarded to the metering API. `source` must be one of: ECP, ERP, 360, journey-submission. `reason` (optional) must be one of: regular, irregular, last, first, meter_change, contract_change, meter_adjustment (or empty/null).
 	Attributes map[string]any `json:"attributes"`
 }
 
